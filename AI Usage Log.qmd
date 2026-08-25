@@ -1,0 +1,32 @@
+---
+title: "AI Use Log"
+author: "Natalie Chidikwindi"
+format: pdf
+editor: visual
+---
+
+## Overview
+
+This page logs all my AI use for:
+
+- model fitting
+
+- explanation of difficult concepts
+
+- explanation of R functions and usages
+
+- data simulation
+
+- brainstorming
+
+- grammar
+
+Date:
+
+Tools Used:
+
+Prompt:
+
+URL:
+
+What I checked and changed myself:

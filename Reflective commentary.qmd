@@ -1,0 +1,14 @@
+---
+title: "Reflective Commentary"
+author: "Natalie Chidikwindi"
+format: pdf
+editor: visual
+---
+
+# Learning Achievements
+
+# Methodological Challenges
+
+# Ethical and reproducibility considerations
+
+# Future areas of development

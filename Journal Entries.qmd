@@ -1,0 +1,62 @@
+---
+title: "Journal Entries"
+author: "Natalie"
+format: pdf
+editor: visual
+---
+
+# Journal Entry 1
+
+Date:
+
+Topic Covered:
+
+What I did:
+
+What I learnt:
+
+Difficulties or Open questions:
+
+Next steps:
+
+# Journal Entry 2:
+
+Date:
+
+Topic Covered:
+
+What I did:
+
+What I learnt:
+
+Difficulties or Open questions:
+
+Next steps:
+
+# Journal Entry 3:
+
+Date:
+
+Topic Covered:
+
+What I did:
+
+What I learnt:
+
+Difficulties or Open questions:
+
+Next steps:
+
+# Journal Entry 4:
+
+Date:
+
+Topic Covered:
+
+What I did:
+
+What I learnt:
+
+Difficulties or Open questions:
+
+Next steps:
