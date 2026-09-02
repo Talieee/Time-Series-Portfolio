@@ -7,56 +7,94 @@ editor: visual
 
 # Journal Entry 1
 
-Date:
+Date: 27 July 2026
 
-Topic Covered:
+Topic Covered: Introduction to Times series and Characteristics of a time series model
 
-What I did:
+What I did: I went over the lecture that Sulaiman taught. Also did the tutorial he gave us to consolidate understanding
 
-What I learnt:
+What I learnt: One thing is realized is that a lot of the fundamental concepts that we use for working with cross sectional data as well as stratified data, is quite similar to how we deal with time series data. There are several differences at the surface level but it seems like the underlying concept is the same. For example:
 
-Difficulties or Open questions:
+I also that order is very important. This is because usually time periods are related to one another in some way, whether that be though auto correlation or a trend, if you mess up the order is messes with your analyses
 
-Next steps:
+Difficulties or Open questions: One thing that I am struggling with a bit is the idea of a realization. I'm not sure if I understand it conceptually and what it means in regards to Time series. I also would like to get more comfortable with using and creating time series objects, as well as being able to interpret the analysis
+
+Next steps: Do my own tutorial using another dataset following the ideas I learnt in the follow through and in the lecture
 
 # Journal Entry 2:
 
-Date:
+Date: 3 August 2026
 
-Topic Covered:
+Topic Covered: The forecasting problem, Exploring a time series and how decomposition works
 
-What I did:
+What I did: Went over the lecture 2 in Sulaiman's class as well as attempted to do a tutorial on how these concepts work and how to apply them.
 
-What I learnt:
+What I learnt: I learnt about the difference between forecasting as well as what predicting is and how that are not the same, forecasting is all about projecting into the future based on past data. There are a lot of factors to take into this based on the complexity of the time series data. I also learnt that forecasting will be determines by the research question and need four conditions to be satisfied. Also how the Forecast-Goal-Plan is a feedback loop. I also learnt that our forecast horizons will depend on certain hings such as how long the period is. One concept that i learnt that I think is very important is that we need to break our time series into its separate components and then we model on them separately and put them together. It can be decomposed into the trend, the seasonality, the cyclical component and then the Irregularity. They can be combined in linear or multiplicative form. I also learnt how to identify each one such as a season, trend, cyclic and the irregular components
 
-Difficulties or Open questions:
+Difficulties or Open questions: Need to go over the notation, there is quite a lot of new notation and make sure I understand the notation. I also don't really understand what is going on on slide 20 with the growing uncertainty. I would like to spend more time describing the different plots based on the component being shown. I would also like to do an example where a cyclic component is in the time series.
 
-Next steps:
+Next steps: Do a Tutorial and Go through slide 20.
 
 # Journal Entry 3:
 
-Date:
+Date: 17 August 2026
 
-Topic Covered:
+Topic Covered: Forecasting methods, and Cross validation techniques and performance metrics
 
-What I did:
+What I did: Went over the lecture content and attended the Lecture on these concepts.
 
-What I learnt:
+What I learnt: I learnt about the 4 different benchmark forecasting method, and how it is important to do more than 1 method even thought the are different recommended forecasts for different time series with components. There is no better method it all depends on the data as well as the question we are trying to answer. It seems that for time series there can be quite a bit of subjectivity and it comes down to your data and the question you are trying to answer. Similar to cross sectional data residuals and performance measures are found to be calculated the same except the out of sample error cannot be randomized, it needs to be ordered.
 
-Difficulties or Open questions:
+We also covered cross validation and the difference in regards to cross sectional data and time series data. Time series data we cannot do a random split, reason being that successive. I also learnt that every training set must precede the validation set or else there will be temporal leakage. The lecture also covered. The lecture also covered the accuracy measured used such as MAE, RMSE, MAPE AND MASE and as well as when to use which metric. The lecture then covered the walk forward, expanding windo validation and sliding window validation.
 
-Next steps:
+Difficulties or Open questions: I am unsure about the fundamental difference between expanding window and walk forward validation.
+
+Next steps: Do a tutorial on how to do cross validation for a time series as well as do the excercise in the slides on page 72 of the slides.
 
 # Journal Entry 4:
 
-Date:
+Date: 19 August 2026
 
-Topic Covered:
+Topic Covered: Lag and Lead operators, stationary, white noise, and restoring stationary.
 
-What I did:
+What I did: Attended the Lecture and went over the slides as well as my notes.
 
-What I learnt:
+What I learnt: I learnt about the lead and lag of time series data with the lag being we record the measure today as yesterdays and the lead being we record today measure as tomorrows measure. I also learnt about strict stationarity and weak stationarity and how the aim is to get the model to stationary to be able to then model and make inference, so we difference to remove trends, seasonality. I also learnt about ergodicity which means that the time series fluctuates around a mean value, which indicates stationarity which is the goal. If the data is stationary then we can model, forecast correctly and so on. Lastly the lecture went through how to get the data to be stationary and how to determine how much differencing is required to remove trend in the data.
 
-Difficulties or Open questions:
+Difficulties or Open questions: Still struggling to understand why we need to have a lead and lags as well. I kind of understand that lags help identify possible correlation but lead i'm not sure. I also need to go over the notation for the the algebra of lags and leads.
 
-Next steps:
+Next steps: Go over the Lags and leads for more understanding and do a tutorial on the difference techniques for restoring stationarity.
+
+# Journal Entry 5:
+
+Date: 24 August 2026
+
+Topic Covered: MA(1), AR(1), ACF, PCF, ARMA models, Differencing, ARIMA, SARIMA, Box Jenkins loop. We also went through the data sets we can use for out portfolio projects during the lecture.
+
+What I did: Went over the lecture as well as my notes that I made during the lecture on the linear conditional mean models.
+
+What I learnt: I learnt about Moving averages which looks at correlated errors, and the Auto regressive model which looks at observations are related, and ARMA models which are a combination of MA and AR models. I learnt about the mean and variance for each of these models as well as the properties. I also learnt about what the plots looks like for each type of the ARMA models.
+
+The other thing I learnt was the ACF and PCF plots which help determine the number of lags depending on whether the values lie in between a region. I think one thing that was interesting is that even if we choose the number of lags we also need to look at the performance of an extra lag more and one less to see which one aligns more with the data. This lecture also covered overdifferencing and how if we do it will over-inflate the values emphasizing the importance of differencing only when necessary.
+
+ARIMA models includes the differencing element which was covered in the lecture as well and how certain specifications of ARIMA collapse to an AR(1), MA(1), ARMA(1,1), random walk, given the fact there is no constant value. The lecture also covered, checking residuals and the box Jenkins workflow of identifying an adequate model.
+
+Lastly, the lecture had a look at SARIMA models which adds a seasonal component in the time series data.This means there would need to be differencing for the seasonal elements as well.
+
+Difficulties or Open questions: I would like to determine how they got to the mean and variance values for these models. In the slide we only get given the values.
+
+Next steps: Research and define my project to do a comparative study between these models.
+
+# Journal Entry 6:
+
+Date: 31 August 2026
+
+Topic Covered: Introduction to Time series in R
+
+What I did: In our lecture with Suilaiman, we went over how to do statistical modelling of time series in R from eda, forecasting to ARIMA, SARIMA modelling. We were able to see what the application was using packages like fable, tstibble and more.
+
+What I learnt: I learnt the procedure as well as what it looks like to do the time series statistical modelling for each section of work we did in R. It was also good consolidation on all the work we have done and how it works using different packages. One thing I learnt was how to use table view, where you can look at the different packages and how the packages work in R.
+
+Difficulties or Open questions: I would like to practice more and would like to know how to code some of the stuff from first principles such as sarima and arima family of models. I also would like to go over volatility modelling and exponential smoothing as it relates to my second projects for my time series projects.
+
+Next steps: Do exercises 1 & 2 to consolidate and start with both projects for time series section A. Also Go over volatility modelling.
