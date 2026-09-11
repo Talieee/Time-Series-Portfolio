@@ -1,0 +1,23 @@
+---
+title: "[Project title] — Detailed Analysis"
+format:
+  html:
+    code-fold: false
+---
+
+<!-- Full write-up: background, methods, code, results, discussion. This is what the one-page
+summary (index.qmd) links out to. -->
+
+## Background
+
+## Data
+
+## Methods
+
+## Results
+
+```{r}
+# analysis code
+```
+
+## Discussion and limitations

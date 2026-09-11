@@ -1,0 +1,25 @@
+---
+title: "[Project title]"
+---
+
+<!--
+Template (per department guidelines, Section 3.1). Keep this to one page — the detailed
+analysis belongs in a linked, separate file/notebook, not here.
+-->
+
+**Section and topic:** [Section 1 or 2 — topic]
+
+**Type of project:** [implementation / Shiny app / exploration / simulation study]
+
+**Question or aim:** [what you set out to answer or demonstrate]
+
+**Data used:** [dataset name and source, if real-world data; or "simulated", with generating
+process]
+
+**Methods used:** [methods/models applied]
+
+**Key findings:** [2-4 sentences — the headline results]
+
+**What I would do differently next time:** [limitations, and what you'd change with hindsight]
+
+**Link to detailed analysis:** [detailed-analysis.qmd](detailed-analysis.qmd)

@@ -1,0 +1,33 @@
+---
+title: "AI Use Log"
+---
+
+A running log of substantive AI use that influenced my work — not every minor interaction, but
+anything that shaped an analysis, a piece of writing, or a decision.
+
+<!--
+Template (per department guidelines, Section 3.3):
+- Date
+- Tool used
+- What you asked it to help with
+- Link to the prompt or conversation
+- What you checked or changed yourself
+-->
+
+## [YYYY-MM-DD]
+
+- **Tool used:** [e.g. Claude]
+- **What I asked for help with:** [brief description]
+- **Link to prompt/conversation:** [link]
+- **What I checked or changed myself:** [what you verified, edited, or rejected]
+
+---
+
+## [YYYY-MM-DD]
+
+- **Tool used:**
+- **What I asked for help with:**
+- **Link to prompt/conversation:**
+- **What I checked or changed myself:**
+
+<!-- Duplicate the block above for each new entry. Add newest entries at the top. -->

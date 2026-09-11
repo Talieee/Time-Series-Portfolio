@@ -1,0 +1,10 @@
+---
+title: "Journal"
+---
+
+A chronological record of my progress through the course. Each entry links to any relevant
+detailed analysis elsewhere in the portfolio.
+
+- [YYYY-MM-DD — Entry title](entries/2026-01-01-entry-template.qmd)
+
+<!-- Add a new bullet + a new file under entries/ for each journal entry. -->

@@ -1,0 +1,16 @@
+---
+title: "Projects"
+---
+
+Four substantial projects, two from each section. Across the four, at least one involves model
+comparison, at least one involves computational/statistical programming, and at least one
+involves real-world data.
+
+| # | Title | Section | Type | Involves |
+|---|-------|---------|------|----------|
+| 1 | [Project title](project-01/index.qmd) | [1 or 2] | [implementation / Shiny app / exploration / simulation study] | [model comparison / programming / real-world data] |
+| 2 | [Project title] | | | |
+| 3 | [Project title] | | | |
+| 4 | [Project title] | | | |
+
+<!-- Duplicate the project-01/ folder for projects 2-4, and add a row + link above for each. -->

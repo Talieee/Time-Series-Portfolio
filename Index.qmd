@@ -1,8 +1,37 @@
 ---
-title: "Index"
-author: "Natalie Chidikwindi"
-format: pdf
-editor: visual
+title: "Statistics Portfolio"
 ---
 
-## 
+## [Your Full Name]
+
+**Student number:** [XXXXXXXX]
+
+**Course:** [Course code / name]
+
+**Date:** [Submission date]
+
+---
+
+### About this portfolio
+
+This portfolio documents my learning across both sections of the course. It contains:
+
+- Four substantial projects ([links in the **Projects** tab](projects/index.qmd)), spanning model
+  comparison, computational/statistical programming, and real-world data.
+- Smaller pieces of work for each section — worked tutorials, implementations, and overviews
+  ([**Section 1**](section-1/section-1.qmd) / [**Section 2**](section-2/section-2.qmd)).
+- A [**journal**](journal/index.qmd) documenting my progress throughout the course.
+- A [**reflective commentary**](reflective-commentary.qmd) (1000–2000 words) on my learning,
+  methodological challenges, and ethical/reproducibility considerations.
+- An [**AI use log**](ai-use-log.qmd) documenting substantive uses of AI tools.
+- [**Reproducible code and data**](appendix/code-and-data.qmd) supporting the above.
+
+### How to navigate
+
+Use the navbar above. Each project has a one-page summary with a link through to its detailed
+analysis; each journal entry links to any relevant detailed work.
+
+<!--
+INFO Note (from the department guidelines): this landing page must clearly state your name and
+student number, since it identifies your portfolio.
+-->

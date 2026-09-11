@@ -1,0 +1,23 @@
+---
+title: "Code & Data"
+---
+
+Reproducible materials supporting the projects and section work elsewhere in this portfolio.
+
+## R code
+
+- [Link to repository / folder]
+
+## Data
+
+- [Dataset name] — source: [link or citation]. [Brief data statement: what it contains, whether
+  it includes personal information, consent basis, and anonymisation steps taken — required if
+  the data contains personal information, per POPIA.]
+
+## Computational notebooks / reports
+
+- [Link to notebook 1]
+- [Link to notebook 2]
+
+<!-- Everything here can instead be linked to directly from individual projects/sections; this
+page is a single place to find it all. -->

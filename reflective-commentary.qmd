@@ -1,0 +1,28 @@
+---
+title: "Reflective Commentary"
+---
+
+<!-- Target length: 1000-2000 words total across the four subsections below. -->
+
+## Learning achievements
+
+[What have you learned across the course? Which concepts, methods, or tools do you now
+understand that you didn't before? Be specific — tie claims back to particular projects or
+tutorials elsewhere in the portfolio.]
+
+## Methodological challenges
+
+[What methodological decisions did you find difficult, and why? Where did you have to choose
+between competing methods, and how did you justify the choice? Where did a method break down or
+behave unexpectedly?]
+
+## Ethical and reproducibility considerations
+
+[How did you handle real-world / personal data (consent, anonymisation, POPIA compliance where
+relevant)? How reproducible is your work — can someone else re-run your analyses from what you've
+submitted? What would you need to add to make it fully reproducible?]
+
+## Future areas for development
+
+[What do you still want to learn? Which methods or topics would you like to explore further
+beyond this course?]

@@ -1,0 +1,37 @@
+---
+title: "Section 1"
+---
+
+Smaller pieces of work for Section 1: for each teaching session, evidence of a model fitted to
+data, code implementing the fitting from first principles where relevant, a reflection on what
+was learned and what was difficult, and any model comparisons — plus one idea explored beyond
+what lectures/notes covered.
+
+## Worked tutorials
+
+### [Tutorial / session topic]
+
+[Reflection on your progress: what you did, what clicked, what didn't.]
+
+## Implementation
+
+### [Method implemented]
+
+[Implementation using data and statistical software — link to code if it lives elsewhere.]
+
+```{r}
+# code
+```
+
+## Overview
+
+### [Topic]
+
+[Key concepts, the most challenging aspects, and your understanding — a page or two, not a
+full write-up.]
+
+## Beyond the notes
+
+### [Idea explored that wasn't directly covered in lectures/notes]
+
+[What you explored and why, and what you found.]

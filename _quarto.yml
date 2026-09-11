@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "[Your Name] — Statistics Portfolio"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: journal/index.qmd
+        text: Journal
+      - href: projects/index.qmd
+        text: Projects
+      - href: section-1/section-1.qmd
+        text: Section 1
+      - href: section-2/section-2.qmd
+        text: Section 2
+      - href: reflective-commentary.qmd
+        text: Reflective Commentary
+      - href: ai-use-log.qmd
+        text: AI Use Log
+      - href: appendix/code-and-data.qmd
+        text: Code & Data
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: false
+    css: styles.css
