@@ -1,0 +1,102 @@
+﻿SARIMA Flight Price Modeling Projects
+https://gemini.google.com/app/bb24c48b9fb91abb
+
+
+User prompt: i want to do 1 of my substantial projects of a form of ARIMA/Sarima MODELLING in particular to flight ticket prices, do you think it could word and is there literature that can link to this. also help me come up with a second project from part 1 :Course Content Part 1: • Introduction • Autoregressive models: AR, MA, ARMA, ARIMA & SARIMA • Volatility Modelling: ARCH & GARCH Models • Spectral analysis and filtering Part 2: • Exponential smoothing • Time series regression models (harmonic regression, indicator variables, non-normal response, splines) • State-space models and Kalman filter • Hidden Markov models
+Response: Your idea to model flight ticket prices using ARIMA and SARIMA is excellent and highly relevant. Flight prices exhibit strong temporal dynamics, making time series analysis a perfect fit.
+Project 1: SARIMA for Flight Ticket Pricing
+Feasibility and Literature This is a very viable project. Flight prices are heavily influenced by trend components (days left to departure) and seasonal loops (day-of-the-week booking trends, holiday spikes). A SARIMA model is specifically equipped to handle this seasonality.
+While much of the academic literature uses SARIMA as the gold standard for forecasting aviation passenger traffic, recent papers and case studies on ticket pricing frequently use ARIMA/SARIMA as a robust statistical baseline to compare against machine learning models (like Prophet or Random Forest). You can easily structure this to fulfill your portfolio's model comparison requirement by evaluating a standard ARIMA model against a SARIMA model.
+Tip for Success: Gathering live daily pricing data can be tedious. To ensure you meet the real-world data requirement smoothly, I highly recommend using an open-source dataset from Kaggle (e.g., "Flight Price Prediction" datasets).
+Project 2: Volatility Modelling (Part 1)
+Since your first project covers autoregressive models, your second Part 1 project should showcase a completely different statistical skill to demonstrate breadth.
+Topic Idea: Analyzing Financial Volatility using ARCH & GARCH Models.
+* The Concept: Instead of predicting the price of an asset, model the volatility (variance) of an asset's returns over time. You could analyze the daily closing prices of the JSE Top 40 index, Bitcoin, or the USD/ZAR exchange rate.
+* Why it fits: It explicitly tackles the Volatility Modelling section of your syllabus and inherently requires computational and statistical programming to fit the models.
+Portfolio Structuring Reminders
+As you build these out, keep your course guidelines in mind:
+* The One-Pager: Each substantial project must include a one-page summary (Title, Aim, Data, Methods, Findings).
+* Reproducibility: Ensure you link these summaries to your detailed, reproducible R code or computational notebooks.
+* AI Logging: Don't forget to link the prompt you used to generate these ideas in your AI use log.
+Are you leaning more toward scraping your own flight data for the first project, or would you prefer to use a pre-existing dataset to save time for the actual statistical modeling?
+
+
+##########################################################################################################################################
+
+https://claude.ai/share/1acde678-3cd3-4f85-a233-b7ac367df66c
+
+1789063598066_image.png
+please create the template i can use for my portolio
+
+Read 3 files, ran 3 commands, and 2 more tools
+Good content overall, just need to fix two things: a duplicated leftover line under Section 1, and the "√" symbol wrapping onto its own line in a few equations. Let me fix both.
+
+Edited a file, ran 7 commands, and 6 more tools
+Fixing text wrapping around square root symbols.
+Fixing line-wrapping issues in centered equation blocks.
+Now rebuild and re-verify.
+Fixing text wrapping around a formatted equation.
+Checking equations and formatting for potential line wraps.
+Building document formatting logic for text rendering.
+That fixed the wrapping issue. Let me check the remaining pages.
+Looks clean now. Let me check page 3.
+The document renders cleanly across all three pages. Copying it to outputs and sharing.
+It's structured as: theorem statement → assumptions → three derivation steps (Sharpe ratio's sampling distribution → expected max over N trials via extreme value theory → solving for T) → result → a discussion section with the interpretation and reporting-problem points already written out, plus placeholder brackets [...] in a couple of spots for you to add your own phrasing in your own words. There's also a reference to the Bailey/Borwein/López de Prado/Zhu (2014) paper at the end.
+
+A few things worth knowing before you use it:
+
+The bracketed placeholders in section 6.1 and 6.2 are meant to be rewritten in your own words for submission — I left the reasoning skeleton in there so you're not staring at a blank page.
+The Euler-Mascheroni refinement in Step 2 is the more precise version of E[max_N]; if your course only covers the simpler √(2 ln N) asymptotic, you can drop that line.
+Course/module name at the top is a placeholder — swap it in.
+
+Q3 minimum backtest length
+Document·DOCX 
+
+Guidelines for creating a Portfolio Department of Statistical Sciences, University of Cape Town July 2026 Portfolios are purposeful collections of various documents and artifacts that provide an impression of how tasks were fulfilled and how competence has developed, showcasing an individual’s
+
+pasted
+
+sorry i meant this, :
+
+Created 13 files, ran 6 commands, and 3 more tools
+Ah, got it — that's a much bigger ask than the Word doc. I built the whole Quarto project scaffold following the department's recommended layout:
+
+portfolio/
+├── _quarto.yml            ← site config + navbar
+├── index.qmd              ← landing page (name/student number go here)
+├── ai-use-log.qmd         ← pre-filled with the AI use log template
+├── reflective-commentary.qmd  ← the four required subsections, ready to write into
+├── journal/
+│   ├── index.qmd
+│   └── entries/2026-01-01-entry-template.qmd  ← the journal entry template, ready to duplicate
+├── projects/
+│   ├── index.qmd          ← summary table for all four projects
+│   └── project-01/
+│       ├── index.qmd      ← one-page project summary template
+│       └── detailed-analysis.qmd  ← linked full write-up
+├── section-1/section-1.qmd  ← worked tutorials / implementation / overview / "beyond the notes"
+├── section-2/section-2.qmd  ← same structure
+├── appendix/code-and-data.qmd
+└── README.md               ← quick-start steps + the department's submission checklist
+Everything is wired up with real internal links, and each file has the department's own template fields already dropped in (just bracketed placeholders like [Your Name] for you to fill in). The README explains how to duplicate project-01/ for your other three projects and add journal entries as you go.
+?
+
+
+Portfolio template
+ZIP 
+
+
+Write a message…
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+
+
+##########################################################################################################################################
+________________
+
+for finding the dataset and figuring how to extract it
+Both from Gemini and Perplexity.
+
+https://share.gemini.google/BaMcwssUAiCd
+https://www.perplexity.ai/search/2777f5f9-b9a9-4def-ba66-3b63970b17e2
