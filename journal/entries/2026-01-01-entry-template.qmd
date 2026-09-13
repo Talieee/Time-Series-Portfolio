@@ -3,15 +3,6 @@ title: "[Entry title]"
 date: 2026-01-01
 ---
 
-<!--
-Template (per department guidelines, Section 3.2):
-- Date
-- Session or topic covered
-- What you did
-- What you learned
-- Difficulties or open questions
-- What to do next
--->
 
 **Date:** [YYYY-MM-DD]
 
@@ -25,4 +16,4 @@ Template (per department guidelines, Section 3.2):
 
 **What to do next:** [next step]
 
-<!-- Link to any relevant detailed analysis, e.g. [see Project 1](../../projects/project-01/index.qmd) -->
+
