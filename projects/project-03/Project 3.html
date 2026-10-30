@@ -156,7 +156,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../Index.qmd"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -410,7 +410,7 @@ window.Quarto = {
 <summary>Click to expand code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># importing cpi dataset</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>read_cpi_index <span class="ot">&lt;-</span> <span class="cf">function</span>(path, code, <span class="at">headline_only =</span> <span class="cn">FALSE</span>) {</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(path) <span class="sc">|&gt;</span> <span class="fu">filter</span>(H03 <span class="sc">==</span> code)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">=</span> <span class="fu">read_excel</span>(path) <span class="sc">|&gt;</span> <span class="fu">filter</span>(H03 <span class="sc">==</span> code)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (headline_only) r <span class="ot">&lt;-</span> r <span class="sc">|&gt;</span> <span class="fu">filter</span>(H04 <span class="sc">==</span> <span class="st">"CPI Headline"</span>)   <span class="co"># for the new file</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">nrow</span>(r) <span class="sc">==</span> <span class="dv">1</span>)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  r <span class="sc">|&gt;</span></span>

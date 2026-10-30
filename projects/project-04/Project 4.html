@@ -156,7 +156,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../Index.qmd"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -506,38 +506,38 @@ P_{t|t} = (1-K_t)P_{t|t-1}.
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>kalman_filt <span class="ot">&lt;-</span> <span class="cf">function</span>(y, Q, R, m0, P0){</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># initialize vectors </span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">length</span>(y)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  at <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  Rt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  Qt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  mt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  Pt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  et <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  Kt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  at <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  Rt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  Qt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  mt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  Pt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  et <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  Kt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># loop for filter</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N){</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># prediction</span></span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i <span class="sc">==</span> <span class="dv">1</span>){</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      at[i] <span class="ot">&lt;-</span> m0</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      Rt[i] <span class="ot">&lt;-</span> P0 <span class="sc">+</span> Q</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      at[i] <span class="ot">=</span> m0</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      Rt[i] <span class="ot">=</span> P0 <span class="sc">+</span> Q</span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      at[i] <span class="ot">&lt;-</span> mt[i<span class="dv">-1</span>]</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      Rt[i] <span class="ot">&lt;-</span> Pt[i<span class="dv">-1</span>] <span class="sc">+</span> Q</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      at[i] <span class="ot">=</span> mt[i<span class="dv">-1</span>]</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      Rt[i] <span class="ot">=</span> Pt[i<span class="dv">-1</span>] <span class="sc">+</span> Q</span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># innovation </span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    et[i] <span class="ot">&lt;-</span> y[i] <span class="sc">-</span> at[i]</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    Qt[i] <span class="ot">&lt;-</span> Rt[i] <span class="sc">+</span> R</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    et[i] <span class="ot">=</span> y[i] <span class="sc">-</span> at[i]</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    Qt[i] <span class="ot">=</span> Rt[i] <span class="sc">+</span> R</span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Kalman gain</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    Kt[i] <span class="ot">&lt;-</span> Rt[i] <span class="sc">/</span> Qt[i]</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    Kt[i] <span class="ot">=</span> Rt[i] <span class="sc">/</span> Qt[i]</span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># update states</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    mt[i] <span class="ot">&lt;-</span> at[i] <span class="sc">+</span> Kt[i] <span class="sc">*</span> et[i]</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    Pt[i] <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Kt[i]) <span class="sc">*</span> Rt[i]</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    mt[i] <span class="ot">=</span> at[i] <span class="sc">+</span> Kt[i] <span class="sc">*</span> et[i]</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    Pt[i] <span class="ot">=</span> (<span class="dv">1</span> <span class="sc">-</span> Kt[i]) <span class="sc">*</span> Rt[i]</span>
 <span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">data.frame</span>(</span>
@@ -827,19 +827,19 @@ P_{t|t} = (1-K_t)P_{t|t-1}.
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># function to create true state values</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>simulate_state <span class="ot">&lt;-</span> <span class="cf">function</span>(n, Q, R, <span class="at">x0 =</span> <span class="dv">0</span>){</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  xt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  yt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  xt <span class="ot">=</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  yt <span class="ot">=</span> <span class="fu">numeric</span>(n)</span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  xt[<span class="dv">1</span>] <span class="ot">&lt;-</span> x0</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  xt[<span class="dv">1</span>] <span class="ot">=</span> x0</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n){</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    wt <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(Q))</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    xt[i] <span class="ot">&lt;-</span> xt[i <span class="sc">-</span> <span class="dv">1</span>] <span class="sc">+</span> wt</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    wt <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(Q))</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    xt[i] <span class="ot">=</span> xt[i <span class="sc">-</span> <span class="dv">1</span>] <span class="sc">+</span> wt</span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    vt <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(R))</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    yt[i] <span class="ot">&lt;-</span> xt[i] <span class="sc">+</span> vt</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    vt <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(R))</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    yt[i] <span class="ot">=</span> xt[i] <span class="sc">+</span> vt</span>
 <span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
@@ -1599,20 +1599,20 @@ P_{t|t} = (1-K_t)P_{t|t-1}.
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">break_size =</span> <span class="dv">15</span>,</span>
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x0 =</span> <span class="dv">0</span>){</span>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  xt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  yt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  xt <span class="ot">=</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  yt <span class="ot">=</span> <span class="fu">numeric</span>(n)</span>
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  xt[<span class="dv">1</span>] <span class="ot">&lt;-</span> x0</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  xt[<span class="dv">1</span>] <span class="ot">=</span> x0</span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n){</span>
 <span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    wt <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    wt <span class="ot">=</span> <span class="fu">rnorm</span>(</span>
 <span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>      <span class="dv">1</span>,</span>
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">mean =</span> <span class="dv">0</span>,</span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">sd =</span> <span class="fu">sqrt</span>(Q)</span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    xt[i] <span class="ot">&lt;-</span> xt[i <span class="sc">-</span> <span class="dv">1</span>] <span class="sc">+</span> wt</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    xt[i] <span class="ot">=</span> xt[i <span class="sc">-</span> <span class="dv">1</span>] <span class="sc">+</span> wt</span>
 <span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Permanent level shift</span></span>
 <span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i <span class="sc">==</span> break_point){</span>
@@ -1621,7 +1621,7 @@ P_{t|t} = (1-K_t)P_{t|t-1}.
 <span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
-<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>    yt[i] <span class="ot">&lt;-</span> xt[i] <span class="sc">+</span></span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>    yt[i] <span class="ot">=</span> xt[i] <span class="sc">+</span></span>
 <span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fu">sqrt</span>(R))</span>
 <span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -1732,46 +1732,46 @@ P_{t|t} = (1-K_t)P_{t|t-1}.
 <summary>Click to expand code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>kalman_filt_missing <span class="ot">&lt;-</span> <span class="cf">function</span>(y, Q, R, m0, P0){</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">length</span>(y)</span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  at <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  Rt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  Qt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_real_</span>, N)</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  mt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  Pt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  et <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_real_</span>, N)</span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  Kt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_real_</span>, N)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  at <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  Rt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  Qt <span class="ot">=</span> <span class="fu">rep</span>(<span class="cn">NA_real_</span>, N)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  mt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  Pt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  et <span class="ot">=</span> <span class="fu">rep</span>(<span class="cn">NA_real_</span>, N)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  Kt <span class="ot">=</span> <span class="fu">rep</span>(<span class="cn">NA_real_</span>, N)</span>
 <span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N){</span>
 <span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Prediction</span></span>
 <span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i <span class="sc">==</span> <span class="dv">1</span>){</span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>      at[i] <span class="ot">&lt;-</span> m0</span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>      Rt[i] <span class="ot">&lt;-</span> P0 <span class="sc">+</span> Q</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>      at[i] <span class="ot">=</span> m0</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>      Rt[i] <span class="ot">=</span> P0 <span class="sc">+</span> Q</span>
 <span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>      at[i] <span class="ot">&lt;-</span> mt[i <span class="sc">-</span> <span class="dv">1</span>]</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>      Rt[i] <span class="ot">&lt;-</span> Pt[i <span class="sc">-</span> <span class="dv">1</span>] <span class="sc">+</span> Q</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>      at[i] <span class="ot">=</span> mt[i <span class="sc">-</span> <span class="dv">1</span>]</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>      Rt[i] <span class="ot">=</span> Pt[i <span class="sc">-</span> <span class="dv">1</span>] <span class="sc">+</span> Q</span>
 <span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.na</span>(y[i])){</span>
 <span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>      </span>
 <span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>      <span class="co"># No measurement:</span></span>
 <span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>      <span class="co"># prediction becomes filtered estimate</span></span>
-<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>      mt[i] <span class="ot">&lt;-</span> at[i]</span>
-<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>      Pt[i] <span class="ot">&lt;-</span> Rt[i]</span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>      mt[i] <span class="ot">=</span> at[i]</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>      Pt[i] <span class="ot">=</span> Rt[i]</span>
 <span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>      </span>
 <span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
 <span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>      </span>
 <span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Normal measurement update</span></span>
-<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>      et[i] <span class="ot">&lt;-</span> y[i] <span class="sc">-</span> at[i]</span>
-<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>      Qt[i] <span class="ot">&lt;-</span> Rt[i] <span class="sc">+</span> R</span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>      et[i] <span class="ot">=</span> y[i] <span class="sc">-</span> at[i]</span>
+<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>      Qt[i] <span class="ot">=</span> Rt[i] <span class="sc">+</span> R</span>
 <span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>      Kt[i] <span class="ot">&lt;-</span> Rt[i] <span class="sc">/</span> Qt[i]</span>
+<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>      Kt[i] <span class="ot">=</span> Rt[i] <span class="sc">/</span> Qt[i]</span>
 <span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>      mt[i] <span class="ot">&lt;-</span> at[i] <span class="sc">+</span></span>
+<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>      mt[i] <span class="ot">=</span> at[i] <span class="sc">+</span></span>
 <span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>        Kt[i] <span class="sc">*</span> et[i]</span>
 <span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>      Pt[i] <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Kt[i]) <span class="sc">*</span> Rt[i]</span>
+<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>      Pt[i] <span class="ot">=</span> (<span class="dv">1</span> <span class="sc">-</span> Kt[i]) <span class="sc">*</span> Rt[i]</span>
 <span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a>  </span>

@@ -3885,7 +3885,7 @@ vertical-align: -.125em;
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../Index.qmd"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -4268,9 +4268,9 @@ F-statistic: 75.93 on 1 and 98 DF,  p-value: 7.439e-14</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># minimum length 10</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>scan_level <span class="ot">&lt;-</span> <span class="cf">function</span>(y, <span class="at">minimum =</span> <span class="dv">10</span>) {</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(y)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(n <span class="sc">&gt;=</span> <span class="dv">2</span> <span class="sc">*</span> minimum, <span class="fu">all</span>(<span class="fu">is.finite</span>(y)))</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  candidates <span class="ot">&lt;-</span> minimum<span class="sc">:</span>(n <span class="sc">-</span> minimum)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  candidates <span class="ot">=</span> minimum<span class="sc">:</span>(n <span class="sc">-</span> minimum)</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">last_before =</span> candidates,</span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">RSS =</span> <span class="fu">vapply</span>(candidates, <span class="cf">function</span>(b) {</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>               <span class="fu">sum</span>((y[<span class="dv">1</span><span class="sc">:</span>b] <span class="sc">-</span> <span class="fu">mean</span>(y[<span class="dv">1</span><span class="sc">:</span>b]))<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span></span>
@@ -4314,9 +4314,9 @@ F-statistic: 75.93 on 1 and 98 DF,  p-value: 7.439e-14</code></pre>
 <summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># minimum 20</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>scan_level <span class="ot">&lt;-</span> <span class="cf">function</span>(y, <span class="at">minimum =</span> <span class="dv">20</span>) {</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(y)</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(n <span class="sc">&gt;=</span> <span class="dv">2</span> <span class="sc">*</span> minimum, <span class="fu">all</span>(<span class="fu">is.finite</span>(y)))</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  candidates <span class="ot">&lt;-</span> minimum<span class="sc">:</span>(n <span class="sc">-</span> minimum)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  candidates <span class="ot">=</span> minimum<span class="sc">:</span>(n <span class="sc">-</span> minimum)</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">last_before =</span> candidates,</span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">RSS =</span> <span class="fu">vapply</span>(candidates, <span class="cf">function</span>(b) {</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>               <span class="fu">sum</span>((y[<span class="dv">1</span><span class="sc">:</span>b] <span class="sc">-</span> <span class="fu">mean</span>(y[<span class="dv">1</span><span class="sc">:</span>b]))<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span></span>
@@ -4360,9 +4360,9 @@ F-statistic: 75.93 on 1 and 98 DF,  p-value: 7.439e-14</code></pre>
 <summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># minimum 30 </span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>scan_level <span class="ot">&lt;-</span> <span class="cf">function</span>(y, <span class="at">minimum =</span> <span class="dv">30</span>) {</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(y)</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(n <span class="sc">&gt;=</span> <span class="dv">2</span> <span class="sc">*</span> minimum, <span class="fu">all</span>(<span class="fu">is.finite</span>(y)))</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  candidates <span class="ot">&lt;-</span> minimum<span class="sc">:</span>(n <span class="sc">-</span> minimum)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  candidates <span class="ot">=</span> minimum<span class="sc">:</span>(n <span class="sc">-</span> minimum)</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">last_before =</span> candidates,</span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">RSS =</span> <span class="fu">vapply</span>(candidates, <span class="cf">function</span>(b) {</span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>               <span class="fu">sum</span>((y[<span class="dv">1</span><span class="sc">:</span>b] <span class="sc">-</span> <span class="fu">mean</span>(y[<span class="dv">1</span><span class="sc">:</span>b]))<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span></span>

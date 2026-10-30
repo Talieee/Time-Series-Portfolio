@@ -156,7 +156,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../Index.qmd"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -904,13 +904,13 @@ r_t = \mu + \varepsilon_t,
 <details class="code-fold">
 <summary>Click to expand code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>garch_loglik <span class="ot">&lt;-</span> <span class="cf">function</span>(par, ret) {</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  omega <span class="ot">&lt;-</span> par[<span class="dv">2</span>]</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> par[<span class="dv">3</span>]</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  beta  <span class="ot">&lt;-</span> par[<span class="dv">4</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  omega <span class="ot">=</span> par[<span class="dv">2</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">=</span> par[<span class="dv">3</span>]</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  beta  <span class="ot">=</span> par[<span class="dv">4</span>]</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (omega <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">||</span> alpha <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">||</span> beta <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">||</span> alpha <span class="sc">+</span> beta <span class="sc">&gt;=</span> <span class="fl">0.9999</span>) {</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fl">1e10</span>)</span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="fu">garch_func</span>(par, ret)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">=</span> <span class="fu">garch_func</span>(par, ret)</span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sum</span>(<span class="fu">log</span>(<span class="dv">2</span> <span class="sc">*</span> pi) <span class="sc">+</span> <span class="fu">log</span>(f<span class="sc">$</span>sig1) <span class="sc">+</span> f<span class="sc">$</span>eps<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> f<span class="sc">$</span>sig1)</span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
@@ -1113,22 +1113,22 @@ beta    0.8883 0.0215 41.3510</code></pre>
 <span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Information Criteria</span></span>
 <span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Diagnostic p-values </span></span>
 <span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>evaluate_model <span class="ot">&lt;-</span> <span class="cf">function</span>(fit) {</span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  ic <span class="ot">&lt;-</span> <span class="fu">infocriteria</span>(fit)</span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  k  <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">coef</span>(fit))</span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>  N  <span class="ot">&lt;-</span> fit<span class="sc">@</span>fit<span class="sc">$</span>N</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  ic <span class="ot">=</span> <span class="fu">infocriteria</span>(fit)</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  k  <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">coef</span>(fit))</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>  N  <span class="ot">=</span> fit<span class="sc">@</span>fit<span class="sc">$</span>N</span>
 <span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  aic  <span class="ot">&lt;-</span> ic[<span class="st">"Akaike"</span>, <span class="dv">1</span>]</span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  aicc <span class="ot">&lt;-</span> aic <span class="sc">+</span> (<span class="dv">2</span> <span class="sc">*</span> k <span class="sc">*</span> (k <span class="sc">+</span> <span class="dv">1</span>)) <span class="sc">/</span> (N <span class="sc">*</span> (N <span class="sc">-</span> k <span class="sc">-</span> <span class="dv">1</span>))</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>  bic  <span class="ot">&lt;-</span> ic[<span class="st">"Bayes"</span>, <span class="dv">1</span>]</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  aic  <span class="ot">=</span> ic[<span class="st">"Akaike"</span>, <span class="dv">1</span>]</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  aicc <span class="ot">=</span> aic <span class="sc">+</span> (<span class="dv">2</span> <span class="sc">*</span> k <span class="sc">*</span> (k <span class="sc">+</span> <span class="dv">1</span>)) <span class="sc">/</span> (N <span class="sc">*</span> (N <span class="sc">-</span> k <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>  bic  <span class="ot">=</span> ic[<span class="st">"Bayes"</span>, <span class="dv">1</span>]</span>
 <span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extracts standardized residuals</span></span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">residuals</span>(fit, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>  z2  <span class="ot">&lt;-</span> res<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">=</span> <span class="fu">residuals</span>(fit, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>  z2  <span class="ot">=</span> res<span class="sc">^</span><span class="dv">2</span></span>
 <span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extracts the p-value from diagnostic tests</span></span>
-<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>  lb_res <span class="ot">&lt;-</span> <span class="fu">Box.test</span>(res, <span class="at">lag =</span> <span class="dv">12</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>, <span class="at">fitdf =</span> <span class="dv">1</span>)<span class="sc">$</span>p.value</span>
-<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>  lb_z2  <span class="ot">&lt;-</span> <span class="fu">Box.test</span>(z2, <span class="at">lag =</span> <span class="dv">12</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>, <span class="at">fitdf =</span> <span class="dv">2</span>)<span class="sc">$</span>p.value</span>
-<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>  arch   <span class="ot">&lt;-</span> <span class="fu">ArchTest</span>(<span class="fu">as.numeric</span>(res))<span class="sc">$</span>p.value</span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>  lb_res <span class="ot">=</span> <span class="fu">Box.test</span>(res, <span class="at">lag =</span> <span class="dv">12</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>, <span class="at">fitdf =</span> <span class="dv">1</span>)<span class="sc">$</span>p.value</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>  lb_z2  <span class="ot">=</span> <span class="fu">Box.test</span>(z2, <span class="at">lag =</span> <span class="dv">12</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>, <span class="at">fitdf =</span> <span class="dv">2</span>)<span class="sc">$</span>p.value</span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>  arch   <span class="ot">=</span> <span class="fu">ArchTest</span>(<span class="fu">as.numeric</span>(res))<span class="sc">$</span>p.value</span>
 <span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># formatting</span></span>
 <span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">AIC =</span> aic, <span class="at">BIC =</span> bic, <span class="at">LB_p =</span> lb_res, <span class="at">LB_Sq_p =</span> lb_z2, <span class="at">ARCH_p =</span> arch)</span>
@@ -1265,11 +1265,11 @@ beta    0.8883 0.0215 41.3510</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># computes average loss metrics in the functions</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Returns the mean of the loss series</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>compute_loss_metrics <span class="ot">&lt;-</span> <span class="cf">function</span>(realized_proxy, var_fc) {</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  eps <span class="ot">&lt;-</span> <span class="fl">1e-8</span>  </span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  safe_var <span class="ot">&lt;-</span> <span class="fu">pmax</span>(var_fc, eps)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  eps <span class="ot">=</span> <span class="fl">1e-8</span>  </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  safe_var <span class="ot">=</span> <span class="fu">pmax</span>(var_fc, eps)</span>
 <span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  mse_loss   <span class="ot">&lt;-</span> (realized_proxy <span class="sc">-</span> safe_var)<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  qlike_loss <span class="ot">&lt;-</span> <span class="fu">log</span>(safe_var) <span class="sc">+</span> (realized_proxy <span class="sc">/</span> safe_var)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  mse_loss   <span class="ot">=</span> (realized_proxy <span class="sc">-</span> safe_var)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  qlike_loss <span class="ot">=</span> <span class="fu">log</span>(safe_var) <span class="sc">+</span> (realized_proxy <span class="sc">/</span> safe_var)</span>
 <span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
 <span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mean_MSE   =</span> <span class="fu">mean</span>(mse_loss), </span>
@@ -1278,7 +1278,7 @@ beta    0.8883 0.0215 41.3510</code></pre>
 <span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>loss_gjrgarch <span class="ot">&lt;-</span> <span class="fu">compute_loss_metrics</span>(realised_proxy, var_fc_gjrgarch)</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>loss_gjrgarch <span class="ot">=</span> <span class="fu">compute_loss_metrics</span>(realised_proxy, var_fc_gjrgarch)</span>
 <span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>loss_gjrgarch <span class="sc">|&gt;</span></span>
 <span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
