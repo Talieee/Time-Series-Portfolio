@@ -548,12 +548,12 @@ The following object is masked from 'package:ggplot2':
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>vals[(n <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(n <span class="sc">+</span> h), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>     observed     predicted     lower    upper
-[1,]       NA -0.1082247395 -5.385505 5.169056
-[2,]       NA -0.0314269149 -3.942456 3.879602
-[3,]       NA -0.0244593869 -5.183947 5.135028
-[4,]       NA  0.0005863835 -2.779165 2.780338
-[5,]       NA  0.0018907293 -3.081676 3.085458</code></pre>
+<pre><code>     observed   predicted     lower    upper
+[1,]       NA -0.50214757 -4.070063 3.065768
+[2,]       NA -0.03525138 -2.827661 2.757158
+[3,]       NA  0.14680006 -3.837350 4.130950
+[4,]       NA  0.13757498 -5.919035 6.194185
+[5,]       NA  0.03692888 -3.970251 4.044109</code></pre>
 </div>
 </div>
 <p>The code below shows the appending of the 5 values because appending five missing values extends the observation vector to include the forecast horizon. At each future time point, the filter predicts the state and observation. Because the future observation is missing, it skips the observation update and carries the predicted state forward to generate the next forecast.</p>
