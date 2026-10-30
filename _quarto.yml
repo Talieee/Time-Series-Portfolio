@@ -3,29 +3,87 @@ project:
   output-dir: _site
 
 website:
-  title: "[Your Name] — Statistics Portfolio"
+  title: "Natalie Chidikwindi — Time Series Portfolio"
+
   navbar:
+    background: dark
+    foreground: light
+    collapse-below: lg
+
     left:
-      - href: index.qmd
+      - href: Index.qmd
         text: Home
+
       - href: journal/index.qmd
         text: Journal
+
       - href: projects/index.qmd
         text: Projects
-      - href: section-1/section-1.qmd
-        text: Section 1
-      - href: section-2/section-2.qmd
-        text: Section 2
+
+      - text: Section 1
+        menu:
+          - href: section-1/section-1.qmd
+            text: Section 1 Overview
+
+          - href: "section-1/section 1 tut - exercises.qmd"
+            text: Time Series Exercises
+
+          - href: "section-1/arch garch lab.qmd"
+            text: ARCH/GARCH Practical Lab
+
+          - href: section-1/ARCH_GARCH_Theoretical_Tutorial.qmd
+            text: ARCH/GARCH Theory
+
+          - href: "section-1/spectral analysis tut.qmd"
+            text: Spectral Analysis
+
+          - href: "section-1/Structural breaks tut.qmd"
+            text: Structural Breaks
+
+      - text: Section 2
+        menu:
+          - href: section-2/section-2.qmd
+            text: Section 2 Overview
+
+          - href: "section-2/exponential smoothing prac.qmd"
+            text: Exponential Smoothing
+
+          - href: "section-2/SSM prac.qmd"
+            text: State Space Models
+
+          - href: "section-2/HMM tutorial.qmd"
+            text: Hidden Markov Models
+
       - href: reflective-commentary.qmd
         text: Reflective Commentary
+
       - href: ai-use-log.qmd
         text: AI Use Log
+
       - href: appendix/code-and-data.qmd
         text: Code & Data
+
+  page-footer:
+    left: "Natalie Chidikwindi · CHDNAT002"
+    right: "Time Series Portfolio · 2026"
+
+  search:
+    location: navbar
+    type: overlay
 
 format:
   html:
     theme: cosmo
-    toc: true
-    number-sections: false
     css: styles.css
+    toc: true
+    toc-title: "On this page"
+    toc-depth: 3
+    number-sections: false
+    code-fold: true
+    code-summary: "Show R code"
+    code-copy: true
+    code-overflow: scroll
+    smooth-scroll: true
+    anchor-sections: true
+
+lang: en

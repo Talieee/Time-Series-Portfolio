@@ -1,0 +1,46 @@
+---
+title: "Journal Entry 7"
+date: 14 Septemebr 2026 
+---
+
+**Date** 2026-09-14
+
+**Session/topic covered:**
+
+Exponential smoothing
+
+**What I did:**
+
+I went over the lecture content and read through the textbook notes on exponential smoothing. I also started the related tutorial to connect the updating equations to their implementation in R.
+
+**Related tutorial:**
+
+[Exponential smoothing tutorial](../../section-2/exponential%20smoothing%20prac.qmd)
+
+**Related analysis:**
+
+[Project 1: Forecasting influenza](../../projects/project-01/code.qmd)
+
+**What I learned:**
+
+I learnt how the components of a time series help guide the choice of exponential smoothing method:
+
+- Simple exponential smoothing is suitable for a series without a clear trend or seasonal pattern.
+- Holt’s linear method includes a level and a trend component.
+- Holt–Winters methods also include a seasonal component.
+
+I learnt that exponential smoothing updates estimates as new observations become available, giving more weight to recent observations. In simple exponential smoothing, the smoothing parameter, alpha, controls how strongly the estimated level responds to new observations. A larger alpha gives more weight to recent observations, while a smaller alpha produces a smoother estimate.
+
+Starting the tutorial helped me begin connecting the mathematical updating equation to the steps needed to implement it in R. It also highlighted the distinction between estimating the current level and forecasting future observations. I would like to develop this understanding further by comparing my own implementation with the package functions.
+
+**Difficulties or open questions:**
+
+I would like to understand more clearly how the smoothing parameter and initial level are estimated. I also want to practice identifying when a series needs a trend or seasonal component, rather than choosing a method only by following an example.
+
+Another question is how prediction intervals are constructed for exponential smoothing models and how uncertainty changes as the forecast horizon increases.
+
+**What to do next:**
+
+Continue the exponential smoothing tutorial, compare my implementation with `ses()`, and investigate the prediction intervals. Then compare simple exponential smoothing with Holt’s linear method and interpret the results. I would also like to connect these ideas to the SARIMA and ETS comparison in Project 1.
+
+[Back to journal](../index.qmd)

@@ -1,0 +1,57 @@
+---
+title: "Project 4: State Estimation Under Uncertainty"
+---
+
+**Section:**
+
+Section 2 - state space models and Kalman filtering.
+
+**Type:**
+
+First-principles implementation and simulation study.
+
+## Aim
+
+This project investigates how uncertainty and disruption affect the Kalman filter’s ability to estimate an unobserved state from noisy observations. It develops Question 1 of the state space models tutorial through a first-principles implementation, validation against a package implementation, and controlled simulation experiments.
+
+## Data and source
+
+The data were simulated from a local-level linear Gaussian state space model:
+
+$$
+x_t = x_{t-1} + w_t, \qquad w_t \sim N(0,Q),
+$$
+
+$$
+y_t = x_t + v_t, \qquad v_t \sim N(0,R),
+$$
+
+where the process and measurement errors were independent. The baseline simulation contained 250 observations, with process variance $Q=2$, measurement variance $R=1.5$, and initial state $x_0=0$.
+
+Simulation made the true latent state available, allowing estimation accuracy to be measured directly. Further scenarios varied the uncertainty assumptions and introduced structural change and missing observations.
+
+## Methods
+
+I implemented the Kalman filter’s prediction and update equations in R, calculating state estimates, variances, innovations and Kalman gains. The implementation was checked against the `dlm` package using matching model specifications and initial conditions.
+
+A five-period trailing moving average provided a simple benchmark. Performance was assessed using RMSE, supported by plots of state estimates, Kalman gains and uncertainty.
+
+A Monte Carlo study used 500 replications per uncertainty combination. Additional experiments examined misspecified process and measurement variances, a permanent structural change, missing observations and the empirical coverage of 95% state uncertainty intervals.
+
+## Key findings
+
+The manual filter produced state estimates numerically consistent with the package implementation, supporting the correctness of the recursive calculations.
+
+Increasing assumed measurement uncertainty reduced the weight placed on observations. Increasing assumed process uncertainty made the filter more responsive to new observations. Misspecifying these variances could therefore cause excessive smoothing or an overly strong response to noise.
+
+The filter continued estimating states when observations were missing, although uncertainty increased. Under the structural-change scenario considered, it adapted relatively quickly to the permanent shift. These findings illustrated how state estimation depends on the balance between model predictions and observational information.
+
+## Limitations and next steps
+
+The study used a simple linear Gaussian model, with process and measurement variances mainly treated as known. Its findings therefore do not establish performance under more complex or non-Gaussian processes.
+
+I would extend the model to include trend and seasonal components, estimate the uncertainty parameters from data, and investigate departures from the Gaussian assumptions. Applying the method to real-world data would also help assess its usefulness when the true state is unknown.
+
+## Detailed analysis and code
+
+[View the detailed analysis and R code](Project%204.qmd)

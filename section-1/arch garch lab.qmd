@@ -1,0 +1,229 @@
+---
+title: "arch garch lab"
+format: html
+editor: visual
+---
+
+```{r}
+#| warning: False
+#| message: False
+library(Ecdat)
+library(tseries)
+library(fGarch)
+```
+
+```{r}
+data(Tbrate, package="Ecdat")
+
+# r = the 91-day treasury bill rate
+Tbill = Tbrate[,1]
+Del.Tbill = diff(Tbill)
+```
+
+## Problem 1
+
+```{r}
+#| message: False
+#| warning: False
+
+# plots of ts
+par(mfrow=c(2,2))
+plot(Tbill, main="T-Bill Rate", type="l")
+plot(Del.Tbill, main="Diff T-Bill Rate", type="l")
+```
+
+The time series plot of the differenced T-bill reveals a calm period characterized by lower volatility from 1955 until early 1980. However, a period of high volatility emerged in 1980 and persisted until approximately 1995, after which the variance decreased. This volatility clustering indicates the presence of conditional heteroskedasticity, as the variance clearly changes over time.
+
+```{r}
+# acf plots
+acf(Tbill, main="ACF T-Bill", na.action=na.pass)
+acf(Del.Tbill, main="ACF Diff T-Bill", na.action=na.pass)
+par(mfrow=c(1,1))
+```
+
+The ACF plot for the T-bill seems to decay very slowly, indicating there is no stationarity; in fact, all the lags are shown to be significant in the ACF T-bill plot. For the Del.Tbill, the significant lags taper off very quickly, suggesting stationarity.
+
+```{r}
+# stationarity tests Tbill
+adf.test(Tbill)
+kpss.test(Tbill)
+
+```
+
+The formal statistical tests confirm the visual findings: both the Augmented Dickey-Fuller (ADF) and KPSS tests suggest that the original T-bill series is non-stationary.
+
+```{r}
+# stationarity tests Del.Tbill
+adf.test(na.omit(Del.Tbill))
+kpss.test(na.omit(Del.Tbill))
+```
+
+For the differenced series (Del.Tbill), both the Augmented Dickey-Fuller (ADF) and KPSS tests suggest stationarity. Therefore, we can conclude that the Del.Tbill series is stationary, whereas the original T-bill series is non-stationary.
+
+```{r}
+# fitting a garch(1,1) model to the TBill dataset
+garch.model.Tbill = garchFit(formula = ~arma(1,0) + garch(1,0), Tbill)
+summary(garch.model.Tbill)
+garch.model.Tbill@fit$matcoef
+```
+
+## Problem 2
+
+### a)  Which ARMA/GARCH model is being fit? Write down the model using the same parameter names as in the R output.
+
+The model being fit at the end of problem 1 is a ARMA(1,0)/GARCH(1,0) model which is made of an AR(1) process for the conditional mean and an ARCH(1) process for the conditional variance.
+
+The maean equation is given as: $$y_t = \mu + ar1 \cdot y_{t-1} + \epsilon_t$$
+
+And the variance equation is given as: $$\sigma_t^2 = \omega + alpha1 \cdot \epsilon_{t-1}^2$$
+
+Where:
+
+- $y_t$: The differenced T-bill series (`Del.Tbill`) at time $t$.
+
+- $\mu$ (`mu`): The constant in the mean equation.
+
+- $ar1$ (`ar1`): The autoregressive coefficient for the first lag.
+
+- $\epsilon_t$: The error term at time $t$ (where $\epsilon_t = z_t \sigma_t$ and $z_t \sim N(0,1)$).
+
+- $\sigma_t^2$: The conditional variance at time $t$.
+
+- $\omega$ (`omega`): The constant in the variance equation.
+
+- $alpha1$ (`alpha1`): The ARCH coefficient capturing the effect of the lagged squared error.
+
+### b)  What are the estimates of each of the parameters in the model?
+
+```{r}
+coef(garch.model.Tbill)
+```
+
+Next, plot the residuals (ordinary or raw) and standardized residuals in various ways using the code below. The standardized residuals are best for checking the model, but the residuals are useful to see if there are GARCH effects in the series.
+
+```{r}
+
+
+res = residuals(garch.model.Tbill)
+res_std = res / garch.model.Tbill@sigma.t
+
+par(mfrow=c(2,3))
+plot(res, main="Raw Residuals", type="l")
+acf(res, main="ACF of Raw Res", na.action=na.pass)
+acf(res^2, main="ACF of Raw Res^2", na.action=na.pass)
+plot(res_std, main="Std Residuals", type="l")
+acf(res_std, main="ACF of Std Res", na.action=na.pass)
+acf(res_std^2, main="ACF of Std Res^2", na.action=na.pass)
+par(mfrow=c(1,1))
+```
+
+It seems the lag 1 is only just significant for the standardized residuals.
+
+## Problem 3
+
+### a) Describe what is plotted by acf(res). What, if anything, does the plot tell you about the fit of the model?
+
+The autocorrelation function of the ordinary residuals is plotted from the fitted model and helps identify if the fitted model successfully captures the linear dependence. The dataset show only a significant lag at 0 but besides that lag 1 appears significant my only just.
+
+### b) Describe what is plotted by acf(res\^2). What, if anything, does the plot tell you about the fit of the model?
+
+The autocorrelation function of the squared raw residuals. and it captures the presence of volatility clustering in the residuals. There are few significant lags which indicate conditional heteroskedasticity remains.
+
+### c) Describe what is plotted by acf(res_std\^2). What, if anything, does the plot tell you about the fit of the model?
+
+The autocorrelation function of the squared standardized residuals is plotted to evaluate whether the fitted GARCH model successfully captured the time-varying volatility. Based on the ACF of Std Res\^2 plot, the GARCH(1,0) model successfully eliminated most of the volatility clustering seen in the raw squared residuals. However, a few minor significant lags still slightly exceed the confidence bounds. This suggests that while the current model is a vast improvement, a higher-order GARCH model might be needed to capture the remaining traces of conditional heteroskedasticity perfectly.
+
+### d) What is contained in the the variable garch.model.Tbill\@sigma.t?
+
+This variable contains the time series of the estimated conditional standard deviations ($\sigma_t$) generated by the fitted model. It extracts the actual point-by-point volatility measurements that the model calculated for the dataset over time.
+
+### e) Is there anything noteworthy in the plot produced by the code plot(res_std)?
+
+The plot of the standardized residuals shows that the variance has been successfully stabilized over time. While the raw residuals had a large amount of volatility between index 100 and 150, the standardized residuals show this volatility clustering has been flattened out, with the residuals oscillating much more evenly between -3 and 3. This seems to show that the model effectively captured the conditional heteroskedasticity.
+
+## Problem 4
+
+```{r}
+del_log_tbill = diff(log(Tbill))
+garch_model_log = garchFit(formula = ~arma(1,0) + garch(1,0), data = del_log_tbill)
+
+# Just outputting the summary
+summary(garch_model_log)
+
+```
+
+Working with the difference of the logarithms has a few advantages over using the regular difference. It firstly approximates the percentage change, which is usually more useful for financial data. It also is advantageous as taking the log helps stabilize the variance before you even difference it. Lastly, since interest rates are positive, using the log ensures any future predictions from the model won't end up being impossible negative rates.
+
+## problem 8
+
+```{r}
+data(SP500, package="Ecdat")
+
+returnBlMon = SP500$r500[1805]
+x = SP500$r500[(1804-2*253+1):1804]
+
+plot(c(x, returnBlMon), type="l", main="S&P 500 Returns (2 Years + Black Monday)", col="darkblue")
+points(length(x)+1, returnBlMon, col="red", pch=16) 
+
+# Fit AR(1)/GARCH(1,1) with standard t-distribution
+results = garchFit(~arma(1,0)+garch(1,1), data=x, cond.dist="std", trace=FALSE)
+dfhat = as.numeric(results@fit$par[6])
+forecast = predict(results, n.ahead=1)
+```
+
+### 8.1 Use the information above to calculate the conditional probability of a return less than or equal to −0.228 on Black Monday.
+
+```{r}
+
+z_val = (returnBlMon - forecast$meanForecast) / forecast$standardDeviation
+prob_bl_mon = pt(z_val, df = dfhat)
+prob_bl_mon
+```
+
+### 8.2 Compute and plot the standardized residuals. Also plot the ACF of the standardized residuals and their squares. Include all three plots with your work. Do the standardized residuals indicate that the AR(1)/GARCH(1,1) model fits adequately?
+
+```{r}
+
+std_res_sp500 = residuals(results, standardize = TRUE)
+
+par(mfrow=c(1,3))
+plot(std_res_sp500, type="l", main="SP500 Std Residuals")
+acf(std_res_sp500, main="ACF of Std Res")
+acf(std_res_sp500^2, main="ACF of Std Res^2")
+par(mfrow=c(1,1))
+```
+
+Based on the plots, the AR(1)/GARCH(1,1) model appears to fit. The ACF plot of the standardized residuals shows no significant lags, indicating that the AR(1) component successfully captured the linear dependence in the mean. Similarly, the ACF plot of the squared standardized residuals shows no significant lags, confirming that the GARCH(1,1) component effectively accounted for the volatility clustering and conditional heteroskedasticity. The time series plot of the standardized residuals also displays a generally stable variance over time, without obvious prolonged periods of extreme volatility.
+
+8.3 Would an AR(1)/ARCH(1) model provide an adequate fit? (Warning: If you apply the function summary to an fGarch object, the AIC value reported has been normalized by division by the sample size. You need to multiply by the sample size to get AIC.)
+
+```{r}
+
+results_arch1 = garchFit(~arma(1,0)+garch(1,0), data=x, cond.dist="std", trace=FALSE)
+aic_garch11 = results@fit$ics["AIC"] * length(x)
+aic_arch1 = results_arch1@fit$ics["AIC"] * length(x)
+
+aic_garch11
+aic_arch1
+```
+
+Since a lower (more negative) AIC indicates a better-fitting model, the GARCH(1,1) model is the better choice. Because the ARCH(1) model yields a higher AIC, it does not provide as adequate a fit as the GARCH(1,1) model for capturing the volatility in these S&P 500 returns.
+
+8.4 Does an AR(1) model with a Gaussian conditional distribution provide an adequate fit? Use the arima function to fit the AR(1) model. This function only allows a Gaussian conditional distribution.
+
+```{r}
+
+results_ar1 = arima(x, order=c(1,0,0))
+results_ar1
+
+```
+
+Based on the output, the Gaussian AR(1) model does not provide an adequate fit. The AIC for this AR(1) model is -3247.03, which is significantly higher (worse) than both the AR(1)/GARCH(1,1) model (-3298.428) and the AR(1)/ARCH(1) model (-3298.121). Because the arima function assumes a constant variance and normally distributed errors, it entirely fails to capture the conditional heteroskedasticity and heavy tails present in the S&P 500 returns.
+
+# Reflection
+
+This lab helped me distinguish between modelling the conditional mean and the conditional variance. Examining raw and standardised residuals, together with their squared values, made it clearer how to check for remaining serial dependence and volatility clustering.
+
+The S&P 500 example also helped me connect volatility modelling to extreme returns and compare alternative specifications. I learnt that information criteria should be considered alongside residual diagnostics, rather than treating a lower AIC as proof that a model is adequate.
+
+My next step is to check that the series used in each model matches my written explanation and strengthen my interpretation of the diagnostic results.

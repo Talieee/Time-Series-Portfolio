@@ -5,23 +5,6 @@ title: "AI Use Log"
 A running log of substantive AI use that influenced my work — not every minor interaction, but
 anything that shaped an analysis, a piece of writing, or a decision.
 
-<!--
-Template (per department guidelines, Section 3.3):
-- Date
-- Tool used
-- What you asked it to help with
-- Link to the prompt or conversation
-- What you checked or changed yourself
--->
-
-## [YYYY-MM-DD]
-
-- **Tool used:** [e.g. Claude]
-- **What I asked for help with:** [brief description]
-- **Link to prompt/conversation:** [link]
-- **What I checked or changed myself:** [what you verified, edited, or rejected]
-
----
 
 ## [YYYY-MM-DD]
 
@@ -30,4 +13,43 @@ Template (per department guidelines, Section 3.3):
 - **Link to prompt/conversation:**
 - **What I checked or changed myself:**
 
-<!-- Duplicate the block above for each new entry. Add newest entries at the top. -->
+
+
+## [YYYY-MM-DD]
+
+- **Tool used:**
+- **What I asked for help with:**
+- **Link to prompt/conversation:**
+- **What I checked or changed myself:**
+
+
+## [2026-10-13]
+
+- **Tool used:** Claude
+- **What I asked for help with:** Help with how to go about doing my second project specifically on volatility modelling. I had initially thought to do a shiny app but due to time and also not really being able to see the direction of it, I decided to switch to one where I could actually focus on the models rather than the UI. 
+- **Link to prompt/conversation:**  https://claude.ai/share/f898dcee-f5bf-4eba-9072-a26361174dbc
+- **What I checked or changed myself:** 
+verified:  
+edited: decided on the series chosen and how to then implement the steps mentioned in r code. Also to chosing the more complex models.
+rejected: the series chosen
+
+
+
+
+## [2026-09 to 2026-10]
+
+- **Tool used:** Gemini Note books
+- **What I asked for help with:**
+explanations of various time series topics for my projects, tutorials and overall time series understanding. The sources used to answer are the R textbooks:
+  - Introduction to Time Series and Forecasting
+  - Introductory to Time Series With R
+  - Time Series Analysis and its Applications
+  - Forecasting: Principles and Practice
+  - Reproducible Finance with R Code Flows and Shiny Apps for Portfolio Analysis
+- **Link to prompt/conversation:**
+https://notebook.google.com/notebook/3c75fb8f-a8b0-4ca9-8bdd-31e4134efe08
+- **What I checked or changed myself:**
+the textbook pages to see if the advice given aligned with the material
+
+will add other ai logs
+

@@ -1,0 +1,2274 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Natalie Chidikwindi">
+
+<title>Forecasting Crime in South Africa: An ARIMA and ARIMAX Analysis of Macroeconomic Indicators, 2005–2025 – Natalie Chidikwindi — Time Series Portfolio</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2af0430c0724a252a33c7a0e9b17275b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Natalie Chidikwindi — Time Series Portfolio</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../Index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../journal/index.html"> 
+<span class="menu-text">Journal</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 1</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-1">    
+        <li>
+    <a class="dropdown-item" href="../../section-1/section-1.html">
+ <span class="dropdown-text">Section 1 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/section 1 tut - exercises.html">
+ <span class="dropdown-text">Time Series Exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/arch garch lab.html">
+ <span class="dropdown-text">ARCH/GARCH Practical Lab</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/ARCH_GARCH_Theoretical_Tutorial.html">
+ <span class="dropdown-text">ARCH/GARCH Theory</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/spectral analysis tut.html">
+ <span class="dropdown-text">Spectral Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/Structural breaks tut.html">
+ <span class="dropdown-text">Structural Breaks</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-2" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 2</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-2">    
+        <li>
+    <a class="dropdown-item" href="../../section-2/section-2.html">
+ <span class="dropdown-text">Section 2 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-2/exponential smoothing prac.html">
+ <span class="dropdown-text">Exponential Smoothing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-2/SSM prac.html">
+ <span class="dropdown-text">State Space Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-2/HMM tutorial.html">
+ <span class="dropdown-text">Hidden Markov Models</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../reflective-commentary.html"> 
+<span class="menu-text">Reflective Commentary</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../ai-use-log.html"> 
+<span class="menu-text">AI Use Log</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../appendix/code-and-data.html"> 
+<span class="menu-text">Code &amp; Data</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#data-and-preparation" id="toc-data-and-preparation" class="nav-link" data-scroll-target="#data-and-preparation">Data and Preparation</a>
+  <ul class="collapse">
+  <li><a href="#data-sources-and-variables" id="toc-data-sources-and-variables" class="nav-link" data-scroll-target="#data-sources-and-variables">Data Sources and Variables</a></li>
+  <li><a href="#loading-packages" id="toc-loading-packages" class="nav-link" data-scroll-target="#loading-packages">Loading Packages</a></li>
+  <li><a href="#importing-gdp-and-unemployment-data" id="toc-importing-gdp-and-unemployment-data" class="nav-link" data-scroll-target="#importing-gdp-and-unemployment-data">Importing GDP and Unemployment Data</a></li>
+  <li><a href="#importing-crime-data" id="toc-importing-crime-data" class="nav-link" data-scroll-target="#importing-crime-data">Importing Crime Data</a></li>
+  <li><a href="#preparing-the-inflation-series" id="toc-preparing-the-inflation-series" class="nav-link" data-scroll-target="#preparing-the-inflation-series">Preparing the Inflation Series</a></li>
+  <li><a href="#combining-and-checking-the-data" id="toc-combining-and-checking-the-data" class="nav-link" data-scroll-target="#combining-and-checking-the-data">Combining and Checking the Data</a></li>
+  </ul></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#recorded-crime-counts" id="toc-recorded-crime-counts" class="nav-link" data-scroll-target="#recorded-crime-counts">Recorded Crime Counts</a></li>
+  <li><a href="#macroeconomic-indicators" id="toc-macroeconomic-indicators" class="nav-link" data-scroll-target="#macroeconomic-indicators">Macroeconomic Indicators</a></li>
+  <li><a href="#autocorrelation-and-partial-autocorrelation" id="toc-autocorrelation-and-partial-autocorrelation" class="nav-link" data-scroll-target="#autocorrelation-and-partial-autocorrelation">Autocorrelation and Partial Autocorrelation</a></li>
+  <li><a href="#preliminary-cross-correlation-analysis" id="toc-preliminary-cross-correlation-analysis" class="nav-link" data-scroll-target="#preliminary-cross-correlation-analysis">Preliminary Cross-Correlation Analysis</a></li>
+  </ul></li>
+  <li><a href="#data-pre-processing-and-stationarity" id="toc-data-pre-processing-and-stationarity" class="nav-link" data-scroll-target="#data-pre-processing-and-stationarity">Data Pre-processing and Stationarity</a>
+  <ul class="collapse">
+  <li><a href="#training-and-test-sets" id="toc-training-and-test-sets" class="nav-link" data-scroll-target="#training-and-test-sets">Training and Test Sets</a></li>
+  <li><a href="#stationarity-assessment" id="toc-stationarity-assessment" class="nav-link" data-scroll-target="#stationarity-assessment">Stationarity Assessment</a></li>
+  <li><a href="#first-differencing" id="toc-first-differencing" class="nav-link" data-scroll-target="#first-differencing">First Differencing</a></li>
+  <li><a href="#acf-and-pacf-after-transformation" id="toc-acf-and-pacf-after-transformation" class="nav-link" data-scroll-target="#acf-and-pacf-after-transformation">ACF and PACF After Transformation</a></li>
+  <li><a href="#cross-correlation-after-transformation" id="toc-cross-correlation-after-transformation" class="nav-link" data-scroll-target="#cross-correlation-after-transformation">Cross-Correlation After Transformation</a>
+  <ul class="collapse">
+  <li><a href="#murder-and-aggravated-robbery" id="toc-murder-and-aggravated-robbery" class="nav-link" data-scroll-target="#murder-and-aggravated-robbery">Murder and Aggravated Robbery</a></li>
+  <li><a href="#residential-burglary-and-vehicle-theft" id="toc-residential-burglary-and-vehicle-theft" class="nav-link" data-scroll-target="#residential-burglary-and-vehicle-theft">Residential Burglary and Vehicle Theft</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#model-fitting-arima-and-arimax" id="toc-model-fitting-arima-and-arimax" class="nav-link" data-scroll-target="#model-fitting-arima-and-arimax">Model Fitting: ARIMA and ARIMAX</a>
+  <ul class="collapse">
+  <li><a href="#in-sample-model-comparison" id="toc-in-sample-model-comparison" class="nav-link" data-scroll-target="#in-sample-model-comparison">In-Sample Model Comparison</a></li>
+  <li><a href="#selected-model-estimates" id="toc-selected-model-estimates" class="nav-link" data-scroll-target="#selected-model-estimates">Selected Model Estimates</a></li>
+  <li><a href="#chosen-models" id="toc-chosen-models" class="nav-link" data-scroll-target="#chosen-models">chosen models</a></li>
+  </ul></li>
+  <li><a href="#residual-diagnostics" id="toc-residual-diagnostics" class="nav-link" data-scroll-target="#residual-diagnostics">Residual Diagnostics</a></li>
+  <li><a href="#out-of-sample-forecasting" id="toc-out-of-sample-forecasting" class="nav-link" data-scroll-target="#out-of-sample-forecasting">Out-of-Sample Forecasting</a>
+  <ul class="collapse">
+  <li><a href="#forecast-design" id="toc-forecast-design" class="nav-link" data-scroll-target="#forecast-design">Forecast Design</a></li>
+  <li><a href="#forecasts-from-the-in-sample-selected-models" id="toc-forecasts-from-the-in-sample-selected-models" class="nav-link" data-scroll-target="#forecasts-from-the-in-sample-selected-models">Forecasts from the In-Sample Selected Models</a>
+  <ul class="collapse">
+  <li><a href="#murder" id="toc-murder" class="nav-link" data-scroll-target="#murder">Murder</a></li>
+  <li><a href="#aggravated-robbery" id="toc-aggravated-robbery" class="nav-link" data-scroll-target="#aggravated-robbery">Aggravated Robbery</a></li>
+  <li><a href="#residential-burglary" id="toc-residential-burglary" class="nav-link" data-scroll-target="#residential-burglary">Residential Burglary</a></li>
+  <li><a href="#vehicle-theft" id="toc-vehicle-theft" class="nav-link" data-scroll-target="#vehicle-theft">Vehicle Theft</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#final-forecast-performance-comparison" id="toc-final-forecast-performance-comparison" class="nav-link" data-scroll-target="#final-forecast-performance-comparison">Final Forecast Performance Comparison</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Forecasting Crime in South Africa: An ARIMA and ARIMAX Analysis of Macroeconomic Indicators, 2005–2025</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Natalie Chidikwindi </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Crime and socioeconomic inequality are important concerns in South Africa. Research on crime often examines factors associated with criminal activity, but understanding how recorded crime changes over time is also important for identifying trends and producing forecasts.</p>
+<p>This project uses time series methods to examine four categories of recorded crime in South Africa: murder, aggravated robbery, residential burglary, and vehicle theft. ARIMA models describe and forecast each crime series using its own historical behaviour, while ARIMAX models incorporate GDP, inflation, and unemployment as explanatory variables.</p>
+<p>The project addresses two main questions:</p>
+<ol type="1">
+<li>How have recorded crime counts changed over time in South Africa?</li>
+<li>Do macroeconomic indicators help explain and forecast changes in recorded crime counts?</li>
+</ol>
+<p>The analysis focuses on recorded cases rather than population-adjusted crime rates. It examines associations between aggregate variables and does not establish that these variables cause crime or explain an individual’s likelihood of committing an offence.</p>
+</section>
+<section id="data-and-preparation" class="level1">
+<h1>Data and Preparation</h1>
+<section id="data-sources-and-variables" class="level2">
+<h2 class="anchored" data-anchor-id="data-sources-and-variables">Data Sources and Variables</h2>
+<p>The response variables are the annual numbers of cases recorded by the South African Police Service (SAPS) for four crime categories:</p>
+<ul>
+<li>Murder.</li>
+<li>Aggravated robbery.</li>
+<li>Residential burglary.</li>
+<li>Vehicle theft.</li>
+</ul>
+<p>These figures represent recorded offences rather than all crimes committed. Changes in the series may therefore reflect changes in criminal activity, reporting behaviour, or recording practices.</p>
+<p>The explanatory variables are GDP, inflation, and the unemployment rate. The datasets are aggregated and joined using a common year identifier. The intended study period is 2005–2025, giving 21 annual observations where all years are available across the datasets.</p>
+<p>The crime data are supplied as aggregated counts, and no individual-level personal information is used in this analysis.</p>
+</section>
+<section id="loading-packages" class="level2">
+<h2 class="anchored" data-anchor-id="loading-packages">Loading Packages</h2>
+<p>The following packages are used to import and clean the data, construct time series objects, estimate models, and present the results.</p>
+</section>
+<section id="importing-gdp-and-unemployment-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-gdp-and-unemployment-data">Importing GDP and Unemployment Data</h2>
+<p>GDP and unemployment observations are grouped by calendar year. The mean of the available observations within each year is used to construct each annual series.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># importing and aggregating gdp data to annual because there is only annual data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>gdp_dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"real gdp.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>gdp_annual <span class="ot">&lt;-</span> gdp_dat <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">year</span>(observation_date)) <span class="sc">|&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">GDP =</span> <span class="fu">mean</span>(NGDPRNSAXDCZAQ, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># importing unemployment data and aggregating to year </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>unemp_dat<span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"unemployment rate.csv"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>unemp_annual <span class="ot">&lt;-</span> unemp_dat<span class="sc">|&gt;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">year</span>(observation_date)) <span class="sc">|&gt;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Unemployment =</span> <span class="fu">mean</span>(LRUN64TTZAQ156S, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The GDP series definition and units should be confirmed from its source metadata before interpreting it as real GDP. In particular, real GDP, nominal GDP, and GDP growth are different measures and should not be used interchangeably.</p>
+</section>
+<section id="importing-crime-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-crime-data">Importing Crime Data</h2>
+<p>The crime dataset records reporting periods using labels such as <code>2005/2006</code>. The first year of each reporting period is used as its year identifier. Thus, the label <code>2005</code> represents the reporting period 2005/2006 rather than the calendar year 2005.</p>
+<p>The selected crime categories are summed across the records within each reporting period.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># importing crime data and aggregating annually</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>crime_dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"sapacr-2005-2026-v1.5.csv"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>crime_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"murder"</span>, <span class="st">"aggr_robbery"</span>, <span class="st">"burglary_res"</span>, <span class="st">"vehicle_theft"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>crime_annual <span class="ot">&lt;-</span> crime_dat <span class="sc">|&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">as.integer</span>(<span class="fu">substr</span>(year, <span class="dv">1</span>, <span class="dv">4</span>))) <span class="sc">|&gt;</span> <span class="co"># the data has dates as e.g. 2005/2006 and therefore it is chosen to be 2005</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(crime_cols), <span class="sc">~</span> <span class="fu">sum</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This aggregation assumes that the source rows represent non-overlapping units. Any national or provincial totals included alongside their component records would need to be excluded to avoid double counting.</p>
+</section>
+<section id="preparing-the-inflation-series" class="level2">
+<h2 class="anchored" data-anchor-id="preparing-the-inflation-series">Preparing the Inflation Series</h2>
+<p>The CPI data require additional preparation because they are stored in two Excel files with overlapping dates. Each file is reshaped into a monthly series containing a date and an index value.</p>
+<p>The overlapping observations are then used to calculate a scaling factor so that the two index series can be joined on a common numerical basis. This adjustment assumes that the selected series are conceptually comparable; rescaling alone cannot resolve differences in their coverage or definition.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># importing cpi dataset</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>read_cpi_index <span class="ot">&lt;-</span> <span class="cf">function</span>(path, code, <span class="at">headline_only =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(path) <span class="sc">|&gt;</span> <span class="fu">filter</span>(H03 <span class="sc">==</span> code)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (headline_only) r <span class="ot">&lt;-</span> r <span class="sc">|&gt;</span> <span class="fu">filter</span>(H04 <span class="sc">==</span> <span class="st">"CPI Headline"</span>)   <span class="co"># for the new file</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">nrow</span>(r) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  r <span class="sc">|&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"MO"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"col"</span>, <span class="at">values_to =</span> <span class="st">"index"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">date  =</span> <span class="fu">make_date</span>(<span class="fu">as.integer</span>(<span class="fu">substr</span>(col, <span class="dv">5</span>, <span class="dv">8</span>)), <span class="fu">as.integer</span>(<span class="fu">substr</span>(col, <span class="dv">3</span>, <span class="dv">4</span>)), <span class="dv">1</span>),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">index =</span> <span class="fu">as.numeric</span>(index)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(index)) <span class="sc">|&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(date, index)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>old <span class="ot">&lt;-</span> <span class="fu">read_cpi_index</span>(<span class="st">"cpi-2000-2008-v1.xlsx"</span>, <span class="st">"VPN00000"</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>new <span class="ot">&lt;-</span> <span class="fu">read_cpi_index</span>(<span class="st">"cpi-2008-2026-v1.1.xlsx"</span>, <span class="st">"CPS00000"</span>, <span class="at">headline_only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># joining both cpi datasets into 1 </span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>overlap <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(old, new, <span class="at">by =</span> <span class="st">"date"</span>, <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">"_old"</span>, <span class="st">"_new"</span>))</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(overlap) <span class="co"># 4 rows overlapping</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>scale <span class="ot">&lt;-</span> <span class="fu">mean</span>(overlap<span class="sc">$</span>index_old <span class="sc">/</span> overlap<span class="sc">$</span>index_new)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>cpi_idx <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(old, new <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span>date <span class="sc">%in%</span> old<span class="sc">$</span>date) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">index =</span> index <span class="sc">*</span> scale)) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(cpi_idx<span class="sc">$</span>date)                             </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "2000-01-01" "2026-06-01"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cpi_idx <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gap =</span> lubridate<span class="sc">::</span><span class="fu">interval</span>(<span class="fu">lag</span>(date), date) <span class="sc">%/%</span> <span class="fu">months</span>(<span class="dv">1</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gap <span class="sc">&gt;</span> <span class="dv">1</span>)  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 3
+# ℹ 3 variables: date &lt;date&gt;, index &lt;dbl&gt;, gap &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Monthly year-on-year inflation is calculated as</p>
+<p><span class="math display">\[
+\pi_t
+=
+100\left(
+\frac{I_t}{I_{t-12}}-1
+\right),
+\]</span></p>
+<p>where (I_t) is the CPI index in month (t).</p>
+<p>The monthly inflation rates are averaged over April–March financial years. Only financial years with 12 available monthly inflation observations are retained.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ensuring cpi is matched properly</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>cpi_m <span class="ot">&lt;-</span> cpi_idx <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">infl =</span> <span class="dv">100</span> <span class="sc">*</span> (index <span class="sc">/</span> index[<span class="fu">match</span>(date <span class="sc">%m-%</span> <span class="fu">months</span>(<span class="dv">12</span>), date)] <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(infl))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># funtion to help mutate date data</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>to_fy <span class="ot">&lt;-</span> <span class="cf">function</span>(d) <span class="fu">if_else</span>(<span class="fu">month</span>(d) <span class="sc">&gt;=</span> <span class="dv">4</span>, <span class="fu">year</span>(d), <span class="fu">year</span>(d) <span class="sc">-</span> <span class="dv">1</span>L)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregating to annual</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>cpi_annual <span class="ot">&lt;-</span> cpi_m <span class="sc">|&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">to_fy</span>(date)) <span class="sc">|&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">==</span> <span class="dv">12</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">CPI =</span> <span class="fu">mean</span>(infl))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Although the variable is named <code>CPI</code> in the code, it contains the average year-on-year inflation rate, expressed as a percentage, rather than the CPI index level.</p>
+</section>
+<section id="combining-and-checking-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="combining-and-checking-the-data">Combining and Checking the Data</h2>
+<p>The crime counts and macroeconomic variables are joined using their year identifiers. Inner joins retain only the years that are present in every dataset.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine into 1 dataset and convert to a tsibble object (time series)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>crime_data <span class="ot">&lt;-</span> crime_annual <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(gdp_annual,   <span class="at">by =</span> <span class="st">"Year"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(unemp_annual, <span class="at">by =</span> <span class="st">"Year"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(cpi_annual,   <span class="at">by =</span> <span class="st">"Year"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> Year)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># missing values checked</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(crime_data))  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checks</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(crime_data<span class="sc">$</span>Year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2005 2025</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(crime_data)   </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 21</code></pre>
+</div>
+</div>
+<p>The combined dataset contains 21 annual observations, covering year labels from 2005 to 2025. There are 0 missing values in the retained dataset.</p>
+<p>No imputation is applied. However, the absence of missing values after joining does not establish that every source dataset was complete: inner joins can remove unmatched years, and the aggregation functions omit missing source values when calculating totals or averages.</p>
+<p>There is also a timing limitation. Crime and inflation are organised by reporting or financial year, while GDP and unemployment are averaged by calendar year. Matching the same year labels therefore does not align the underlying periods exactly. These periods should ideally be harmonised before interpreting the ARIMAX coefficients or evaluating predictive relationships.</p>
+</section>
+</section>
+<section id="exploratory-data-analysis" class="level1">
+<h1>Exploratory Data Analysis</h1>
+<p>The exploratory analysis examines changes in recorded crime counts and macroeconomic indicators over time. These plots help identify trends and unusual movements that may be relevant when specifying the ARIMA and ARIMAX models.</p>
+<section id="recorded-crime-counts" class="level2">
+<h2 class="anchored" data-anchor-id="recorded-crime-counts">Recorded Crime Counts</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>crimes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"murder"</span>, <span class="st">"aggr_robbery"</span>, <span class="st">"burglary_res"</span>, <span class="st">"vehicle_theft"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>regs   <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"GDP"</span>, <span class="st">"CPI"</span>, <span class="st">"Unemployment"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># time series plots </span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># function for plotting</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>c1 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(murder, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Murder"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>c2 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(aggr_robbery, <span class="at">colour =</span> <span class="st">"orange"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Aggravated robbery"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>c3 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(burglary_res, <span class="at">colour =</span> <span class="st">"blue"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Residential burglary"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>c4 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(vehicle_theft, <span class="at">colour =</span> <span class="st">"green"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Vehicle theft"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>(c1 <span class="sc">|</span> c2) <span class="sc">/</span> (c3 <span class="sc">|</span> c4) <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Crime series"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-07-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The murder series shows an upward movement over much of the later study period, interrupted by a decline around 2020 during the COVID-19 pandemic. Recorded cases subsequently rise and appear to peak around the reporting periods labelled 2022–2023 before declining towards the end of the series.</p>
+<p>Aggravated robbery follows a less consistent pattern. Recorded cases decline around 2010–2012 before increasing again. A further dip is visible around 2020, followed by a recovery and a more recent decline after approximately 2022–2023.</p>
+<p>Residential burglary and vehicle theft both display broadly declining trends over the study period. Both also show a decrease around the pandemic period, although the longer-term downward movement extends beyond this disruption.</p>
+<p>The movements around 2020 coincide with the COVID-19 pandemic and associated restrictions. These restrictions may have affected opportunities for particular offences, mobility, and reporting behaviour. However, the plots alone cannot establish the reasons for the observed changes.</p>
+<p>The differences between the four series suggest that each crime category may require a different time series specification. A model suitable for a declining property-crime series may not adequately describe the changing pattern of recorded murder cases.</p>
+</section>
+<section id="macroeconomic-indicators" class="level2">
+<h2 class="anchored" data-anchor-id="macroeconomic-indicators">Macroeconomic Indicators</h2>
+<p>The explanatory variables are plotted below to examine their long-term movements and any disruptions that may be relevant to the crime series.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>r1 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(GDP, <span class="at">colour =</span> <span class="st">"purple"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"GDP"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(CPI, <span class="at">colour =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"CPI (inflation, %)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>r3 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(Unemployment, <span class="at">colour =</span> <span class="st">"brown"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Unemployment rate (%)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>(r1 <span class="sc">|</span> r2 <span class="sc">|</span> r3) <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Macroeconomic regressors"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-08-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The GDP series shows a broad upward movement, with disruptions around the 2008–2009 global financial crisis and the COVID-19 pandemic in 2020. These events provide economic context for changes in the series. However, the interpretation of its upward trend depends on whether the source measures nominal or real GDP, which should be confirmed before drawing conclusions about growth in economic activity.</p>
+<p>Inflation fluctuates rather than following a sustained upward trend. The series shows a pronounced increase around 2008 and further movements during the pandemic and subsequent recovery period. More recent observations appear to indicate easing inflation. These changes describe movements in the rate of price increases rather than changes in the CPI index level itself.</p>
+<p>The unemployment rate displays a broad upward trend over much of the study period, with particularly high levels around the pandemic and its aftermath. A modest decline is visible in the later observations, although unemployment remains elevated relative to earlier years.</p>
+<p>These patterns motivate examining whether macroeconomic indicators add useful information to forecasts based on past crime counts alone. Nevertheless, visual co-movement does not establish a statistical relationship or causation. Trends, possible structural changes, and the short sample of annual observations must be considered when specifying and interpreting the models.</p>
+</section>
+<section id="autocorrelation-and-partial-autocorrelation" class="level2">
+<h2 class="anchored" data-anchor-id="autocorrelation-and-partial-autocorrelation">Autocorrelation and Partial Autocorrelation</h2>
+<p>The autocorrelation function (ACF) measures the relationship between a series and its past values. The partial autocorrelation function (PACF) measures the relationship at each lag after accounting for the intervening lags.</p>
+<p>These plots provide an initial assessment of persistence in the recorded crime series. However, model orders should not be selected from these plots alone before assessing stationarity.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># acf plots for crimes </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">ACF</span>(murder, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ACF: murder"</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">ACF</span>(aggr_robbery, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ACF: aggravated robbery"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">ACF</span>(burglary_res, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ACF: residential burglary"</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">ACF</span>(vehicle_theft, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ACF: vehicle theft"</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># layout for acf plots</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">|</span> p2) <span class="sc">/</span> (p3 <span class="sc">|</span> p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-09-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># acf plots for explanatory</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>q1 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">PACF</span>(murder, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PACF: murder"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>q2 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">PACF</span>(aggr_robbery, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PACF: aggravated robbery"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>q3 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">PACF</span>(burglary_res, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PACF: residential burglary"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>q4 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">PACF</span>(vehicle_theft, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PACF: vehicle theft"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># layout for acf plots</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>(q1 <span class="sc">|</span> q2) <span class="sc">/</span> (q3 <span class="sc">|</span> q4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-09-2.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The ACF plots show positive autocorrelation that gradually declines as the lag increases. Significant spikes extend approximately to lag three for residential burglary and vehicle theft, and to lag two for murder and aggravated robbery. Lag one has the strongest autocorrelation in each series.</p>
+<p>In the PACF plots, the main significant spike occurs at lag one across all four crime categories. These patterns indicate persistence, but they may also reflect non-stationarity. Stationarity is therefore assessed before using the correlation patterns to identify candidate ARIMA models.</p>
+</section>
+<section id="preliminary-cross-correlation-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="preliminary-cross-correlation-analysis">Preliminary Cross-Correlation Analysis</h2>
+<p>The cross-correlation function (CCF) measures the association between two series at different lags. It is used here to explore potential relationships between recorded crime counts and the macroeconomic indicators.</p>
+<p>The variable named <code>CPI</code> contains the inflation rate calculated from CPI rather than the CPI index level.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># murder and aggravated robbery ccf plots</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(murder, GDP, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Murder &amp; GDP"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(murder, CPI, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Murder &amp; CPI"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>a3 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(murder, Unemployment, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Murder &amp; Unemployment"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(aggr_robbery, GDP, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Aggravated robbery &amp; GDP"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>b2 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(aggr_robbery, CPI, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Aggravated robbery &amp; CPI"</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>b3 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(aggr_robbery, Unemployment, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Aggravated robbery &amp; Unemployment"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ccf plot layout</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>(a1 <span class="sc">|</span> a2 <span class="sc">|</span> a3) <span class="sc">/</span> (b1 <span class="sc">|</span> b2 <span class="sc">|</span> b3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-10-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The preliminary plots suggest associations between murder and both GDP and unemployment. For aggravated robbery, all three macroeconomic indicators display potentially relevant correlations, including an isolated significant correlation with inflation.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># burglary and vehicle theft ccf plots</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>d1 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(burglary_res, GDP, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Residential burglary &amp; GDP"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(burglary_res, CPI, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Residential burglary &amp; CPI"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>d3 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(burglary_res, Unemployment, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Residential burglary &amp; Unemployment"</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>e1 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(vehicle_theft, GDP, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Vehicle theft &amp; GDP"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>e2 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(vehicle_theft, CPI, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Vehicle theft &amp; CPI"</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>e3 <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">CCF</span>(vehicle_theft, Unemployment, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Vehicle theft &amp; Unemployment"</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ccf plot layout</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>(d1 <span class="sc">|</span> d2 <span class="sc">|</span> d3) <span class="sc">/</span> (e1 <span class="sc">|</span> e2 <span class="sc">|</span> e3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-11-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>GDP and unemployment appear to be potential explanatory variables for residential burglary. For vehicle theft, all three indicators display potentially relevant correlations.</p>
+<p>These findings are preliminary. Correlations between non-stationary series can arise from shared trends rather than a meaningful relationship. Serial dependence within each series can also affect the CCF. The relationships are therefore reassessed after examining stationarity and applying the required transformations.</p>
+<p>These full-sample plots are descriptive. Predictor and model selection for forecast evaluation will rely on on the training sample to avoid using information from the test period.</p>
+</section>
+</section>
+<section id="data-pre-processing-and-stationarity" class="level1">
+<h1>Data Pre-processing and Stationarity</h1>
+<section id="training-and-test-sets" class="level2">
+<h2 class="anchored" data-anchor-id="training-and-test-sets">Training and Test Sets</h2>
+<p>The dataset is divided chronologically into a training sample and a test sample. The training sample contains 18 annual observations from 2005 to 2022, while the test sample contains three observations from 2023 to 2025. This corresponds to approximately 86% of the observations for training and 14% for testing.</p>
+<p>The training data are used to assess stationarity, identify candidate models, and estimate their parameters. The test data are reserved for evaluating forecasts.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># splitting into training and test</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>n_test <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">filter</span>(Year <span class="sc">&lt;=</span> <span class="fu">max</span>(Year) <span class="sc">-</span> n_test)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>test_data  <span class="ot">&lt;-</span> crime_data <span class="sc">|&gt;</span> <span class="fu">filter</span>(Year <span class="sc">&gt;</span>  <span class="fu">max</span>(Year) <span class="sc">-</span> n_test)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># no of obs</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(train_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 18</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(test_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># year range</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(train_data<span class="sc">$</span>Year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2005 2022</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(test_data<span class="sc">$</span>Year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2023 2025</code></pre>
+</div>
+</div>
+<p>he year labels retain the definitions used during data preparation. In particular, the crime observations represent reporting periods identified by their starting year.</p>
+</section>
+<section id="stationarity-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="stationarity-assessment">Stationarity Assessment</h2>
+<p>Stationarity is assessed using the KPSS test and the recommended number of differences returned by <code>unitroot_ndiffs()</code>.</p>
+<p>For the KPSS test, the hypotheses are:</p>
+<ul>
+<li>(H_0): The series is stationary under the test specification.</li>
+<li>(H_1): The series is not stationary under the test specification.</li>
+</ul>
+<p>A small KPSS p-value provides evidence against stationarity. This interpretation differs from unit-root tests whose null hypothesis is the presence of a unit root.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test for differencing and whether te time series plots are stationary </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># response variables</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>train_data <span class="sc">|&gt;</span> <span class="fu">features</span>(murder,        <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.498      0.0420      1</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="sc">|&gt;</span> <span class="fu">features</span>(aggr_robbery,  <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.417      0.0700      0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="sc">|&gt;</span> <span class="fu">features</span>(burglary_res,  <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.492      0.0434      1</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="sc">|&gt;</span> <span class="fu">features</span>(vehicle_theft, <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.673      0.0160      1</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explanatory variables</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>train_data <span class="sc">|&gt;</span> <span class="fu">features</span>(GDP,          <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.667      0.0166      1</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="sc">|&gt;</span> <span class="fu">features</span>(CPI,          <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.168         0.1      0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="sc">|&gt;</span> <span class="fu">features</span>(Unemployment, <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.626      0.0202      1</code></pre>
+</div>
+</div>
+<p>The reported KPSS results give small p-values for murder, residential burglary, and vehicle theft, providing evidence against stationarity. The differencing procedure recommends one difference for each of these series.</p>
+<p>For aggravated robbery, the results do not indicate that differencing is required.</p>
+<p>Among the explanatory variables, GDP and unemployment also require one difference. Inflation does not require differencing under the procedure used.</p>
+<p>These findings guide the initial transformations, although stationarity tests have limited power in a training sample of only 18 annual observations.</p>
+</section>
+<section id="first-differencing" class="level2">
+<h2 class="anchored" data-anchor-id="first-differencing">First Differencing</h2>
+<p>First differencing is applied to the series identified above:</p>
+<p><span class="math display">\[
+\Delta y_t = y_t-y_{t-1}.
+\]</span></p>
+<p>For crime counts, this transformation measures the annual change in recorded cases. For unemployment, it measures the change in the unemployment rate in percentage points. The GDP difference measures an absolute change in the source units rather than a percentage growth rate.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># difference the series that required differencing</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>train_diff <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">d_murder        =</span> <span class="fu">difference</span>(murder),</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">d_burglary_res  =</span> <span class="fu">difference</span>(burglary_res),</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">d_vehicle_theft =</span> <span class="fu">difference</span>(vehicle_theft),</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">d_GDP           =</span> <span class="fu">difference</span>(GDP),</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">d_Unemployment  =</span> <span class="fu">difference</span>(Unemployment)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(d_murder))      <span class="co"># drops the first year as it is NA</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co"># checks for stationarity of the difference ones</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>train_diff <span class="sc">|&gt;</span> <span class="fu">features</span>(d_murder,        <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.433      0.0631      0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>train_diff <span class="sc">|&gt;</span> <span class="fu">features</span>(d_burglary_res,  <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.239         0.1      0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>train_diff <span class="sc">|&gt;</span> <span class="fu">features</span>(d_vehicle_theft, <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.159         0.1      0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>train_diff <span class="sc">|&gt;</span> <span class="fu">features</span>(d_GDP,           <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.323         0.1      0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>train_diff <span class="sc">|&gt;</span> <span class="fu">features</span>(d_Unemployment,  <span class="fu">list</span>(unitroot_kpss, unitroot_ndiffs))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  kpss_stat kpss_pvalue ndiffs
+      &lt;dbl&gt;       &lt;dbl&gt;  &lt;int&gt;
+1     0.332         0.1      0</code></pre>
+</div>
+</div>
+<p>After first differencing, the reported results recommend no further differencing, and the KPSS tests no longer reject stationarity at the chosen significance level.</p>
+<p>These results support proceeding with the transformed series, although failure to reject the stationarity null does not prove stationarity.</p>
+</section>
+<section id="acf-and-pacf-after-transformation" class="level2">
+<h2 class="anchored" data-anchor-id="acf-and-pacf-after-transformation">ACF and PACF After Transformation</h2>
+<p>The ACF and PACF are examined again using the differenced series where required. Aggravated robbery remains in levels because the stationarity assessment did not recommend differencing.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># acf &amp; pacf plots  for crimes</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">ACF</span>(d_murder, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ACF: d(murder)"</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">ACF</span>(aggr_robbery, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ACF: aggravated robbery"</span>)</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">ACF</span>(d_burglary_res, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ACF: d(residential burglary)"</span>)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">ACF</span>(d_vehicle_theft, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ACF: d(vehicle theft)"</span>)</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">|</span> p2) <span class="sc">/</span> (p3 <span class="sc">|</span> p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-15-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>q1 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">PACF</span>(d_murder, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PACF: d(murder)"</span>)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>q2 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">PACF</span>(aggr_robbery, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PACF: aggravated robbery"</span>)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>q3 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">PACF</span>(d_burglary_res, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PACF: d(residential burglary)"</span>)</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>q4 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">PACF</span>(d_vehicle_theft, <span class="at">lag_max =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PACF: d(vehicle theft)"</span>)</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>(q1 <span class="sc">|</span> q2) <span class="sc">/</span> (q3 <span class="sc">|</span> q4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-15-2.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For differenced murder and residential burglary, neither the ACF nor the PACF shows a clear significant pattern. This suggests ARIMA(0,1,0) as a useful initial candidate for each original series.</p>
+<p>For aggravated robbery, the ACF and PACF both show a prominent spike at lag one. This motivates considering low-order AR, MA, and combined ARMA specifications. A gradual decline in the ACF alone does not establish an MA(1) model; the cutoff and decay patterns in both plots must be considered together.</p>
+<p>For differenced vehicle theft, neither plot shows a clear significant pattern. ARIMA(0,1,0) is therefore a natural initial candidate, while ARIMA(0,1,1) can be evaluated as an alternative.</p>
+<p>The proposed baseline candidates are:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Crime category</th>
+<th>Initial model candidates</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Murder</td>
+<td>ARIMA(0,1,0)</td>
+</tr>
+<tr class="even">
+<td>Aggravated robbery</td>
+<td>ARIMA(1,0,0), ARIMA(0,0,1), and ARIMA(1,0,1)</td>
+</tr>
+<tr class="odd">
+<td>Residential burglary</td>
+<td>ARIMA(0,1,0)</td>
+</tr>
+<tr class="even">
+<td>Vehicle theft</td>
+<td>ARIMA(0,1,0) and ARIMA(0,1,1)</td>
+</tr>
+</tbody>
+</table>
+<p>These are candidate specifications rather than confirmed final models. Information criteria, residual diagnostics, and forecast performance are needed to assess their suitability. Intercept or drift terms must also be considered when fitting the models.</p>
+</section>
+<section id="cross-correlation-after-transformation" class="level2">
+<h2 class="anchored" data-anchor-id="cross-correlation-after-transformation">Cross-Correlation After Transformation</h2>
+<p>The CCF is reassessed using the training data after the required transformations. These plots examine relationships between changes in the non-stationary series and the variables retained in levels.</p>
+<p>The differenced variables are used here for exploratory analysis. Their use in the final ARIMAX specification must be considered separately from the differencing applied to the model’s errors.</p>
+<section id="murder-and-aggravated-robbery" class="level3">
+<h3 class="anchored" data-anchor-id="murder-and-aggravated-robbery">Murder and Aggravated Robbery</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ccf plots for murder and robbery</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_murder, d_GDP, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Murder) &amp; d(GDP)"</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_murder, CPI, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Murder) &amp; CPI"</span>)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>a3 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_murder, d_Unemployment, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Murder) &amp; d(Unemployment)"</span>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(aggr_robbery, d_GDP, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Agg. robbery &amp; d(GDP)"</span>)</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>b2 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(aggr_robbery, CPI, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Agg. robbery &amp; CPI"</span>)</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>b3 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(aggr_robbery, d_Unemployment, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Agg. robbery &amp; d(Unemployment)"</span>)</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>(a1 <span class="sc">|</span> a2 <span class="sc">|</span> a3) <span class="sc">/</span> (b1 <span class="sc">|</span> b2 <span class="sc">|</span> b3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-16-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For murder, the reported plots show:</p>
+<ul>
+<li>A negative correlation with the change in GDP at plotted lag −1 and a positive correlation at lag zero.</li>
+<li>A negative correlation with inflation at plotted lag −2.</li>
+<li>A positive correlation with the change in unemployment at lag zero.</li>
+</ul>
+<p>For aggravated robbery, the main reported correlations are negative associations with inflation at plotted lags −2, −3, and −4. The earlier apparent associations with GDP and unemployment are less evident after transformation.</p>
+<p>The lag labels are reported as displayed rather than interpreted automatically as predictor delays. Their direction depends on the CCF convention and the order of the variables supplied to the function. This must be checked before constructing lagged predictors.</p>
+</section>
+<section id="residential-burglary-and-vehicle-theft" class="level3">
+<h3 class="anchored" data-anchor-id="residential-burglary-and-vehicle-theft">Residential Burglary and Vehicle Theft</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ccf plots for burglary and vehicle theft</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>d1 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_burglary_res, d_GDP, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Burglary) &amp; d(GDP)"</span>)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_burglary_res, CPI, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Burglary) &amp; CPI"</span>)</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>d3 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_burglary_res, d_Unemployment, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Burglary) &amp; d(Unemployment)"</span>)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>e1 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_vehicle_theft, d_GDP, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Vehicle theft) &amp; d(GDP)"</span>)</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>e2 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_vehicle_theft, CPI, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Vehicle theft) &amp; CPI"</span>)</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>e3 <span class="ot">&lt;-</span> train_diff <span class="sc">|&gt;</span> <span class="fu">CCF</span>(d_vehicle_theft, d_Unemployment, <span class="at">lag_max =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"d(Vehicle theft) &amp; d(Unemployment)"</span>)</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>(d1 <span class="sc">|</span> d2 <span class="sc">|</span> d3) <span class="sc">/</span> (e1 <span class="sc">|</span> e2 <span class="sc">|</span> e3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-17-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For residential burglary, the reported plots show positive correlations with inflation and the change in GDP at lag zero. A negative correlation with the change in unemployment appears at plotted lag one.</p>
+<p>For vehicle theft, a positive correlation with the change in GDP appears at lag zero, while a negative correlation with the change in unemployment appears at plotted lag one. Inflation does not show a clear significant relationship after transformation.</p>
+<p>These findings identify possible relationships for further investigation, but they do not establish causation or guarantee that the variables will improve forecasts. Differencing also does not remove all serial dependence; prewhitening could provide a more reliable assessment of cross-correlations.</p>
+<p>Given the small sample and the number of correlations examined, isolated significant spikes should be interpreted cautiously. Parsimonious ARIMAX specifications are therefore preferred. Any contemporaneous or future explanatory values required for forecasting must also be available at the forecast origin or supplied through forecasts or explicit scenarios.</p>
+</section>
+</section>
+</section>
+<section id="model-fitting-arima-and-arimax" class="level1">
+<h1>Model Fitting: ARIMA and ARIMAX</h1>
+<p>Candidate models are fitted using the training sample. Baseline ARIMA models describe each crime series using its own historical behaviour, while ARIMAX models incorporate selected macroeconomic variables.</p>
+<p>The explanatory variables and their candidate lags are informed by the exploratory analysis. Different combinations are evaluated to determine whether they improve model fit relative to the baseline specifications.</p>
+<p>Because the data are annual, no within-year seasonal component is included. The models are therefore described as ARIMA and ARIMAX rather than SARIMA and SARIMAX.</p>
+<p>In the ARIMAX specifications, the ARIMA orders describe the error process after accounting for the explanatory variables:</p>
+<p><span class="math display">\[
+y_t = \beta_0 + \boldsymbol{\beta}^{\prime}\mathbf{x}_t + n_t,
+\]</span></p>
+<p>where (n_t) follows the specified ARIMA process.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Murder: ARIMA(0,1,0) error specification</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>murder_models <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">base =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>      murder <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">unemp =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>      murder <span class="sc">~</span> Unemployment <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp_unemp =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>      murder <span class="sc">~</span> GDP <span class="sc">+</span> <span class="fu">lag</span>(GDP, <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>        Unemployment <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">full =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a>      murder <span class="sc">~</span> GDP <span class="sc">+</span> <span class="fu">lag</span>(GDP, <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lag</span>(CPI, <span class="dv">2</span>) <span class="sc">+</span> Unemployment <span class="sc">+</span></span>
+<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggravated robbery: ARIMA(1,0,1) and ARIMA(1,0,0)</span></span>
+<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a>robbery_models <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span></span>
+<span id="cb58-23"><a href="#cb58-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb58-24"><a href="#cb58-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_101 =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-25"><a href="#cb58-25" aria-hidden="true" tabindex="-1"></a>      aggr_robbery <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb58-26"><a href="#cb58-26" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-27"><a href="#cb58-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_100 =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-28"><a href="#cb58-28" aria-hidden="true" tabindex="-1"></a>      aggr_robbery <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb58-29"><a href="#cb58-29" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-30"><a href="#cb58-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">cpi_101 =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-31"><a href="#cb58-31" aria-hidden="true" tabindex="-1"></a>      aggr_robbery <span class="sc">~</span> <span class="fu">lag</span>(CPI, <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb58-32"><a href="#cb58-32" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb58-33"><a href="#cb58-33" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-34"><a href="#cb58-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">cpi_100 =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-35"><a href="#cb58-35" aria-hidden="true" tabindex="-1"></a>      aggr_robbery <span class="sc">~</span> <span class="fu">lag</span>(CPI, <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb58-36"><a href="#cb58-36" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pdq</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb58-37"><a href="#cb58-37" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb58-38"><a href="#cb58-38" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb58-39"><a href="#cb58-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-40"><a href="#cb58-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Residential burglary: ARIMA(0,1,0) error specification</span></span>
+<span id="cb58-41"><a href="#cb58-41" aria-hidden="true" tabindex="-1"></a>burglary_models <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span></span>
+<span id="cb58-42"><a href="#cb58-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb58-43"><a href="#cb58-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">base =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-44"><a href="#cb58-44" aria-hidden="true" tabindex="-1"></a>      burglary_res <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-45"><a href="#cb58-45" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-46"><a href="#cb58-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-47"><a href="#cb58-47" aria-hidden="true" tabindex="-1"></a>      burglary_res <span class="sc">~</span> GDP <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-48"><a href="#cb58-48" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-49"><a href="#cb58-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp_cpi =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-50"><a href="#cb58-50" aria-hidden="true" tabindex="-1"></a>      burglary_res <span class="sc">~</span> GDP <span class="sc">+</span> CPI <span class="sc">+</span></span>
+<span id="cb58-51"><a href="#cb58-51" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-52"><a href="#cb58-52" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb58-53"><a href="#cb58-53" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb58-54"><a href="#cb58-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-55"><a href="#cb58-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Vehicle theft: ARIMA(0,1,1) and ARIMA(0,1,0)</span></span>
+<span id="cb58-56"><a href="#cb58-56" aria-hidden="true" tabindex="-1"></a>vehicle_models <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span></span>
+<span id="cb58-57"><a href="#cb58-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb58-58"><a href="#cb58-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_011 =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-59"><a href="#cb58-59" aria-hidden="true" tabindex="-1"></a>      vehicle_theft <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb58-60"><a href="#cb58-60" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-61"><a href="#cb58-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">base_010 =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-62"><a href="#cb58-62" aria-hidden="true" tabindex="-1"></a>      vehicle_theft <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-63"><a href="#cb58-63" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-64"><a href="#cb58-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp_011 =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-65"><a href="#cb58-65" aria-hidden="true" tabindex="-1"></a>      vehicle_theft <span class="sc">~</span> GDP <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb58-66"><a href="#cb58-66" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb58-67"><a href="#cb58-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp_010 =</span> <span class="fu">ARIMA</span>(</span>
+<span id="cb58-68"><a href="#cb58-68" aria-hidden="true" tabindex="-1"></a>      vehicle_theft <span class="sc">~</span> GDP <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb58-69"><a href="#cb58-69" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb58-70"><a href="#cb58-70" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The variable named <code>CPI</code> represents inflation calculated from CPI. Its lagged values therefore represent past inflation rates rather than past CPI index levels.</p>
+<p>The lagged relationships identified through the CCF are treated as exploratory candidates rather than established predictive relationships.</p>
+<section id="in-sample-model-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="in-sample-model-comparison">In-Sample Model Comparison</h2>
+<p>The candidate models are compared using AIC, corrected AIC (AICc), and BIC. These criteria balance model fit against complexity, with lower values indicating a more favourable balance.</p>
+<p>AICc is used as the main ranking criterion because the training sample is small. Nevertheless, models with several explanatory variables require particular caution when only 18 annual observations are available.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># in sample comparions</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="co"># murder</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>murder_models <span class="sc">|&gt;</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glance</span>() <span class="sc">|&gt;</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AICc) <span class="sc">|&gt;</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, AIC, AICc, BIC) <span class="sc">|&gt;</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">"Murder: in-sample comparison"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Murder: in-sample comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">AIC</th>
+<th style="text-align: right;">AICc</th>
+<th style="text-align: right;">BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">full</td>
+<td style="text-align: right;">259.97</td>
+<td style="text-align: right;">265.43</td>
+<td style="text-align: right;">264.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gdp_unemp</td>
+<td style="text-align: right;">277.08</td>
+<td style="text-align: right;">280.41</td>
+<td style="text-align: right;">280.41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">unemp</td>
+<td style="text-align: right;">295.68</td>
+<td style="text-align: right;">296.54</td>
+<td style="text-align: right;">297.35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">base</td>
+<td style="text-align: right;">300.85</td>
+<td style="text-align: right;">301.12</td>
+<td style="text-align: right;">301.68</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">#robbery</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>robbery_models <span class="sc">|&gt;</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glance</span>() <span class="sc">|&gt;</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AICc) <span class="sc">|&gt;</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, AIC, AICc, BIC) <span class="sc">|&gt;</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">"Aggravated robbery: in-sample comparison"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Aggravated robbery: in-sample comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">AIC</th>
+<th style="text-align: right;">AICc</th>
+<th style="text-align: right;">BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">cpi_100</td>
+<td style="text-align: right;">346.78</td>
+<td style="text-align: right;">349.86</td>
+<td style="text-align: right;">350.35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cpi_101</td>
+<td style="text-align: right;">347.39</td>
+<td style="text-align: right;">352.39</td>
+<td style="text-align: right;">351.85</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">base_100</td>
+<td style="text-align: right;">386.92</td>
+<td style="text-align: right;">388.64</td>
+<td style="text-align: right;">389.59</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">base_101</td>
+<td style="text-align: right;">388.71</td>
+<td style="text-align: right;">391.79</td>
+<td style="text-align: right;">392.27</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co">#burglary</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>burglary_models <span class="sc">|&gt;</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glance</span>() <span class="sc">|&gt;</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AICc) <span class="sc">|&gt;</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, AIC, AICc, BIC) <span class="sc">|&gt;</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">"Residential burglary: in-sample comparison"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Residential burglary: in-sample comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">AIC</th>
+<th style="text-align: right;">AICc</th>
+<th style="text-align: right;">BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">gdp</td>
+<td style="text-align: right;">372.27</td>
+<td style="text-align: right;">374.12</td>
+<td style="text-align: right;">374.77</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">base</td>
+<td style="text-align: right;">375.88</td>
+<td style="text-align: right;">376.74</td>
+<td style="text-align: right;">377.55</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gdp_cpi</td>
+<td style="text-align: right;">373.59</td>
+<td style="text-align: right;">376.92</td>
+<td style="text-align: right;">376.92</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">#vehicle</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>vehicle_models <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glance</span>() <span class="sc">|&gt;</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AICc) <span class="sc">|&gt;</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, AIC, AICc, BIC) <span class="sc">|&gt;</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">"Vehicle theft: in-sample comparison"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Vehicle theft: in-sample comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">AIC</th>
+<th style="text-align: right;">AICc</th>
+<th style="text-align: right;">BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">gdp_010</td>
+<td style="text-align: right;">322.76</td>
+<td style="text-align: right;">324.61</td>
+<td style="text-align: right;">325.26</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">base_010</td>
+<td style="text-align: right;">327.87</td>
+<td style="text-align: right;">328.72</td>
+<td style="text-align: right;">329.53</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">base_011</td>
+<td style="text-align: right;">329.47</td>
+<td style="text-align: right;">331.32</td>
+<td style="text-align: right;">331.97</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In the reported results, the preferred in-sample specifications are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Crime category</th>
+<th>Selected model</th>
+<th>Explanatory variables</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Murder</td>
+<td>ARIMAX with ARIMA(0,1,0) errors</td>
+<td>GDP, GDP lagged one year, inflation lagged two years, and unemployment</td>
+</tr>
+<tr class="even">
+<td>Aggravated robbery</td>
+<td>ARIMAX with ARIMA(1,0,0) errors</td>
+<td>Inflation lagged two years</td>
+</tr>
+<tr class="odd">
+<td>Residential burglary</td>
+<td>ARIMAX with ARIMA(0,1,0) errors</td>
+<td>GDP</td>
+</tr>
+<tr class="even">
+<td>Vehicle theft</td>
+<td>ARIMAX with ARIMA(0,1,0) errors</td>
+<td>GDP</td>
+</tr>
+</tbody>
+</table>
+<p>These selections describe the most favourable in-sample results among the candidate models. They do not necessarily identify the models with the best forecasting performance.</p>
+<p>Lagged predictors create unavailable values at the beginning of the training sample. Information criteria should therefore be interpreted only after checking that the models are estimated over comparable observations and that any missing-value warnings have been resolved. If different effective samples are used, the models should be refitted over a common period before their information criteria are compared.</p>
+</section>
+<section id="selected-model-estimates" class="level2">
+<h2 class="anchored" data-anchor-id="selected-model-estimates">Selected Model Estimates</h2>
+<p>The coefficient estimates and their standard errors are examined for the selected models.</p>
+</section>
+<section id="chosen-models" class="level2">
+<h2 class="anchored" data-anchor-id="chosen-models">chosen models</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># coeffecients for each model</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>murder_models <span class="sc">|&gt;</span> <span class="fu">select</span>(full) <span class="sc">|&gt;</span> <span class="fu">report</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: murder 
+Model: LM w/ ARIMA(0,1,0) errors 
+
+Coefficients:
+         GDP  lag(GDP, 1)  lag(CPI, 2)  Unemployment
+      0.0274      -0.0076    -201.3394      411.3944
+s.e.  0.0100       0.0095     159.4569      214.4297
+
+sigma^2 estimated as 1167181:  log likelihood=-124.99
+AIC=259.97   AICc=265.43   BIC=264.14</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>robbery_models <span class="sc">|&gt;</span> <span class="fu">select</span>(cpi_100) <span class="sc">|&gt;</span> <span class="fu">report</span>()    </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: aggr_robbery 
+Model: LM w/ ARIMA(1,0,0) errors 
+
+Coefficients:
+         ar1  lag(CPI, 2)  intercept
+      0.7356    -1547.952  134375.15
+s.e.  0.1694     1643.546   10978.29
+
+sigma^2 estimated as 93365053:  log likelihood=-169.39
+AIC=346.78   AICc=349.86   BIC=350.35</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>burglary_models <span class="sc">|&gt;</span> <span class="fu">select</span>(gdp) <span class="sc">|&gt;</span> <span class="fu">report</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: burglary_res 
+Model: LM w/ ARIMA(0,1,0) errors 
+
+Coefficients:
+         GDP   intercept
+      0.2619  -10346.883
+s.e.  0.1016    3317.062
+
+sigma^2 estimated as 1.51e+08:  log likelihood=-183.14
+AIC=372.27   AICc=374.12   BIC=374.77</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>vehicle_models <span class="sc">|&gt;</span> <span class="fu">select</span>(gdp_010) <span class="sc">|&gt;</span> <span class="fu">report</span>()         </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: vehicle_theft 
+Model: LM w/ ARIMA(0,1,0) errors 
+
+Coefficients:
+         GDP   intercept
+      0.0703  -4063.1567
+s.e.  0.0237    773.3572
+
+sigma^2 estimated as 8207247:  log likelihood=-158.38
+AIC=322.76   AICc=324.61   BIC=325.26</code></pre>
+</div>
+</div>
+<p>For the selected murder model, contemporaneous GDP is the only explanatory term identified as statistically significant in the reported results. The additional lagged and contemporaneous variables contribute to the selected specification but are not individually significant at the chosen threshold.</p>
+<p>For aggravated robbery, the first-order autoregressive coefficient is statistically significant. This indicates persistence in the model’s error process after accounting for lagged inflation. The reported results do not establish that the inflation coefficient itself is significant.</p>
+<p>GDP is also statistically significant in the selected residential burglary and vehicle theft models.</p>
+<p>These findings describe conditional associations within the fitted models. They do not establish causal effects, and the small sample means that coefficient estimates and significance assessments should be interpreted cautiously. Statistical significance also does not guarantee improved forecast accuracy.</p>
+</section>
+</section>
+<section id="residual-diagnostics" class="level1">
+<h1>Residual Diagnostics</h1>
+<p>Residual diagnostics are used to assess whether the selected models leave systematic serial dependence unexplained. The analysis examines residual time plots, residual distributions, and residual ACF plots.</p>
+<p>The Ljung–Box test provides a joint assessment of residual autocorrelation across the first five lags. Its hypotheses are:</p>
+<ul>
+<li>(H_0): Residual autocorrelations at lags one through five are zero.</li>
+<li>(H_1): At least one of these autocorrelations is non-zero.</li>
+</ul>
+<p>The test assesses serial correlation rather than stationarity.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visual check &amp; Ljung-Box Test</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="co">#murder</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>murder_models <span class="sc">|&gt;</span> <span class="fu">select</span>(full) <span class="sc">|&gt;</span> <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Murder: residual diagnostics"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-21-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>murder_models <span class="sc">|&gt;</span> <span class="fu">select</span>(full) <span class="sc">|&gt;</span> <span class="fu">augment</span>() <span class="sc">|&gt;</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.innov, ljung_box, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">dof =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .model lb_stat lb_pvalue
+  &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 full      5.03     0.413</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co">#robbery</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>robbery_models <span class="sc">|&gt;</span> <span class="fu">select</span>(cpi_100) <span class="sc">|&gt;</span> <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Aggravated robbery: residual diagnostics"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-21-2.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>robbery_models <span class="sc">|&gt;</span> <span class="fu">select</span>(cpi_100) <span class="sc">|&gt;</span> <span class="fu">augment</span>() <span class="sc">|&gt;</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.innov, ljung_box, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">dof =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .model  lb_stat lb_pvalue
+  &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 cpi_100    1.54     0.820</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co">#burglary</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>burglary_models <span class="sc">|&gt;</span> <span class="fu">select</span>(gdp) <span class="sc">|&gt;</span> <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Residential burglary: residual diagnostics"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-21-3.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>burglary_models <span class="sc">|&gt;</span> <span class="fu">select</span>(gdp) <span class="sc">|&gt;</span> <span class="fu">augment</span>() <span class="sc">|&gt;</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.innov, ljung_box, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">dof =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .model lb_stat lb_pvalue
+  &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 gdp       7.86     0.164</code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co">#vehicle theft</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>vehicle_models <span class="sc">|&gt;</span> <span class="fu">select</span>(gdp_010) <span class="sc">|&gt;</span> <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Vehicle theft: residual diagnostics"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-21-4.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>vehicle_models <span class="sc">|&gt;</span> <span class="fu">select</span>(gdp_010) <span class="sc">|&gt;</span> <span class="fu">augment</span>() <span class="sc">|&gt;</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.innov, ljung_box, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">dof =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .model  lb_stat lb_pvalue
+  &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 gdp_010    5.53     0.354</code></pre>
+</div>
+</div>
+<p>The residual ACF plots show no significant spikes for the selected models. The reported Ljung–Box p-values are also above the chosen significance level, so the null hypothesis of no residual autocorrelation is not rejected.</p>
+<p>Together, these findings suggest that the models adequately capture the serial dependence detectable in the training sample. However, a large p-value does not give the probability that the null hypothesis is true, and it does not prove that the residuals are independent or stationary.</p>
+<p>Because the sample is small, the tests may have limited ability to detect remaining dependence. The diagnostics therefore support proceeding to forecast evaluation without establishing that the models are fully adequate in every respect.</p>
+</section>
+<section id="out-of-sample-forecasting" class="level1">
+<h1>Out-of-Sample Forecasting</h1>
+<section id="forecast-design" class="level2">
+<h2 class="anchored" data-anchor-id="forecast-design">Forecast Design</h2>
+<p>Forecasts are generated for the three held-out observations covering the year labels 2023–2025. All candidate models are evaluated, allowing their forecasting performance to be compared with their in-sample rankings.</p>
+<p>The explanatory-variable values supplied in <code>test_data</code> are the realised values from the test period. The ARIMAX forecasts are therefore conditional on these observed macroeconomic outcomes.</p>
+<p>This is a conditional forecast evaluation rather than a fully prospective forecasting exercise. In practical forecasting, unavailable explanatory variables would need to be forecast separately or supplied through explicit scenarios.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># forecasting</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>murder_fc   <span class="ot">&lt;-</span> murder_models   <span class="sc">|&gt;</span> <span class="fu">forecast</span>(<span class="at">new_data =</span> test_data)</span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>robbery_fc  <span class="ot">&lt;-</span> robbery_models  <span class="sc">|&gt;</span> <span class="fu">forecast</span>(<span class="at">new_data =</span> test_data)</span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>burglary_fc <span class="ot">&lt;-</span> burglary_models <span class="sc">|&gt;</span> <span class="fu">forecast</span>(<span class="at">new_data =</span> test_data)</span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>vehicle_fc  <span class="ot">&lt;-</span> vehicle_models  <span class="sc">|&gt;</span> <span class="fu">forecast</span>(<span class="at">new_data =</span> test_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The prediction intervals describe uncertainty under the fitted model and supplied explanatory-variable paths. They do not incorporate uncertainty from separately forecasting those explanatory variables.</p>
+</section>
+<section id="forecasts-from-the-in-sample-selected-models" class="level2">
+<h2 class="anchored" data-anchor-id="forecasts-from-the-in-sample-selected-models">Forecasts from the In-Sample Selected Models</h2>
+<p>The following plots compare the forecasts from the selected models with the observed crime counts.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># forecast overlayed on full model</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="co"># murder</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>murder_fc   <span class="sc">|&gt;</span> <span class="fu">filter</span>(.model <span class="sc">==</span> <span class="st">"full"</span>)     <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(crime_data) <span class="sc">+</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Murder: forecast vs actual"</span>, <span class="at">y =</span> <span class="st">"Murder"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-23-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co">#robbery</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>robbery_fc  <span class="sc">|&gt;</span> <span class="fu">filter</span>(.model <span class="sc">==</span> <span class="st">"cpi_100"</span>)  <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(crime_data) <span class="sc">+</span></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Aggravated robbery: forecast vs actual"</span>, <span class="at">y =</span> <span class="st">"Aggravated robbery"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-23-2.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># burglary</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>burglary_fc <span class="sc">|&gt;</span> <span class="fu">filter</span>(.model <span class="sc">==</span> <span class="st">"gdp"</span>)      <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(crime_data) <span class="sc">+</span></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Residential burglary: forecast vs actual"</span>, <span class="at">y =</span> <span class="st">"Residential burglary"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-23-3.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co"># vehicle theft</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>vehicle_fc  <span class="sc">|&gt;</span> <span class="fu">filter</span>(.model <span class="sc">==</span> <span class="st">"gdp_010"</span>)  <span class="sc">|&gt;</span> <span class="fu">autoplot</span>(crime_data) <span class="sc">+</span></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Vehicle theft: forecast vs actual"</span>, <span class="at">y =</span> <span class="st">"Vehicle theft"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-3_files/figure-html/project3-chunk-23-4.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="murder" class="level3">
+<h3 class="anchored" data-anchor-id="murder">Murder</h3>
+<p>The selected murder model predicts a decline, whereas the observed series rises over part of the forecast period. The point forecasts therefore do not capture the observed direction of movement. However, the observations remain within the displayed prediction intervals, indicating substantial uncertainty around the forecast path.</p>
+</section>
+<section id="aggravated-robbery" class="level3">
+<h3 class="anchored" data-anchor-id="aggravated-robbery">Aggravated Robbery</h3>
+<p>The selected aggravated robbery model does not closely reproduce the observed path. Nevertheless, the observations fall within the displayed prediction intervals. This distinction highlights that interval coverage and point forecast accuracy assess different aspects of forecast performance.</p>
+</section>
+<section id="residential-burglary" class="level3">
+<h3 class="anchored" data-anchor-id="residential-burglary">Residential Burglary</h3>
+<p>The residential burglary model captures the direction of the observed decline, and its point forecasts are comparatively close to the recorded values. The observations also lie within the displayed prediction intervals.</p>
+</section>
+<section id="vehicle-theft" class="level3">
+<h3 class="anchored" data-anchor-id="vehicle-theft">Vehicle Theft</h3>
+<p>The vehicle theft model also predicts a decline, consistent with the overall direction of the observed series. However, it overestimates the magnitude of the decline, producing forecasts that fall more sharply than the observed counts.</p>
+<p>The prediction intervals appear narrower for residential burglary and vehicle theft than for murder and aggravated robbery. Because the crime series have different levels and plotting scales, this visual comparison should not be treated as a formal comparison of relative uncertainty.</p>
+</section>
+</section>
+</section>
+<section id="final-forecast-performance-comparison" class="level1">
+<h1>Final Forecast Performance Comparison</h1>
+<p>Forecast accuracy is evaluated using root mean squared error (RMSE), mean absolute error (MAE), mean absolute percentage error (MAPE), and mean absolute scaled error (MASE).</p>
+<p>RMSE and MAE measure errors in recorded-case units. MAPE expresses errors relative to the observed counts, while MASE scales errors against an in-sample naïve benchmark. Lower values indicate better performance under each measure.</p>
+<p>The tables are ranked by MAPE, although the other measures are considered alongside it.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># accuracy comparison</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="co"># murder</span></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(murder_fc, crime_data) <span class="sc">|&gt;</span></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, RMSE, MAE, MAPE, MASE) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(MAPE) <span class="sc">|&gt;</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Murder: out-of-sample accuracy"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Murder: out-of-sample accuracy</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">RMSE</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: right;">MAPE</th>
+<th style="text-align: right;">MASE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">full</td>
+<td style="text-align: right;">2527.993</td>
+<td style="text-align: right;">2206.313</td>
+<td style="text-align: right;">9.159</td>
+<td style="text-align: right;">1.980</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">unemp</td>
+<td style="text-align: right;">2525.859</td>
+<td style="text-align: right;">2248.650</td>
+<td style="text-align: right;">9.327</td>
+<td style="text-align: right;">2.018</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gdp_unemp</td>
+<td style="text-align: right;">2840.192</td>
+<td style="text-align: right;">2430.350</td>
+<td style="text-align: right;">10.148</td>
+<td style="text-align: right;">2.181</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">base</td>
+<td style="text-align: right;">3011.630</td>
+<td style="text-align: right;">2442.333</td>
+<td style="text-align: right;">10.283</td>
+<td style="text-align: right;">2.192</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># robbery</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(robbery_fc, crime_data) <span class="sc">|&gt;</span></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, RMSE, MAE, MAPE, MASE) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(MAPE) <span class="sc">|&gt;</span></span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Aggravated robbery: out-of-sample accuracy"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Aggravated robbery: out-of-sample accuracy</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">RMSE</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: right;">MAPE</th>
+<th style="text-align: right;">MASE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">base_101</td>
+<td style="text-align: right;">8737.163</td>
+<td style="text-align: right;">7380.777</td>
+<td style="text-align: right;">5.616</td>
+<td style="text-align: right;">0.915</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">base_100</td>
+<td style="text-align: right;">9628.748</td>
+<td style="text-align: right;">8267.006</td>
+<td style="text-align: right;">6.290</td>
+<td style="text-align: right;">1.025</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cpi_100</td>
+<td style="text-align: right;">9718.705</td>
+<td style="text-align: right;">8978.640</td>
+<td style="text-align: right;">6.660</td>
+<td style="text-align: right;">1.113</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cpi_101</td>
+<td style="text-align: right;">15896.570</td>
+<td style="text-align: right;">13807.250</td>
+<td style="text-align: right;">9.735</td>
+<td style="text-align: right;">1.712</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co"># burglary</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(burglary_fc, crime_data) <span class="sc">|&gt;</span></span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, RMSE, MAE, MAPE, MASE) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(MAPE) <span class="sc">|&gt;</span></span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Residential burglary: out-of-sample accuracy"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Residential burglary: out-of-sample accuracy</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">RMSE</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: right;">MAPE</th>
+<th style="text-align: right;">MASE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">gdp</td>
+<td style="text-align: right;">8091.061</td>
+<td style="text-align: right;">6977.088</td>
+<td style="text-align: right;">5.209</td>
+<td style="text-align: right;">0.651</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">base</td>
+<td style="text-align: right;">12901.959</td>
+<td style="text-align: right;">11505.510</td>
+<td style="text-align: right;">8.541</td>
+<td style="text-align: right;">1.074</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gdp_cpi</td>
+<td style="text-align: right;">12841.596</td>
+<td style="text-align: right;">11565.137</td>
+<td style="text-align: right;">8.571</td>
+<td style="text-align: right;">1.079</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co"># vehicle</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(vehicle_fc, crime_data) <span class="sc">|&gt;</span></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, RMSE, MAE, MAPE, MASE) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(MAPE) <span class="sc">|&gt;</span></span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Vehicle theft: out-of-sample accuracy"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Vehicle theft: out-of-sample accuracy</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">RMSE</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: right;">MAPE</th>
+<th style="text-align: right;">MASE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">base_010</td>
+<td style="text-align: right;">1283.310</td>
+<td style="text-align: right;">1064.157</td>
+<td style="text-align: right;">3.105</td>
+<td style="text-align: right;">0.336</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">base_011</td>
+<td style="text-align: right;">1943.002</td>
+<td style="text-align: right;">1821.119</td>
+<td style="text-align: right;">5.440</td>
+<td style="text-align: right;">0.576</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gdp_010</td>
+<td style="text-align: right;">2307.609</td>
+<td style="text-align: right;">2280.047</td>
+<td style="text-align: right;">6.956</td>
+<td style="text-align: right;">0.721</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gdp_011</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">NaN</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For aggravated robbery and vehicle theft, the models preferred by the in-sample comparison do not produce the best out-of-sample forecasts. Baseline models without macroeconomic regressors perform better over the held-out period under the reported accuracy ranking.</p>
+<p>This suggests that adding explanatory variables does not automatically improve forecasting performance. Additional predictors may improve training-sample fit while introducing estimation uncertainty, particularly when the available sample is small.</p>
+<p>Model comparisons are most direct within each crime category. Raw RMSE and MAE values should not be used alone to rank forecasting difficulty across crime categories because the counts differ in scale. MAPE and MASE provide additional context, although neither removes every difference between the series.</p>
+<p>The test sample contains only three annual observations, so the rankings are sensitive to individual forecast errors. These results provide an initial assessment rather than strong evidence of long-run forecasting superiority.</p>
+<p>Overall, the analysis shows why model selection should consider both in-sample fit and held-out forecast performance. The macroeconomic variables offer potentially useful explanatory information, but their predictive value differs across crime categories and is not consistently greater than that of simpler ARIMA models.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<p>International Monetary Fund. (2026). <em>Real Gross Domestic Product (GDP) for South Africa</em> [NGDPRSAXDCZAQ][real gdp.csv]. FRED, Federal Reserve Bank of St.&nbsp;Louis. <a href="https://fred.stlouisfed.org/series/NGDPRSAXDCZAQ" class="uri">https://fred.stlouisfed.org/series/NGDPRSAXDCZAQ</a>.</p>
+<p>Organisation for Economic Co-operation and Development. (2026). <em>Infra-Annual Labor Statistics: Unemployment Rate Total: From 15 to 64 Years for South Africa</em> [LRUN64TTZAQ156S] [unemployment rate.csv]. FRED, Federal Reserve Bank of St.&nbsp;Louis. <a href="https://fred.stlouisfed.org/series/LRUN64TTZAQ156S" class="uri">https://fred.stlouisfed.org/series/LRUN64TTZAQ156S</a>.</p>
+<p>South African Police Service. (2026). <em>South African Police Service Annual Crime Records 2005–2026</em> (Version 1.5)[sapacr-2005-2026-v1.5.csv]. DataFirst. <a href="https://doi.org/10.25828/5MAW-4H90" class="uri">https://doi.org/10.25828/5MAW-4H90</a>.</p>
+<p>Statistics South Africa. (2026). <em>Consumer Price Index 1970–2026</em> (Version 1.1)[cpi-2008-2026-v1.1.xlsx]. DataFirst. <a href="https://doi.org/10.25828/5ZYE-Y989" class="uri">https://doi.org/10.25828/5ZYE-Y989</a>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Natalie Chidikwindi · CHDNAT002</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Time Series Portfolio · 2026</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

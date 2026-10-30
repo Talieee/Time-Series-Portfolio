@@ -1,25 +1,47 @@
 ---
-title: "[Project title]"
+title: "Project 1: Forecasting Influenza Cases in Australia"
 ---
 
-<!--
-Template (per department guidelines, Section 3.1). Keep this to one page — the detailed
-analysis belongs in a linked, separate file/notebook, not here.
--->
+**Section:**
 
-**Section and topic:** [Section 1 or 2 — topic]
+Section 1 seasonal modelling and forecasting, with connections to exponential smoothing in Section 2.
 
-**Type of project:** [implementation / Shiny app / exploration / simulation study]
+**Type:**
 
-**Question or aim:** [what you set out to answer or demonstrate]
+Implementation and model comparison using real-world data.
 
-**Data used:** [dataset name and source, if real-world data; or "simulated", with generating
-process]
+## Aim
 
-**Methods used:** [methods/models applied]
+This project investigates whether seasonal ARIMA (SARIMA) or exponential smoothing (ETS) produces more accurate forecasts of monthly influenza notifications in Australia. It also examines whether the selected models adequately capture temporal dependence and improve on simple forecasting benchmarks.
 
-**Key findings:** [2-4 sentences — the headline results]
+## Data and source
 
-**What I would do differently next time:** [limitations, and what you'd change with hindsight]
+The data came from the Australian National Notifiable Disease Surveillance System (NNDSS). Weekly laboratory-confirmed influenza notifications were aggregated to national monthly totals for January 2008–December 2019, giving 144 observations.
 
-**Link to detailed analysis:** [detailed-analysis.qmd](detailed-analysis.qmd)
+These are reported notifications rather than all influenza infections; the totals depend on healthcare-seeking, testing and reporting practices. Observations from 2020 onward were excluded because pandemic-related disruptions could represent a structural break.
+
+## Methods
+
+Time plots, seasonal plots and STL decomposition were used to explore trends, seasonality and unusual observations. The data were split chronologically into training observations from 2008–2017 and a 24-month test period covering 2018–2019.
+
+For SARIMA modelling, a log transformation was supported by the training-data Box–Cox estimate. Stationarity tests, seasonal differencing, ACF and PACF plots informed candidate models. SARIMA and ETS specifications were compared within their respective model families using information criteria, followed by residual plots and Ljung–Box tests.
+
+The selected models were compared with mean, naive, seasonal naive and drift benchmarks. Test-set accuracy was evaluated using RMSE, MAE and MAPE.
+
+## Key findings
+
+Influenza notifications showed strong annual seasonality, with the highest average level in August and substantial variation in seasonal peaks across years.
+
+The preferred in-sample specifications were SARIMA(2,0,0)(2,1,0)\[12\] and ETS(M,N,M). Both retained residual autocorrelation, indicating that neither fully captured the dependence in the series.
+
+ETS(M,N,M) achieved the lowest test-set RMSE and MAE, while the drift benchmark achieved the lowest MAPE. Therefore, the preferred forecasting method depended on the accuracy measure. The selected SARIMA model’s poor test performance also demonstrated that strong in-sample fit does not guarantee accurate forecasts.
+
+## Limitations and next steps
+
+The comparison used a single two-year test period and primarily assessed point forecasts. National aggregation may also conceal regional and strain-specific patterns.
+
+I would extend the analysis using rolling-origin evaluation, assess prediction-interval coverage and width, and investigate external predictors such as weather or testing activity. Modelling unusual seasons and structural changes explicitly could also improve the analysis.
+
+## Detailed analysis and code
+
+[View the detailed analysis and R code](code.qmd)

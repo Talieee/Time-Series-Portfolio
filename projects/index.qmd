@@ -2,15 +2,11 @@
 title: "Projects"
 ---
 
-Four substantial projects, two from each section. Across the four, at least one involves model
-comparison, at least one involves computational/statistical programming, and at least one
-involves real-world data.
+This portfolio contains four substantial projects covering topics from Sections 1 and 2. Together, the projects demonstrate **model comparison, computational and statistical programming, simulation, forecasting, and the analysis of real-world data**.
 
 | # | Title | Section | Type | Involves |
-|---|-------|---------|------|----------|
-| 1 | [Project title](project-01/index.qmd) | [1 or 2] | [implementation / Shiny app / exploration / simulation study] | [model comparison / programming / real-world data] |
-| 2 | [Project title] | | | |
-| 3 | [Project title] | | | |
-| 4 | [Project title] | | | |
-
-<!-- Duplicate the project-01/ folder for projects 2-4, and add a row + link above for each. -->
+|---|---|---|---|---|
+| 1 | [Forecasting Influenza Cases in Australia](project-01/index.qmd) | 1 & 2 | Implementation / Exploration / Forecasting Study | Model comparison / Forecasting / Real-world data |
+| 2 | [GARCH Modelling of Financial Data](project-02/index.qmd) | 1 | Implementation / Model Comparison / Simulation Study | Statistical programming / Model comparison / Simulation / Real-world data |
+| 3 | [Crime and Economic Indicators in South Africa](project-03/index.qmd) | 2 | Exploration / Real-World Data Analysis / Forecasting Study | ARIMAX / Model comparison / Forecasting / Real-world data |
+| 4 | [State Estimation Under Uncertainty: A Simulation Study of the Kalman Filter](project-04/index.qmd) | 2 | Implementation / Exploration / Simulation Study | Statistical programming / Simulation / Model comparison |

@@ -1,10 +1,35 @@
 ---
-title: "Journal"
+title: "Learning Journal"
 ---
 
-A chronological record of my progress through the course. Each entry links to any relevant
-detailed analysis elsewhere in the portfolio.
+This journal documents my progress through the course, including what I learned, the difficulties I encountered, and my next steps. Relevant tutorial links are included within the entries.
 
-- [YYYY-MM-DD — Entry title](entries/2026-01-01-entry-template.qmd)
+## July 2026
 
-<!-- Add a new bullet + a new file under entries/ for each journal entry. -->
+- [27 July — Entry 1: Introduction to time series](entries/entry%201.qmd)
+
+## August 2026
+
+- [3 August — Entry 2: Forecasting, exploration and decomposition](entries/entry%202.qmd)
+- [17 August — Entry 3: Forecasting methods, cross-validation and accuracy measures](entries/entry%203.qmd)
+- [19 August — Entry 4: Lag operators, stationarity and differencing](entries/entry%204.qmd)
+- [24 August — Entry 5: ARMA, ARIMA and SARIMA models](entries/entry%205.qmd)
+- [31 August — Entry 6: Time series modelling in R](entries/entry%206.qmd)
+
+## September 2026
+
+- [14 September — Entry 7: Introduction to exponential smoothing](entries/entry%207.qmd)
+- [16 September — Entry 8: ARCH and GARCH models](entries/entry%208.qmd)
+- [21 September — Entry 9: Exponential smoothing, bootstrapping and time series regression](entries/entry%209.qmd)
+- [28 September — Entry 10: State space models and dynamic linear models](entries/entry%2010.qmd)
+
+## October 2026
+
+- [12 October — Entry 11: Spectral analysis](entries/entry%2011.qmd)
+- [19 October — Entry 12: Kalman filtering, smoothing and forecasting](entries/entry%2012.qmd)
+- [26 October — Entry 13: Hidden Markov models](entries/entry%2013.qmd)
+- [29 October — Entry 14: Structural breaks in time series](entries/entry%2014.qmd)
+
+------------------------------------------------------------------------
+
+[Home](../index.qmd) · [AI use log](../ai-use-log.qmd)

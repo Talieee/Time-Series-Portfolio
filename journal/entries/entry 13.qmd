@@ -1,0 +1,32 @@
+---
+title: "Journal entry 13"
+date: 26 October 2026
+---
+
+**Date:** 2026-10-26
+
+**Session/topic covered:**
+
+Hidden Markov Models, likelihood calculation and state decoding
+
+**What I did:**
+
+Attended the lectures on Hidden Markov Models, went through the chapter notes, and worked through selected tutorial questions. This included simulating a three-state Gaussian HMM, using the Viterbi algorithm to decode hidden states, and calculating observation probabilities through enumeration and matrix multiplication. I also explored the connection between HMMs and independent mixture models, simulated the occasionally dishonest casino model, and implemented a Bernoulli HMM likelihood function. Due to time constraints, I did not complete Questions 5 and 8.
+
+**Related tutorial:**
+
+[Hidden Markov models tutorial](../../section-2/HMM%20tutorial.qmd)
+
+**What I learned:**
+
+An HMM combines an unobserved Markov state sequence with state-dependent observation distributions. Transition probabilities describe movement between states, while emission probabilities describe the observations generated within each state. Likelihood calculations sum over all possible hidden state sequences, whereas Viterbi decoding selects the most likely complete sequence. I feel most confident in my understanding of the Viterbi algorithm, particularly how it builds up the best path scores and then works backwards to recover the most likely state sequence.
+
+**Difficulties or open questions:**
+
+The main challenge was consolidating the lecture material, notes and code. I also find it challenging to recognize where HMMs would arise in practice and when they would be an appropriate modelling choice. Although I can follow the tutorial examples, I need more practice identifying plausible hidden states and observation distributions in real applications.
+
+**What to do next:**
+
+Complete Questions 5 and 8 and use these examples to strengthen my understanding of practical applications. Practice explaining the forward and Viterbi algorithms in my own words, review how transition and emission parameters are estimated, and consider what features of a dataset would suggest that an HMM is appropriate.
+
+[Back to journal](../index.qmd)

@@ -1,0 +1,32 @@
+---
+title: "Journal Entry 4"
+date: 19 August 2026
+---
+
+**Date:** 2026-08-19
+
+**Session/topic covered:**
+
+Lag and Lead operators, stationary, white noise, and restoring stationary.
+
+**What I did:**
+
+Attended the Lecture and went over the slides as well as my notes.
+
+**Related analysis:**
+
+[Project 1: Forecasting influenza — analysis and code](../../projects/project-01/code.qmd)
+
+**What I learned:**
+
+I learnt about the lead and lag of time series data with the lag being we record the measure today as yesterdays and the lead being we record today measure as tomorrows measure. I also learnt about strict stationarity and weak stationarity and how the aim is to get the model to stationary to be able to then model and make inference, so we difference to remove trends, seasonality. I also learnt about ergodicity which means that the time series fluctuates around a mean value, which indicates stationarity which is the goal. If the data is stationary then we can model, forecast correctly and so on. Lastly the lecture went through how to get the data to be stationary and how to determine how much differencing is required to remove trend in the data.
+
+**Difficulties or open questions:**
+
+Still struggling to understand why we need to have a lead and lags as well. I kind of understand that lags help identify possible correlation but lead I'm not sure. I also need to go over the notation for the the algebra of lags and leads.
+
+**What to do next:**
+
+Go over the Lags and leads for more understanding and do a tutorial on the difference techniques for restoring stationarity.
+
+[Back to journal](../index.qmd)

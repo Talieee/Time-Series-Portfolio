@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Exponential Smoothing prac – Natalie Chidikwindi — Time Series Portfolio</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-2af0430c0724a252a33c7a0e9b17275b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Natalie Chidikwindi — Time Series Portfolio</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../Index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../journal/index.html"> 
+<span class="menu-text">Journal</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 1</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-1">    
+        <li>
+    <a class="dropdown-item" href="../section-1/section-1.html">
+ <span class="dropdown-text">Section 1 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/section 1 tut - exercises.html">
+ <span class="dropdown-text">Time Series Exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/arch garch lab.html">
+ <span class="dropdown-text">ARCH/GARCH Practical Lab</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/ARCH_GARCH_Theoretical_Tutorial.html">
+ <span class="dropdown-text">ARCH/GARCH Theory</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/spectral analysis tut.html">
+ <span class="dropdown-text">Spectral Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/Structural breaks tut.html">
+ <span class="dropdown-text">Structural Breaks</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-2" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 2</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-2">    
+        <li>
+    <a class="dropdown-item" href="../section-2/section-2.html">
+ <span class="dropdown-text">Section 2 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/exponential smoothing prac.html">
+ <span class="dropdown-text">Exponential Smoothing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/SSM prac.html">
+ <span class="dropdown-text">State Space Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/HMM tutorial.html">
+ <span class="dropdown-text">Hidden Markov Models</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../reflective-commentary.html"> 
+<span class="menu-text">Reflective Commentary</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../ai-use-log.html"> 
+<span class="menu-text">AI Use Log</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../appendix/code-and-data.html"> 
+<span class="menu-text">Code &amp; Data</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#question-1" id="toc-question-1" class="nav-link active" data-scroll-target="#question-1">Question 1</a>
+  <ul class="collapse">
+  <li><a href="#for-the-marathon-data-set-in-library-fpp2-write-your-own-functions-to-implement-simple-exponential-smoothing.-you-need-to-calculate-error-sums-of-squares-and-estimate-the-parameters-𝛼-and-ℓ0.-the-function-should-take-arguments-y-the-time-series-alpha-the-smoothing-parameter-𝛼-and-level-the-initial-level-ℓ0.-it-should-return-the-forecast-of-the-next-observation-in-the-series.-does-it-give-the-same-forecast-as-ses" id="toc-for-the-marathon-data-set-in-library-fpp2-write-your-own-functions-to-implement-simple-exponential-smoothing.-you-need-to-calculate-error-sums-of-squares-and-estimate-the-parameters-𝛼-and-ℓ0.-the-function-should-take-arguments-y-the-time-series-alpha-the-smoothing-parameter-𝛼-and-level-the-initial-level-ℓ0.-it-should-return-the-forecast-of-the-next-observation-in-the-series.-does-it-give-the-same-forecast-as-ses" class="nav-link" data-scroll-target="#for-the-marathon-data-set-in-library-fpp2-write-your-own-functions-to-implement-simple-exponential-smoothing.-you-need-to-calculate-error-sums-of-squares-and-estimate-the-parameters-𝛼-and-ℓ0.-the-function-should-take-arguments-y-the-time-series-alpha-the-smoothing-parameter-𝛼-and-level-the-initial-level-ℓ0.-it-should-return-the-forecast-of-the-next-observation-in-the-series.-does-it-give-the-same-forecast-as-ses">1. For the marathon data set in library fpp2 write your own functions to implement simple exponential smoothing. You need to calculate error sums of squares and estimate the parameters 𝛼 and ℓ0. The function should take arguments y (the time series), alpha (the smoothing parameter 𝛼) and level (the initial level ℓ0). It should return the forecast of the next observation in the series. Does it give the same forecast as ses()?</a></li>
+  <li><a href="#use-simple-exponential-smoothing-to-obtain-a-point-forecast-for-2017-and-a-prediction-interval-for-2017.-with-and-without-the-ses-function.-the-estimates-should-be-exactly-the-same." id="toc-use-simple-exponential-smoothing-to-obtain-a-point-forecast-for-2017-and-a-prediction-interval-for-2017.-with-and-without-the-ses-function.-the-estimates-should-be-exactly-the-same." class="nav-link" data-scroll-target="#use-simple-exponential-smoothing-to-obtain-a-point-forecast-for-2017-and-a-prediction-interval-for-2017.-with-and-without-the-ses-function.-the-estimates-should-be-exactly-the-same.">2. Use simple exponential smoothing to obtain a point forecast for 2017, and a prediction interval for 2017. With and without the ses() function. The estimates should be exactly the same.</a></li>
+  <li><a href="#plot-the-time-series-and-add-fitted-values" id="toc-plot-the-time-series-and-add-fitted-values" class="nav-link" data-scroll-target="#plot-the-time-series-and-add-fitted-values">3. Plot the time series and add fitted values</a></li>
+  <li><a href="#obtain-an-estimate-for-𝜎" id="toc-obtain-an-estimate-for-𝜎" class="nav-link" data-scroll-target="#obtain-an-estimate-for-𝜎">4. Obtain an estimate for 𝜎</a></li>
+  </ul></li>
+  <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2">Question 2</a></li>
+  <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3">Question 3</a></li>
+  <li><a href="#question-4" id="toc-question-4" class="nav-link" data-scroll-target="#question-4">Question 4</a>
+  <ul class="collapse">
+  <li><a href="#data-set-books-contains-the-daily-sales-of-paperback-and-hardcover-books-at-the-same-store.-the-task-is-to-forecast-the-next-four-days-sales-for-paperback-and-hardcover-books.-plot-the-series-and-discuss-the-main-features-of-the-data.-use-the-ses-function-to-forecast-each-series-and-plot-the-forecasts.-compute-the-rmse-values-for-the-training-data-in-each-case." id="toc-data-set-books-contains-the-daily-sales-of-paperback-and-hardcover-books-at-the-same-store.-the-task-is-to-forecast-the-next-four-days-sales-for-paperback-and-hardcover-books.-plot-the-series-and-discuss-the-main-features-of-the-data.-use-the-ses-function-to-forecast-each-series-and-plot-the-forecasts.-compute-the-rmse-values-for-the-training-data-in-each-case." class="nav-link" data-scroll-target="#data-set-books-contains-the-daily-sales-of-paperback-and-hardcover-books-at-the-same-store.-the-task-is-to-forecast-the-next-four-days-sales-for-paperback-and-hardcover-books.-plot-the-series-and-discuss-the-main-features-of-the-data.-use-the-ses-function-to-forecast-each-series-and-plot-the-forecasts.-compute-the-rmse-values-for-the-training-data-in-each-case.">1. Data set books contains the daily sales of paperback and hardcover books at the same store. The task is to forecast the next four days’ sales for paperback and hardcover books. Plot the series and discuss the main features of the data. Use the ses() function to forecast each series, and plot the forecasts. Compute the RMSE values for the training data in each case.</a></li>
+  <li><a href="#now-apply-holts-linear-method-to-the-paperback-and-hardback-series-and-compute-four-day-forecasts-in-each-case.-compare-the-rmse-measures-of-holts-method-for-the-two-series-to-those-of-simple-exponential-smoothing-in-a..-remember-that-holts-method-is-using-one-more-parameter-than-ses.-discuss-the-merits-of-the-two-forecasting-methods-for-these-data-sets." id="toc-now-apply-holts-linear-method-to-the-paperback-and-hardback-series-and-compute-four-day-forecasts-in-each-case.-compare-the-rmse-measures-of-holts-method-for-the-two-series-to-those-of-simple-exponential-smoothing-in-a..-remember-that-holts-method-is-using-one-more-parameter-than-ses.-discuss-the-merits-of-the-two-forecasting-methods-for-these-data-sets." class="nav-link" data-scroll-target="#now-apply-holts-linear-method-to-the-paperback-and-hardback-series-and-compute-four-day-forecasts-in-each-case.-compare-the-rmse-measures-of-holts-method-for-the-two-series-to-those-of-simple-exponential-smoothing-in-a..-remember-that-holts-method-is-using-one-more-parameter-than-ses.-discuss-the-merits-of-the-two-forecasting-methods-for-these-data-sets.">2. Now apply Holt’s linear method to the paperback and hardback series and compute four-day forecasts in each case. Compare the RMSE measures of Holt’s method for the two series to those of simple exponential smoothing in a.). Remember that Holt’s method is using one more parameter than SES. Discuss the merits of the two forecasting methods for these data sets.</a></li>
+  <li><a href="#compare-the-forecasts-for-the-two-series-using-both-methods.-which-do-you-think-is-best" id="toc-compare-the-forecasts-for-the-two-series-using-both-methods.-which-do-you-think-is-best" class="nav-link" data-scroll-target="#compare-the-forecasts-for-the-two-series-using-both-methods.-which-do-you-think-is-best">3. Compare the forecasts for the two series using both methods. Which do you think is best?</a></li>
+  <li><a href="#calculate-a-95-prediction-interval-for-the-first-forecast-for-each-series-using-the-rmse-values-and-assuming-normal-errors.-compare-your-intervals-with-those-produced-using-ses-and-holt." id="toc-calculate-a-95-prediction-interval-for-the-first-forecast-for-each-series-using-the-rmse-values-and-assuming-normal-errors.-compare-your-intervals-with-those-produced-using-ses-and-holt." class="nav-link" data-scroll-target="#calculate-a-95-prediction-interval-for-the-first-forecast-for-each-series-using-the-rmse-values-and-assuming-normal-errors.-compare-your-intervals-with-those-produced-using-ses-and-holt.">4. Calculate a 95% prediction interval for the first forecast for each series, using the RMSE values and assuming normal errors. Compare your intervals with those produced using ses() and holt().</a></li>
+  </ul></li>
+  <li><a href="#question-5" id="toc-question-5" class="nav-link" data-scroll-target="#question-5">Question 5</a></li>
+  <li><a href="#reflection" id="toc-reflection" class="nav-link" data-scroll-target="#reflection">Reflection</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Exponential Smoothing prac</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1</h2>
+<section id="for-the-marathon-data-set-in-library-fpp2-write-your-own-functions-to-implement-simple-exponential-smoothing.-you-need-to-calculate-error-sums-of-squares-and-estimate-the-parameters-𝛼-and-ℓ0.-the-function-should-take-arguments-y-the-time-series-alpha-the-smoothing-parameter-𝛼-and-level-the-initial-level-ℓ0.-it-should-return-the-forecast-of-the-next-observation-in-the-series.-does-it-give-the-same-forecast-as-ses" class="level3">
+<h3 class="anchored" data-anchor-id="for-the-marathon-data-set-in-library-fpp2-write-your-own-functions-to-implement-simple-exponential-smoothing.-you-need-to-calculate-error-sums-of-squares-and-estimate-the-parameters-𝛼-and-ℓ0.-the-function-should-take-arguments-y-the-time-series-alpha-the-smoothing-parameter-𝛼-and-level-the-initial-level-ℓ0.-it-should-return-the-forecast-of-the-next-observation-in-the-series.-does-it-give-the-same-forecast-as-ses">1. For the marathon data set in library fpp2 write your own functions to implement simple exponential smoothing. You need to calculate error sums of squares and estimate the parameters 𝛼 and ℓ0. The function should take arguments y (the time series), alpha (the smoothing parameter 𝛼) and level (the initial level ℓ0). It should return the forecast of the next observation in the series. Does it give the same forecast as ses()?</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># library for the dataset</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dat_q1 <span class="ot">&lt;-</span> marathon </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># function for simple exponential smoothing</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>simp_ets <span class="ot">&lt;-</span> <span class="cf">function</span>(y, alpha, level){</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  yhat <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  yhat[<span class="dv">1</span>] <span class="ot">&lt;-</span> level</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n){</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    yhat[i] <span class="ot">&lt;-</span> alpha <span class="sc">*</span> y[i<span class="dv">-1</span>] <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> alpha) <span class="sc">*</span> yhat[i<span class="dv">-1</span>]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  next_fc <span class="ot">&lt;-</span> alpha <span class="sc">*</span> y[n] <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> alpha) <span class="sc">*</span> yhat[n]</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">forecast =</span> next_fc, <span class="at">fitted =</span> yhat))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted using the ses function</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">ses</span>(<span class="at">y =</span> dat_q1, <span class="at">h =</span> <span class="dv">1</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># optimal values extracted for mine</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">simp_ets</span>(<span class="at">y =</span> dat_q1, <span class="at">alpha =</span> fit<span class="sc">$</span>model<span class="sc">$</span>par[<span class="dv">1</span>], <span class="at">level =</span> fit<span class="sc">$</span>model<span class="sc">$</span>par[<span class="dv">2</span>])</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison using a data frame to display as a table</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">My_Forecast =</span> res<span class="sc">$</span>forecast, </span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">SES_Forecast =</span> <span class="fu">as.numeric</span>(fit<span class="sc">$</span>mean)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      My_Forecast SES_Forecast
+alpha    130.3563     130.3563</code></pre>
+</div>
+</div>
+<p>Yes the values are the same</p>
+</section>
+<section id="use-simple-exponential-smoothing-to-obtain-a-point-forecast-for-2017-and-a-prediction-interval-for-2017.-with-and-without-the-ses-function.-the-estimates-should-be-exactly-the-same." class="level3">
+<h3 class="anchored" data-anchor-id="use-simple-exponential-smoothing-to-obtain-a-point-forecast-for-2017-and-a-prediction-interval-for-2017.-with-and-without-the-ses-function.-the-estimates-should-be-exactly-the-same.">2. Use simple exponential smoothing to obtain a point forecast for 2017, and a prediction interval for 2017. With and without the ses() function. The estimates should be exactly the same.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for the manual prediction intervals</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sig <span class="ot">&lt;-</span> <span class="fu">sd</span>(dat_q1 <span class="sc">-</span> fit<span class="sc">$</span>fitted)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>pi_l_manual <span class="ot">&lt;-</span> res<span class="sc">$</span>forecast <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> sig</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pi_u_manual <span class="ot">&lt;-</span> res<span class="sc">$</span>forecast <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> sig</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># using ses</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>fit_pi <span class="ot">&lt;-</span> <span class="fu">ses</span>(<span class="at">y =</span> dat_q1, <span class="at">h =</span> <span class="dv">1</span>, <span class="at">level =</span> <span class="dv">95</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>pi_l_ses <span class="ot">&lt;-</span> fit_pi<span class="sc">$</span>lower[<span class="dv">1</span>]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>pi_u_ses <span class="ot">&lt;-</span> fit_pi<span class="sc">$</span>upper[<span class="dv">1</span>]</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Manual"</span>, <span class="st">"ses() Function"</span>),</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Forecast =</span> <span class="fu">c</span>(res<span class="sc">$</span>forecast, <span class="fu">as.numeric</span>(fit_pi<span class="sc">$</span>mean)),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lower_PI =</span> <span class="fu">c</span>(pi_l_manual, pi_l_ses),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Upper_PI =</span> <span class="fu">c</span>(pi_u_manual, pi_u_ses)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Method Forecast Lower_PI Upper_PI
+alpha         Manual 130.3563 119.7273 140.9854
+      ses() Function 130.3563 119.5394 141.1733</code></pre>
+</div>
+</div>
+<p>I think they are off a bit because I used 1.96.</p>
+</section>
+<section id="plot-the-time-series-and-add-fitted-values" class="level3">
+<h3 class="anchored" data-anchor-id="plot-the-time-series-and-add-fitted-values">3. Plot the time series and add fitted values</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(dat_q1, <span class="at">series =</span> <span class="st">"Data"</span>) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(fit<span class="sc">$</span>fitted, <span class="at">series =</span> <span class="st">"Fitted"</span>) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Boston Marathon Winning Times with SES Fitted Values"</span>) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Minutes"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Year"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exponential-smoothing-prac_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The fit seems to be quite bad. Its not able to capture much variation in the data</p>
+</section>
+<section id="obtain-an-estimate-for-𝜎" class="level3">
+<h3 class="anchored" data-anchor-id="obtain-an-estimate-for-𝜎">4. Obtain an estimate for 𝜎</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.422984</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="question-2" class="level2">
+<h2 class="anchored" data-anchor-id="question-2">Question 2</h2>
+<p>Consider the oil series (annual oil production in Saudi Arabia, in library fpp2). Use the ses() function in R to find the optimal values of 𝛼 and ℓ0, and generate forecasts for the next four years. Compute a 95% prediction interval for the first forecast using 𝑦̂±1.96×𝑠, where 𝑠 is the standard deviation of the residuals. Compare your interval with the interval produced by R.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading of data</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>oil_ts <span class="ot">&lt;-</span> oil</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># forecasting into the next 4 years </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">ses</span>(oil_ts, <span class="at">h =</span> <span class="dv">4</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># calculates prediction intervals</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>lower_pi <span class="ot">&lt;-</span> fit2<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span><span class="fu">sd</span>(fit2<span class="sc">$</span>residuals)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>upper_pi <span class="ot">&lt;-</span> fit2<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span><span class="fu">sd</span>(fit2<span class="sc">$</span>residuals)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ses prediction intervals</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>my_pi <span class="ot">&lt;-</span> <span class="fu">c</span>(lower_pi, upper_pi)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>r_pi <span class="ot">&lt;-</span> <span class="fu">c</span>(fit2<span class="sc">$</span>lower[<span class="dv">1</span>,<span class="dv">2</span>], fit2<span class="sc">$</span>upper[<span class="dv">1</span>,<span class="dv">2</span>])</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"Manual"</span>, <span class="st">"ses() Function"</span>),</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Forecast =</span> <span class="fu">c</span>(res<span class="sc">$</span>forecast, <span class="fu">as.numeric</span>(fit_pi<span class="sc">$</span>mean)),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lower_PI =</span> <span class="fu">c</span>(lower_pi, r_pi[<span class="dv">1</span>]),</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">Upper_PI =</span> <span class="fu">c</span>(upper_pi, r_pi[<span class="dv">2</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Method Forecast Lower_PI Upper_PI
+alpha         Manual 130.3563 448.8206 635.8618
+      ses() Function 130.3563 446.2037 638.4788</code></pre>
+</div>
+</div>
+</section>
+<section id="question-3" class="level2">
+<h2 class="anchored" data-anchor-id="question-3">Question 3</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ses_sse <span class="ot">&lt;-</span> <span class="cf">function</span>(par, y) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> par[<span class="dv">1</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  level <span class="ot">&lt;-</span> par[<span class="dv">2</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  y_hat <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  y_hat[<span class="dv">1</span>] <span class="ot">&lt;-</span> level</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n) {</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    y_hat[i] <span class="ot">&lt;-</span> alpha <span class="sc">*</span> y[i<span class="dv">-1</span>] <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> alpha) <span class="sc">*</span> y_hat[i<span class="dv">-1</span>]</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  errors <span class="ot">&lt;-</span> y <span class="sc">-</span> y_hat</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sum</span>(errors<span class="sc">^</span><span class="dv">2</span>)) <span class="co"># returns SSE</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>oil_subset <span class="ot">&lt;-</span> <span class="fu">window</span>(oil, <span class="at">start=</span><span class="dv">1996</span>, <span class="at">end=</span><span class="dv">2013</span>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>opt_res <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, oil_subset[<span class="dv">1</span>]), </span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fn =</span> ses_sse, </span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>                 <span class="at">y =</span> oil_subset,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"L-BFGS-B"</span>,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lower =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="sc">-</span><span class="cn">Inf</span>),</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">upper =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="cn">Inf</span>))</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co"># ses()</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>fit_oil_sub <span class="ot">&lt;-</span> <span class="fu">ses</span>(oil_subset, <span class="at">h=</span><span class="dv">1</span>)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">Parameter =</span> <span class="fu">c</span>(<span class="st">"Alpha"</span>, <span class="st">"Initial Level (l0)"</span>),</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">Manual_optim =</span> <span class="fu">c</span>(opt_res<span class="sc">$</span>par[<span class="dv">1</span>], opt_res<span class="sc">$</span>par[<span class="dv">2</span>]),</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">SES_function =</span> <span class="fu">c</span>(<span class="fu">as.numeric</span>(fit_oil_sub<span class="sc">$</span>model<span class="sc">$</span>par[<span class="st">"alpha"</span>]), <span class="fu">as.numeric</span>(fit_oil_sub<span class="sc">$</span>model<span class="sc">$</span>par[<span class="st">"l"</span>]))</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Parameter Manual_optim SES_function
+1              Alpha    0.8338438    0.8338901
+2 Initial Level (l0)  446.5754462  446.5867935</code></pre>
+</div>
+</div>
+<p>The values are quite close.</p>
+</section>
+<section id="question-4" class="level2">
+<h2 class="anchored" data-anchor-id="question-4">Question 4</h2>
+<section id="data-set-books-contains-the-daily-sales-of-paperback-and-hardcover-books-at-the-same-store.-the-task-is-to-forecast-the-next-four-days-sales-for-paperback-and-hardcover-books.-plot-the-series-and-discuss-the-main-features-of-the-data.-use-the-ses-function-to-forecast-each-series-and-plot-the-forecasts.-compute-the-rmse-values-for-the-training-data-in-each-case." class="level3">
+<h3 class="anchored" data-anchor-id="data-set-books-contains-the-daily-sales-of-paperback-and-hardcover-books-at-the-same-store.-the-task-is-to-forecast-the-next-four-days-sales-for-paperback-and-hardcover-books.-plot-the-series-and-discuss-the-main-features-of-the-data.-use-the-ses-function-to-forecast-each-series-and-plot-the-forecasts.-compute-the-rmse-values-for-the-training-data-in-each-case.">1. Data set books contains the daily sales of paperback and hardcover books at the same store. The task is to forecast the next four days’ sales for paperback and hardcover books. Plot the series and discuss the main features of the data. Use the ses() function to forecast each series, and plot the forecasts. Compute the RMSE values for the training data in each case.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(books) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Daily Books Sales"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exponential-smoothing-prac_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># datasets</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> books[,<span class="dv">1</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> books[,<span class="dv">2</span>]</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fitting ses on the data </span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>ses_pb <span class="ot">&lt;-</span> <span class="fu">ses</span>(pb, <span class="at">h=</span><span class="dv">4</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>ses_hc <span class="ot">&lt;-</span> <span class="fu">ses</span>(hc, <span class="at">h=</span><span class="dv">4</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># calculating RMSE</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>rmse_ses_pb <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(ses_pb)[,<span class="st">"RMSE"</span>]</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>rmse_ses_hc <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(ses_hc)[,<span class="st">"RMSE"</span>]</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>rmse_ses_pb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 33.63769</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rmse_ses_hc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 31.93101</code></pre>
+</div>
+</div>
+<p>need to do the interpretation still.</p>
+</section>
+<section id="now-apply-holts-linear-method-to-the-paperback-and-hardback-series-and-compute-four-day-forecasts-in-each-case.-compare-the-rmse-measures-of-holts-method-for-the-two-series-to-those-of-simple-exponential-smoothing-in-a..-remember-that-holts-method-is-using-one-more-parameter-than-ses.-discuss-the-merits-of-the-two-forecasting-methods-for-these-data-sets." class="level3">
+<h3 class="anchored" data-anchor-id="now-apply-holts-linear-method-to-the-paperback-and-hardback-series-and-compute-four-day-forecasts-in-each-case.-compare-the-rmse-measures-of-holts-method-for-the-two-series-to-those-of-simple-exponential-smoothing-in-a..-remember-that-holts-method-is-using-one-more-parameter-than-ses.-discuss-the-merits-of-the-two-forecasting-methods-for-these-data-sets.">2. Now apply Holt’s linear method to the paperback and hardback series and compute four-day forecasts in each case. Compare the RMSE measures of Holt’s method for the two series to those of simple exponential smoothing in a.). Remember that Holt’s method is using one more parameter than SES. Discuss the merits of the two forecasting methods for these data sets.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># forecasts</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>holt_pb <span class="ot">&lt;-</span> <span class="fu">holt</span>(pb, <span class="at">h=</span><span class="dv">4</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>holt_hc <span class="ot">&lt;-</span> <span class="fu">holt</span>(hc, <span class="at">h=</span><span class="dv">4</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># performance RMSE </span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>rmse_holt_pb <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(holt_pb)[,<span class="st">"RMSE"</span>]</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>rmse_holt_hc <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(holt_hc)[,<span class="st">"RMSE"</span>]</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>rmse_holt_pb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 31.13692</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>rmse_holt_hc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 27.19358</code></pre>
+</div>
+</div>
+</section>
+<section id="compare-the-forecasts-for-the-two-series-using-both-methods.-which-do-you-think-is-best" class="level3">
+<h3 class="anchored" data-anchor-id="compare-the-forecasts-for-the-two-series-using-both-methods.-which-do-you-think-is-best">3. Compare the forecasts for the two series using both methods. Which do you think is best?</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(pb) <span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(ses_pb, <span class="at">series=</span><span class="st">"SES"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(holt_pb, <span class="at">series=</span><span class="st">"Holt"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Paperback Forecasts: SES vs Holt"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exponential-smoothing-prac_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(hc) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(ses_hc, <span class="at">series=</span><span class="st">"SES"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(holt_hc, <span class="at">series=</span><span class="st">"Holt"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Hardcover Forecasts: SES vs Holt"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="exponential-smoothing-prac_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Not really sure, but I think holt winters</p>
+</section>
+<section id="calculate-a-95-prediction-interval-for-the-first-forecast-for-each-series-using-the-rmse-values-and-assuming-normal-errors.-compare-your-intervals-with-those-produced-using-ses-and-holt." class="level3">
+<h3 class="anchored" data-anchor-id="calculate-a-95-prediction-interval-for-the-first-forecast-for-each-series-using-the-rmse-values-and-assuming-normal-errors.-compare-your-intervals-with-those-produced-using-ses-and-holt.">4. Calculate a 95% prediction interval for the first forecast for each series, using the RMSE values and assuming normal errors. Compare your intervals with those produced using ses() and holt().</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paperback</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>pi_ses_pb_man <span class="ot">&lt;-</span> <span class="fu">c</span>(ses_pb<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> rmse_ses_pb, ses_pb<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> rmse_ses_pb)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>pi_holt_pb_man <span class="ot">&lt;-</span> <span class="fu">c</span>(holt_pb<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> rmse_holt_pb, holt_pb<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> rmse_holt_pb)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Hardcover</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>pi_ses_hc_man <span class="ot">&lt;-</span> <span class="fu">c</span>(ses_hc<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> rmse_ses_hc, ses_hc<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> rmse_ses_hc)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>pi_holt_hc_man <span class="ot">&lt;-</span> <span class="fu">c</span>(holt_hc<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> rmse_holt_hc, holt_hc<span class="sc">$</span>mean[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> rmse_holt_hc)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"SES Manual"</span>, <span class="st">"SES Function"</span>, <span class="st">"Holt Manual"</span>, <span class="st">"Holt Function"</span>),</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lower_95 =</span> <span class="fu">c</span>(pi_ses_pb_man[<span class="dv">1</span>], ses_pb<span class="sc">$</span>lower[<span class="dv">1</span>, <span class="st">"95%"</span>], pi_holt_pb_man[<span class="dv">1</span>], holt_pb<span class="sc">$</span>lower[<span class="dv">1</span>, <span class="st">"95%"</span>]),</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Upper_95 =</span> <span class="fu">c</span>(pi_ses_pb_man[<span class="dv">2</span>], ses_pb<span class="sc">$</span>upper[<span class="dv">1</span>, <span class="st">"95%"</span>], pi_holt_pb_man[<span class="dv">2</span>], holt_pb<span class="sc">$</span>upper[<span class="dv">1</span>, <span class="st">"95%"</span>])</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Method Lower_95 Upper_95
+1    SES Manual 141.1798 273.0395
+2  SES Function 138.8670 275.3523
+3   Holt Manual 148.4384 270.4951
+4 Holt Function 143.9130 275.0205</code></pre>
+</div>
+</div>
+<p>values are close, might be because I used 1.96</p>
+</section>
+</section>
+<section id="question-5" class="level2">
+<h2 class="anchored" data-anchor-id="question-5">Question 5</h2>
+<p>Simulate data using the state-space model formulation of simple exponential smoothing (and Holt’s exponential smoothing if you want). Then estimate the parameters using optim, and the R functions.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function for ses for exponential smoothing</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>simulate_ses <span class="ot">&lt;-</span> <span class="cf">function</span>(n, alpha, l0, sigma) {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  l <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  e <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, sigma)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  l[<span class="dv">1</span>] <span class="ot">&lt;-</span> l0</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  y[<span class="dv">1</span>] <span class="ot">&lt;-</span> l[<span class="dv">1</span>] <span class="sc">+</span> e[<span class="dv">1</span>] </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n) {</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    y[t] <span class="ot">&lt;-</span> l[t<span class="dv">-1</span>] <span class="sc">+</span> e[t]           </span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    l[t] <span class="ot">&lt;-</span> l[t<span class="dv">-1</span>] <span class="sc">+</span> alpha <span class="sc">*</span> e[t]    </span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">ts</span>(y))</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="co"># simulating data</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>sim_data <span class="ot">&lt;-</span> <span class="fu">simulate_ses</span>(<span class="at">n=</span><span class="dv">100</span>, <span class="at">alpha=</span><span class="fl">0.3</span>, <span class="at">l0=</span><span class="dv">10</span>, <span class="at">sigma=</span><span class="dv">1</span>)</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="co"># finding optimal values</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>sim_opt <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, sim_data[<span class="dv">1</span>]), </span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fn =</span> ses_sse, </span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">y =</span> sim_data,</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"L-BFGS-B"</span>,</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lower =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="sc">-</span><span class="cn">Inf</span>),</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>                 <span class="at">upper =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="cn">Inf</span>))</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>opt_alpha <span class="ot">&lt;-</span> sim_opt<span class="sc">$</span>par[<span class="dv">1</span>]</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>opt_l0 <span class="ot">&lt;-</span> sim_opt<span class="sc">$</span>par[<span class="dv">2</span>]</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">Source =</span> <span class="fu">c</span>(<span class="st">"True Parameters"</span>, <span class="st">"Manual optim()"</span>),</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">Alpha =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, opt_alpha),</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">Initial_Level_l0 =</span> <span class="fu">c</span>(<span class="dv">10</span>, opt_l0)</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Source     Alpha Initial_Level_l0
+1 True Parameters 0.3000000         10.00000
+2  Manual optim() 0.2746831         10.33156</code></pre>
+</div>
+</div>
+<p>relatively close to the true parameter value</p>
+</section>
+<section id="reflection" class="level1">
+<h1>Reflection</h1>
+<p>This tutorial helped me connect the exponential smoothing equations to their implementation in R. Writing the simple exponential smoothing function made the role of the smoothing parameter and initial level clearer. My function produced the same point forecast as <code>ses()</code> when using the package’s estimated parameters, which helped me check the updating calculation. Estimating parameters separately using <code>optim()</code> then helped me understand how minimising the sum of squared errors relates to fitting the model.</p>
+<p>Comparing simple exponential smoothing with Holt’s linear method helped me distinguish between modelling a changing level and explicitly including a trend. However, I found interpreting the book-sales results more difficult than producing the forecasts. I still need to justify which method is more suitable for each series using the plots and accuracy measures. I also need to correct my reference to Holt–Winters in this exercise, since the comparison uses Holt’s linear method without seasonality. The reported training RMSE values describe in-sample fit; evaluating future forecasting performance would require a chronological test set or time series cross-validation.</p>
+<p>Prediction intervals were another area where I need more understanding. My manual intervals were close to the package intervals, but I should investigate differences in variance estimation and the forecast-variance calculation rather than assume the discrepancy is only caused by using 1.96.</p>
+<p>The simulation exercise helped connect the state space formulation to parameter estimation because the generating parameters were known. However, a single simulation is not enough to establish how reliably the parameters can be recovered. My next steps are to finish the written interpretations, check the interval calculations, and repeat the simulation across different parameter values and sample sizes.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Natalie Chidikwindi · CHDNAT002</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Time Series Portfolio · 2026</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

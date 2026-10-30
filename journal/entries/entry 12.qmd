@@ -1,0 +1,32 @@
+---
+title: "Journal Entry 12"
+date: 19 October 2026
+---
+
+**Date:** 2026-10-19
+
+**Session/topic covered:**
+
+Kalman filtering, smoothing and forecasting
+
+**What I did:**
+
+Attended the lecture on Kalman filtering, smoothing and forecasting, and completed the accompanying state space models tutorial. This included implementing a Kalman filter, generating forecasts and prediction intervals, and interpreting the plots. I also compared my regression coefficient estimates with OLS and the `dlm` package.
+
+**Related tutorial:**
+
+[State space models tutorial](../../section-2/SSM%20prac.qmd)
+
+**What I learned:**
+
+I developed a clearer understanding of how the Kalman filter combines predictions with new observations to estimate an underlying state. Filtering uses observations available up to the current time, while smoothing also uses later observations to refine estimates of past states. Forecasting carries state predictions forward without observation updates because future observations are unavailable. Prediction intervals account for uncertainty in both the state and future observations.
+
+**Difficulties or open questions:**
+
+Working through the tutorial and connecting the lecture material and equations to the code was the main challenge. I found it particularly difficult to distinguish predicted and filtered estimates and to understand why coefficient estimates change before stabilizing, even when the model assumes constant coefficients.
+
+**What to do next:**
+
+Revisit the lecture notes and explain each filter equation alongside the tutorial code. Implement smoothing and compare the smoothed states with the filtered estimates. Explore how changing process and measurement variances affects state estimates, forecasts and prediction intervals.
+
+[Back to journal](../index.qmd)

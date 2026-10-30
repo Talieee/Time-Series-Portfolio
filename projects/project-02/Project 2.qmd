@@ -1,0 +1,1048 @@
+---
+title: "A Comparative Study of GARCH Models for JSE Top 40 Volatility"
+author: "Natalie Chidikwindi"
+format:
+  html:
+    code-fold: true
+    code-summary: "Click to expand code"
+    code-copy: true
+    code-overflow: scroll
+editor: visual
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-align: center
+  fig-width: 9
+  fig-height: 5
+---
+
+# Introduction
+
+Equity prices are difficult to predict because markets respond to new information, including geopolitical events, economic developments, and company announcements. Although returns may be difficult to forecast, their volatility often exhibits patterns that can be modelled. In particular, periods of large price movements tend to cluster together, as do periods of relatively small movements.
+
+The ARCH and GARCH frameworks provide methods for modelling this time-varying volatility. The standard GARCH(1,1) model is widely used because it captures volatility clustering and persistence with relatively few parameters. However, it treats positive and negative shocks of equal magnitude symmetrically. In equity markets, negative shocks may have a larger effect on subsequent volatility than positive shocks of the same size, motivating the use of alternative GARCH specifications.
+
+This project examines the volatility of daily FTSE/JSE Top 40 Index returns. A GARCH(1,1) model is first implemented from first principles, and its parameter estimates are compared with those obtained using the `rugarch` package. Standard GARCH, integrated GARCH, GJR-GARCH, exponential GARCH, and component GARCH models are then compared using information criteria and residual diagnostics. The selected model is evaluated through out-of-sample volatility forecasting.
+
+Finally, a simulation study examines how accurately the `rugarch` estimator recovers known GARCH(1,1) parameters as the sample size increases.
+
+The project addresses three questions:
+
+1.  Which GARCH specification provides the most suitable description of JSE Top 40 return volatility among the models considered?
+2.  How do the parameter estimates from the first-principles GARCH(1,1) implementation compare with those from `rugarch`, and what could explain any differences?
+3.  How do the bias and variability of GARCH(1,1) parameter estimates change as the sample size increases?
+
+# Data Cleaning and Preparation
+
+## Packages
+
+The following packages are used to obtain and prepare the data, explore the return series, estimate volatility models, and present the results.
+
+```{r}
+#| label: setup
+#| include: false
+# Financial modelling
+library(tidyquant)
+library(quantmod)
+
+# Volatility modelling
+library(rugarch)
+library(FinTS)
+
+# Time series 
+library(tsibble)
+library(feasts)
+library(forecast)
+library(timetk)
+
+# Other 
+library(tidyverse) # clean data
+library(lubridate) # date manipulation
+library(ggplot2)   # plotting
+library(knitr)     # table formatting
+library(dplyr)
+library(readr)
+library(patchwork)
+```
+
+## Data Source and Study Period
+
+This study uses the FTSE/JSE Top 40 Index, which represents 40 of the largest eligible companies in the FTSE/JSE All Share Index, ranked by investable market capitalization. The index provides a measure of the performance of large companies listed on the Johannesburg Stock Exchange.
+
+Daily index data are obtained from Yahoo Finance using the `quantmod` package and the ticker `^J200.JO`. The requested download period runs from 2 January 2017 to 12 October 2026. The actual dates available in the downloaded series are reported below, as the requested period may include non-trading days.
+
+```{r}
+#| label: project2-chunk-02
+# Import the ticker for the SA40 Index 
+getSymbols('^J200.JO', from = "2017-01-02", to = "2026-10-12")
+
+# Renamed data set
+jse40 <- J200.JO
+
+# periodicity is extracted
+p <- periodicity(jse40)
+
+# fomated into a data frame
+info <- data.frame(
+  Start_Date = as.character(start(jse40)),
+  End_Date = as.character(end(jse40)),
+  Frequency = p$label
+)
+
+# table
+info |> 
+  kable(caption = "JSE Top 40 Data Information")
+
+```
+
+The adjusted closing price series is used to calculate daily returns.
+
+```{r}
+#| label: project2-chunk-03
+jse40_adjclose <- jse40$J200.JO.Adjusted
+
+#Checking for missing values
+missing_vals <- which(is.na(jse40_adjclose))
+missing <- jse40_adjclose[missing_vals,]
+missing
+```
+
+## Missing Values
+
+The initial inspection identified 20 missing adjusted closing prices. To retain these trading dates, a secondary dataset stored in `SA40.csv` was used to supply the missing observations.
+
+Prices on overlapping dates were compared before combining the datasets to assess their agreement. Replacement observations must be matched by date because the two datasets may have different ordering or coverage. Using secondary closing prices also requires care if their definition differs from that of the primary adjusted closing price series.
+
+The secondary dataset is cleaned below by correcting its quotation marks, converting the date column, and parsing the numeric fields.
+
+```{r}
+#| label: project2-chunk-04
+# reads in lines of the dataset
+other_dat <- readLines("SA40.csv", encoding = "UTF-8")
+
+# Removes the outer quotes wrapping each line and unescape internal quotes
+other_dat <- gsub('^"|"$', '', other_dat)
+other_dat <- gsub('""', '"', other_dat)
+
+# into a dataset
+other_dat <- read.csv(text = other_dat, check.names = FALSE)
+
+# cleaning the format of the data
+other_dat_clean <- other_dat %>%
+  mutate(
+    Date = as.Date(Date, format = "%Y/%m/%d"),
+    across(c(Price, Open, High, Low), ~ parse_number(.x)),
+    `Change %` = parse_number(`Change %`) / 100,
+    `Vol.` = parse_number(`Vol.`) * 1e6
+  )
+# extracts the date and closing price
+other_dat <- other_dat_clean[,c(1,2)]
+
+# making into a time series object
+sa40 <- xts(x = other_dat$Price, order.by = other_dat$Date)
+
+```
+
+The missing observations are then filled using the secondary prices for the corresponding dates.
+
+```{r}
+#| label: project2-chunk-05
+# extract the closing price from the other dataset based on the missing closing prices
+added_vals <- sa40[missing_vals,]
+
+# fills in missing values
+for (i in 1:length(added_vals)){
+  k = missing_vals[i]
+  jse40_adjclose[k,] = added_vals[i]
+}
+
+
+```
+
+### Calculating the log returns
+
+The analysis focuses on log returns rather than index levels. Log returns are additive over time, meaning that a return over several trading periods can be calculated by summing the individual log returns.
+
+The daily log return is defined as
+
+$$
+r_t = \ln(P_t) - \ln(P_{t-1})
+    = \ln\left(\frac{P_t}{P_{t-1}}\right),
+$$
+
+where $P_t$ is the adjusted closing index value on trading day $t$.
+
+```{r}
+#| label: project2-chunk-06
+log_ret <- CalculateReturns(jse40_adjclose, method = "log")
+
+# now to check for missing values here:
+missing_vals <- which(is.na(log_ret))
+missing <- log_ret[missing_vals,]
+
+log_ret<- na.omit(log_ret)
+
+#confrim missing value is dealt with
+missing_vals <- which(is.na(log_ret))
+missing <- log_ret[missing_vals,]
+```
+
+The first price observation has no preceding observation within the dataset, so its return cannot be calculated. Removing this observation reduces the number of observations by one.
+
+## Final Dataset
+
+The table below reports the study period, frequency, and number of observations in the cleaned price and return series.
+
+```{r}
+#| label: project2-chunk-07
+data_summary <- data.frame(
+  Start_Date = as.character(start(log_ret)),
+  End_Date = as.character(end(log_ret)),
+  Frequency = periodicity(log_ret)$label,
+  Price_Observations = NROW(jse40_adjclose),
+  Return_Observations = NROW(log_ret)
+)
+
+data_summary |>
+  kable(caption = "Summary of the Cleaned Dataset")
+```
+
+The cleaned dataset contains `r NROW(jse40_adjclose)` daily price observations and `r NROW(log_ret)` daily log returns. The return series covers the period from `r format(start(log_ret), "%d %B %Y")` to `r format(end(log_ret), "%d %B %Y")`.
+
+For exploratory analysis and plotting, the return series is converted into a `tsibble`.
+
+# Exploratory data analysis
+
+This section examines the behaviour of JSE Top 40 log returns and assesses whether GARCH modelling is appropriate. The analysis considers volatility clustering, autocorrelation, and the distribution of returns, followed by formal tests for ARCH effects and dependence in squared returns
+
+## Daily Log Returns
+
+The daily log return series is plotted below to examine how the magnitude of returns changes over time.
+
+```{r}
+#| label: project2-chunk-08
+
+
+# Converting to a tsibble so I can use the tidyverse for plotting
+tktbl <- tk_tbl(log_ret, preserve_index = TRUE, rename_index = "Date")
+JTOPI_ret <- as_tsibble(tktbl)
+
+JTOPI_ret |> 
+  autoplot(J200.JO.Adjusted) +
+  labs(
+    title = "Daily Log Returns of the JSE Top 40 Index (2017-2026)",
+    y = "Log Return",
+    x = "Date"
+  )
+```
+
+The plot shows alternating periods of relatively small and large return movements. Large movements tend to occur close together, while quieter periods also cluster together. This pattern is known as volatility clustering and is a common characteristic of financial return series.
+
+The most pronounced fluctuations appear in 2020, coinciding with the COVID-19 pandemic and the associated disruption to financial markets. Further periods of elevated volatility are visible at the beginning of 2021 and during 2022, when Russia’s invasion of Ukraine increased geopolitical and economic uncertainty.
+
+Elevated volatility is also visible during parts of 2025 and early 2026. Potential contributing factors include developments in commodity and precious metals markets, as well as US and Israeli attacks on Iran and the associated uncertainty surrounding oil prices and commodity markets. These explanations provide context for the observed movements, although the return plot alone cannot establish a causal relationship between particular events and changes in volatility.
+
+In contrast, the period before 2018 and parts of late 2024 appear comparatively calm. Overall, the concentration of large and small return movements into distinct periods suggests that return variability changes over time, motivating further investigation of conditional variance models.
+
+## Returns at Different Time Frequencies
+
+Daily log returns are aggregated into weekly, monthly, quarterly, and yearly returns. Since log returns are additive over time, each aggregated return is calculated as the sum of the daily log returns within the corresponding period.
+
+```{r}
+#| label: project2-chunk-09
+
+#different agrregations
+weekly <- JTOPI_ret |>
+  index_by(week = yearweek(Date)) |>
+  summarise(ret = sum(J200.JO.Adjusted, na.rm = TRUE))
+
+monthly <- JTOPI_ret |>
+  index_by(month = yearmonth(Date)) |>
+  summarise(ret = sum(J200.JO.Adjusted, na.rm = TRUE))
+
+quarterly <- JTOPI_ret |>
+  index_by(quarter = yearquarter(Date)) |>
+  summarise(ret = sum(J200.JO.Adjusted, na.rm = TRUE))
+
+yearly <- JTOPI_ret |>
+  index_by(year = year(Date)) |>
+  summarise(ret = sum(J200.JO.Adjusted, na.rm = TRUE))
+  
+
+```
+
+```{r}
+#| label: project2-chunk-10
+# plots for each aggregation
+p_week <- weekly |> 
+  autoplot(ret) + 
+  labs(title = "Weekly Returns", x = NULL, y = "Return") +
+  theme_minimal()
+
+p_month <- monthly |> 
+  autoplot(ret) + 
+  labs(title = "Monthly Returns", x = NULL, y = "Return") +
+  theme_minimal()
+
+p_quarter <- quarterly |> 
+  autoplot(ret) + 
+  labs(title = "Quarterly Returns", x = "Date", y = "Return") +
+  theme_minimal()
+
+p_year <- yearly |> 
+  autoplot(ret) + 
+  labs(title = "Yearly Returns", x = "Date", y = "Return") +
+  theme_minimal()
+
+(p_week | p_month) / 
+(p_quarter | p_year) +
+  plot_annotation(title = "Time Aggregation Effect on JSE Top 40 Volatility")
+```
+
+Weekly returns retain some of the short-term fluctuations visible in the daily series. As the aggregation period increases, fewer observations remain, and individual daily movements become less visible.
+
+The smoother appearance of the lower-frequency plots does not necessarily imply lower volatility. These plots show cumulative returns over different horizons, and their scales differ. In addition, the first and last aggregated periods may be incomplete because the dataset begins and ends within a calendar period.
+
+## Stylised Facts of Financial Returns
+
+Four characteristics commonly examined when assessing financial return series are:
+
+1.  Weak autocorrelation in returns.
+2.  Persistent autocorrelation in squared returns.
+3.  Volatility clustering.
+4.  Heavy-tailed return distributions.
+
+Volatility clustering was evident in the daily return plot. The remaining characteristics are examined below.
+
+### Autocorrelation in Returns and Squared Returns
+
+The autocorrelation function (ACF) is used to examine linear dependence in returns. The ACF of squared returns provides an indication of whether the magnitude of returns exhibits persistent dependence.
+
+```{r}
+#| label: project2-chunk-11
+r <- JTOPI_ret$J200.JO.Adjusted
+
+# plotting using patchwork
+p_acf <- ggAcf(r, lag.max = 40) + 
+  ggtitle("ACF of Log Returns") +
+  theme_minimal()
+
+p_acf_sq <- ggAcf(r^2, lag.max = 40) + 
+  ggtitle("ACF of Squared Log Returns") +
+  theme_minimal()
+
+p_acf | p_acf_sq
+
+```
+
+The ACF of log returns contains some significant spikes, but these do not form a clear, persistent pattern across the displayed lags. This suggests that linear dependence in returns is relatively limited, although the significant spikes warrant consideration when specifying the mean equation.
+
+In contrast, the ACF of squared returns shows more persistent autocorrelation, with a gradual decline across lags. This indicates that the magnitude of a return is related to the magnitude of previous returns, even when the direction of returns is difficult to predict. This pattern is consistent with volatility clustering and supports investigating a time-varying conditional variance model.
+
+### Distribution of Returns
+
+A normal quantile–quantile (Q–Q) plot is used to compare the empirical distribution of daily returns with a normal distribution.
+
+```{r}
+#| label: project2-chunk-12
+r_vals <- as.data.frame(r)
+
+#plot to check for nromality
+ggplot(r_vals, aes(sample = r)) +
+  stat_qq() + 
+  stat_qq_line(color = "red", linewidth = 1) + 
+  theme_minimal() +
+  labs(
+    title = "Q-Q Plot of JSE Top 40 Daily Returns",
+    x = "Theoretical Normal Quantiles",
+    y = "Sample Quantiles"
+  )
+```
+
+The observations deviate from the reference line in the tails, indicating that extreme returns occur more frequently than would be expected under a normal distribution. This provides visual evidence of heavy tails.
+
+Kurtosis provides an additional descriptive measure of tail behaviour. The calculation below uses Pearson kurtosis, for which a normal distribution has a value of 3.
+
+```{r}
+#| label: project2-chunk-13
+pearson_kurtosis <- kurtosis(r)
+```
+
+The Pearson kurtosis is `r round(pearson_kurtosis, 3)`. A value greater than 3 is consistent with heavier tails than those of a normal distribution.
+
+Heavy tails describe the unconditional distribution of returns; they do not, by themselves, establish that conditional variance changes over time. Evidence of time-varying conditional variance is assessed more directly using the tests below.
+
+## Formal Tests for ARCH Effects and Serial Dependence
+
+### Engle’s ARCH-LM Test
+
+Engle’s ARCH-LM test is used to assess whether squared innovations exhibit dependence on their past values. For this preliminary test, returns are centred by subtracting their sample mean, consistent with the proposed constant mean specification.
+
+Using 12 lags, the hypotheses are:
+
+- $H_0$: There are no ARCH effects up to lag 12.
+- $H_1$: ARCH effects are present at one or more of these lags.
+
+```{r}
+#| label: project2-chunk-14
+
+arch_test <- FinTS::ArchTest(r, lags = 12, demean = TRUE)
+arch_test
+
+```
+
+The p-value is `r format.pval(arch_test$p.value, digits = 3, eps = 0.001)`. A p-value below 0.05 leads to rejection of the null hypothesis at the 5% significance level and provides evidence of ARCH effects.
+
+Such a result supports modelling conditional variance using an ARCH or GARCH specification, although it does not identify which particular model is most suitable.
+
+### Ljung–Box Test on Squared Returns
+
+The Ljung–Box test is applied to squared returns to assess whether they exhibit serial correlation across the first 10 lags. It is a joint test across these lags, rather than a test of lag 10 alone.
+
+The hypotheses are:
+
+- $H_0$: Squared returns have zero autocorrelation at lags 1 through 10.
+- $H_1$: Squared returns have non-zero autocorrelation at one or more of these lags.
+
+```{r}
+#| label: project2-chunk-15
+
+r2 <- r^2
+
+lb_squared <- Box.test(r2, type = "Ljung-Box", lag = 10)
+lb_squared
+
+```
+
+The p-value is `r format.pval(lb_squared$p.value, digits = 3, eps = 0.001)`. A p-value below 0.01 leads to rejection of the null hypothesis at the 1% significance level, providing evidence of serial dependence in squared returns.
+
+Together with volatility clustering and the ARCH-LM test, significant dependence in squared returns supports the use of a time-varying conditional variance model.
+
+## Implications for Model Selection
+
+The exploratory analysis identifies volatility clustering, persistent dependence in squared returns, and a heavy-tailed return distribution. These features motivate the comparison of GARCH models and the consideration of a heavy-tailed innovation distribution.
+
+The formal tests assess whether the evidence against a constant conditional variance is statistically significant. Model comparison and residual diagnostics are then needed to determine which GARCH specification adequately captures the observed dependence.
+
+# Mean Equation Specification
+
+A constant mean equation is adopted as the initial specification:
+
+$$
+r_t = \mu + \varepsilon_t,
+\qquad
+\varepsilon_t = \sigma_t z_t,
+$$
+
+where $\mu$ is the conditional mean return, $\sigma\_t$ is the conditional standard deviation, and $z_t$ is an innovation with mean zero and variance one.
+
+This specification provides a parsimonious starting point because the ACF of returns does not show a clear, persistent pattern. However, the isolated significant autocorrelations mean that a constant mean should be treated as a modelling choice rather than an established property of the series.
+
+After fitting each GARCH model, the standardised residuals are checked for remaining serial correlation. If meaningful dependence remains, an ARMA mean specification may need to be considered.
+
+# GARCH Model Fitting
+
+## GARCH(1,1) Model from First Principles
+
+The generalised autoregressive conditional heteroskedasticity (GARCH) model describes conditional variance as a function of past squared innovations and past conditional variances. Under suitable conditions, it can be represented as an ARCH model with infinitely many lags, providing a parsimonious way to capture the persistent effects of past shocks.
+
+The GARCH(1,1) model with a constant mean is specified as
+
+$$
+r_t = \mu + \varepsilon_t,
+\qquad
+\varepsilon_t = \sigma_t z_t,
+$$
+
+$$
+\sigma_t^2
+=
+\omega
++
+\alpha \varepsilon_{t-1}^2
++
+\beta \sigma_{t-1}^2,
+$$
+
+where:
+
+- $\mu$ is the conditional mean return.
+- $\omega$ is the variance intercept.
+- $\alpha$ measures the immediate response of volatility to a shock.
+- $\beta$ measures the persistence of past conditional variance.
+- $z_t$ is a standardized innovation with mean zero and variance one.
+
+The conditions $\omega \> 0$, $\alpha \geq 0$, and $\beta \geq 0$ ensure positive conditional variances. The additional condition $\alpha + \beta \< 1$ implies a finite unconditional variance under the standard model assumptions.
+
+### Recursive Variance Calculation
+
+The model is implemented from first principles using a recursive loop. The initial conditional variance is set equal to the sample variance of returns. Each subsequent conditional variance is calculated using the previous squared innovation and conditional variance.
+
+Returns are multiplied by 100 before estimation to improve numerical scaling. The resulting series therefore expresses log returns in percentage units.
+
+```{r}
+#| label: project2-chunk-16
+ret_perc <- as.numeric(r) * 100 # scaled because optim struggles with small values 
+
+# function for garch implementation once optimal values are found
+garch_func <- function(par, ret) {
+  mu    = par[1]
+  omega = par[2]
+  alpha = par[3]
+  beta  = par[4]
+  eps   = ret - mu
+  sig1  = numeric(length(ret))
+  sig1[1] <- var(ret)
+  # loop for garch model translating an arch model that is somewhat infinite
+  for (i in 2:length(ret)) {
+    sig1[i] =  omega + alpha * eps[i - 1]^2 + beta * sig1[i - 1]
+  }
+  list(eps = eps, sig1 = sig1)
+}
+
+```
+
+### Likelihood and Parameter Estimation
+
+For the first-principles implementation, the standardised innovations are assumed to follow a normal distribution. Conditional on the initial variance, the Gaussian negative log-likelihood is
+
+$$
+-\ell(\theta)
+=
+\frac{1}{2}
+\sum_{t=1}^{T}
+\left[
+\ln(2\pi)
++
+\ln(\sigma_t^2)
++
+\frac{\varepsilon_t^2}{\sigma_t^2}
+\right],
+$$
+
+where $\theta = (\mu,\omega,\alpha,\beta)$.
+
+The optimiser searches for the parameter values that minimise this expression, which is equivalent to maximising the likelihood. Parameter combinations that violate the variance constraints are assigned a large penalty.
+
+```{r}
+#| label: project2-chunk-17
+garch_loglik <- function(par, ret) {
+  omega <- par[2]
+  alpha <- par[3]
+  beta  <- par[4]
+  if (omega <= 0 || alpha < 0 || beta < 0 || alpha + beta >= 0.9999) {
+    return(1e10)
+  }
+  f <- garch_func(par, ret)
+  0.5 * sum(log(2 * pi) + log(f$sig1) + f$eps^2 / f$sig1)
+}
+
+#initial starting values 
+initial <- c(mu = mean(ret_perc), omega = 0.05 * var(ret_perc), alpha = 0.10, beta = 0.85)
+
+# garch parameter estimated obtained for GARCH(1,1) 
+g11 <- optim(initial, fn = garch_loglik, ret = ret_perc,
+             method = "L-BFGS-B",
+             lower = c(-1, 1e-6, 1e-6, 1e-6),
+             upper = c( 1, 10,   0.999, 0.999),
+             hessian = TRUE)
+
+#check for convergence
+g11$convergence # showed convergence
+
+# coefficients and standard errors for estimated parameters
+errors <- sqrt(diag(solve(g11$hessian)))
+
+round(cbind(Estimate = g11$par,SE = errors,z = g11$par / errors),4)
+```
+
+The optimizer returned a convergence code of zero, indicating successful numerical termination. The estimated standard errors were relatively small, although these are approximate Hessian-based standard errors under the Gaussian likelihood specification. Numerical convergence alone does not establish that the model is correctly specified or that the global optimum has been found.
+
+### Volatility Persistence
+
+For a standard GARCH(1,1) model, volatility persistence is measured by $\alpha + \beta$. Values close to one indicate that the effects of shocks decay slowly.
+
+```{r}
+#| label: project2-chunk-18
+# Calculate volatility persistence
+persistence <- unname(g11$par[3] + g11$par[4])
+persistence
+
+# Calculate the implied unconditional variance
+long_run_variance <- unname(
+  g11$par[2] / (1 - persistence)
+)
+
+long_run_variance
+```
+
+The estimated persistence is `r round(persistence, 6)`, indicating that volatility shocks are persistent. Since this value is below one, the model implies a finite unconditional variance:
+
+$$
+\operatorname{Var}(r_t)
+=
+\frac{\omega}{1-\alpha-\beta}.
+$$
+
+Because returns were scaled by 100, this variance is expressed in squared percentage units.
+
+## Comparison with the `rugarch` Package
+
+The first-principles estimates are compared with a standard GARCH(1,1) model fitted using `rugarch`. The package model uses a constant mean and standardised Student's t innovations to accommodate the heavy tails identified in the exploratory analysis.
+
+```{r}
+#| label: project2-chunk-19
+ 
+# Standard GARCH (sGARCH)
+spec_g11 <- ugarchspec(
+  variance.model     = list(model = "sGARCH", garchOrder = c(1, 1)),
+  mean.model         = list(armaOrder = c(0, 0), include.mean = TRUE),
+  distribution.model = "std"
+)
+fit_g11 <- ugarchfit(spec = spec_g11, data = ret_perc, solver = "hybrid")
+round(coef(fit_g11), 4)
+
+```
+
+In the reported results, the `rugarch` model has a larger variance intercept and a larger coefficient on past conditional variance, but a smaller coefficient on the previous squared innovation than the first-principles model. This suggests a weaker immediate response to shocks and a greater contribution from past conditional variance.
+
+However, the two implementations use different innovation distributions. The first-principles model uses a Gaussian likelihood, whereas the package model uses a Student's t likelihood. Their estimates therefore need not coincide. Differences in variance initialization, optimization methods, and parameter constraints may also contribute.
+
+A direct implementation check would require both models to use the same innovation distribution and comparable estimation settings.
+
+## Alternative GARCH Specifications
+
+Four additional GARCH specifications are fitted to examine whether they capture features that the standard model does not. All package models use a constant mean and standardized Student's t innovations.
+
+### Integrated GARCH
+
+The integrated GARCH (iGARCH) model imposes
+
+$$
+\alpha + \beta = 1.
+$$
+
+Its persistence is therefore exactly one, rather than simply close to one. Under the usual specification with a positive intercept, the model does not have a finite unconditional variance, and volatility shocks do not decay in the same way as in a stationary standard GARCH model.
+
+```{r}
+#| label: project2-chunk-20
+## Other garch models
+# Integrated GARCH (iGARCH)
+spec_ig11 <- ugarchspec(
+  variance.model     = list(model = "iGARCH", garchOrder = c(1, 1)),
+  mean.model         = list(armaOrder = c(0, 0), include.mean = TRUE),
+  distribution.model = "std"
+)
+fit_ig11 <- ugarchfit(spec = spec_ig11, data = ret_perc, solver = "hybrid")
+
+
+```
+
+### GJR-GARCH
+
+The GJR-GARCH model allows positive and negative innovations to have different effects on subsequent volatility:
+
+$$
+\sigma_t^2
+=
+\omega
++
+\left[
+\alpha + \gamma I(\varepsilon_{t-1}<0)
+\right]\varepsilon_{t-1}^2
++
+\beta \sigma_{t-1}^2.
+$$
+
+The indicator equals one when the previous innovation is negative and zero otherwise. Positive innovations therefore have a coefficient of $\alpha$, while negative innovations have a coefficient of $\alpha+\gamma$. If $\gamma\>0$, negative innovations increase conditional variance more than positive innovations of the same magnitude.
+
+```{r}
+#| label: project2-chunk-21
+# GJR-GARCH 
+spec_gjrg11 <- ugarchspec(
+  variance.model     = list(model = "gjrGARCH", garchOrder = c(1, 1)),
+  mean.model         = list(armaOrder = c(0, 0), include.mean = TRUE),
+  distribution.model = "std"
+)
+fit_gjrg11 <- ugarchfit(spec = spec_gjrg11, data = ret_perc, solver = "hybrid")
+```
+
+### Exponential GARCH
+
+The exponential GARCH (eGARCH) model describes the logarithm of conditional variance. Exponentiating the fitted log variance ensures that conditional variance is positive, so the same non-negativity constraints used in the standard GARCH model are not required. The model also allows asymmetric responses to innovations.
+
+```{r}
+#| label: project2-chunk-22
+# Exponential GARCH (eGARCH)
+spec_eg11 <- ugarchspec(
+  variance.model     = list(model = "eGARCH", garchOrder = c(1, 1)),
+  mean.model         = list(armaOrder = c(0, 0), include.mean = TRUE),
+  distribution.model = "std"
+)
+fit_eg11 <- ugarchfit(spec = spec_eg11, data = ret_perc, solver = "hybrid")
+
+```
+
+### Component GARCH
+
+The component GARCH model separates conditional variance into a time-varying long-run component and a transitory component. This allows short-run volatility movements to be distinguished from more persistent changes in the underlying volatility level.
+
+```{r}
+#| label: project2-chunk-23
+# Component GARCH (csGARCH)
+spec_csg11 <- ugarchspec(
+  variance.model     = list(model = "csGARCH", garchOrder = c(1, 1)),
+  mean.model         = list(armaOrder = c(0, 0), include.mean = TRUE),
+  distribution.model = "std"
+)
+fit_csg11 <- ugarchfit(spec = spec_csg11, data = ret_perc, solver = "hybrid")
+
+```
+
+# In-Sample Performance and Diagnostics
+
+The fitted models are compared using the Akaike information criterion (AIC), Bayesian information criterion (BIC), and residual diagnostic tests. Lower information criteria indicate a more favourable balance between fit and model complexity.
+
+Diagnostic tests assess whether dependence remains after fitting the model. The Ljung–Box test on standardised residuals examines remaining serial correlation in the mean, while the test on squared standardised residuals examines remaining dependence in their magnitude. The ARCH-LM test provides an additional check for remaining ARCH effects.
+
+```{r}
+#| label: project2-chunk-24
+# fitted models stored in 1 list
+models <- list(
+  "GARCH(1,1)"    = fit_g11,
+  "iGARCH(1,1)"   = fit_ig11,
+  "gjrGARCH(1,1)" = fit_gjrg11,
+  "eGARCH(1,1)"   = fit_eg11,
+  "csGARCH(1,1)"  = fit_csg11
+)
+
+# function to evaluate model for each one
+# information required:
+  # Information Criteria
+  # Diagnostic p-values 
+evaluate_model <- function(fit) {
+  ic <- infocriteria(fit)
+  k  <- length(coef(fit))
+  N  <- fit@fit$N
+  
+  aic  <- ic["Akaike", 1]
+  aicc <- aic + (2 * k * (k + 1)) / (N * (N - k - 1))
+  bic  <- ic["Bayes", 1]
+  
+  # extracts standardized residuals
+  res <- residuals(fit, standardize = TRUE)
+  z2  <- res^2
+  
+  # extracts the p-value from diagnostic tests
+  lb_res <- Box.test(res, lag = 12, type = "Ljung-Box", fitdf = 1)$p.value
+  lb_z2  <- Box.test(z2, lag = 12, type = "Ljung-Box", fitdf = 2)$p.value
+  arch   <- ArchTest(as.numeric(res))$p.value
+  
+  # formatting
+  c(AIC = aic, BIC = bic, LB_p = lb_res, LB_Sq_p = lb_z2, ARCH_p = arch)
+}
+
+
+# table 
+comparison_table <- t(sapply(models, evaluate_model))
+
+round(comparison_table, 4) |> 
+  kable(caption = "Model Selection and Diagnostic Test P-Values")
+```
+
+These conventional residual tests provide useful screening diagnostics, although their reference distributions are approximate when applied to residuals from estimated GARCH models. In particular, subtracting the number of variance parameters through the `fitdf` argument is not a general correction for GARCH estimation.
+
+In the reported results, eGARCH has the lowest AIC and BIC. However, the diagnostics indicate remaining dependence in its squared standardised residuals, suggesting that it does not fully capture the volatility dynamics.
+
+GJR-GARCH also has relatively low information criteria, while its Ljung–Box tests do not reject the null hypotheses of no remaining serial correlation in standardised residuals and their squares at the chosen significance level. Failure to reject these hypotheses does not prove that all dependence has been removed, but it provides a more favourable diagnostic assessment.
+
+On this basis, GJR-GARCH(1,1) is selected as the preferred in-sample specification among the models considered. This choice balances fit with residual adequacy rather than relying on the lowest AIC alone.
+
+# Out-of-Sample Forecasting
+
+## Rolling Forecast Design
+
+The GJR-GARCH model is evaluated using one-step-ahead rolling volatility forecasts. The initial estimation sample contains approximately 70% of the observations, with the remaining 30% used for forecast evaluation. Parameters are re-estimated every five observations using a moving estimation window.
+
+```{r}
+#| label: project2-chunk-25
+
+# window sized is determined and the refit period is set to be 5 days. 
+window_size <- round(length(ret_perc) * 0.7)
+refit_period <- 5
+
+# rolling window forecast using rugarch 
+roll_wind <- ugarchroll(
+  spec            = spec_gjrg11,
+  data            = ret_perc, 
+  n.ahead         = 1,
+  forecast.length = length(ret_perc) - window_size,
+  refit.every     = refit_period,
+  refit.window    = "moving",
+  solver          = "hybrid"
+)
+
+# Extract predictions
+fc_gjrgarch <- as.data.frame(roll_wind)
+
+# Calculate variance and the realized proxy (squared returns)
+var_fc_gjrgarch  <- fc_gjrgarch$Sigma^2
+realised_proxy <- fc_gjrgarch$Realized^2
+
+```
+
+Conditional variance is not directly observable, so squared realised returns are used as a proxy. This proxy is noisy and includes the contribution of the conditional mean; squared forecast errors would align more directly with conditional variance when the mean is non-zero.
+
+## Forecast Evaluation
+
+Forecast performance is assessed using mean squared error (MSE) and a QLIKE loss:
+
+$$
+\operatorname{MSE}
+=
+\frac{1}{H}
+\sum_{t=1}^{H}
+\left(v_t-\widehat{\sigma}_t^2\right)^2,
+$$
+
+$$
+\operatorname{QLIKE}
+=
+\frac{1}{H}
+\sum_{t=1}^{H}
+\left[
+\ln\left(\widehat{\sigma}_t^2\right)
++
+\frac{v_t}{\widehat{\sigma}_t^2}
+\right],
+$$
+
+where (v_t) is the squared-return proxy and (H) is the number of forecast observations. Lower values indicate better performance when comparing forecasts evaluated on the same observations and scale.
+
+```{r}
+#| label: project2-chunk-26
+# computes average loss metrics in the functions
+# Returns the mean of the loss series
+compute_loss_metrics <- function(realized_proxy, var_fc) {
+  eps <- 1e-8  
+  safe_var <- pmax(var_fc, eps)
+  
+  mse_loss   <- (realized_proxy - safe_var)^2
+  qlike_loss <- log(safe_var) + (realized_proxy / safe_var)
+  
+  data.frame(
+    Mean_MSE   = mean(mse_loss), 
+    Mean_QLIKE = mean(qlike_loss)
+  )
+}
+
+ 
+loss_gjrgarch <- compute_loss_metrics(realised_proxy, var_fc_gjrgarch)
+
+loss_gjrgarch |>
+  kable(
+    digits = 3,
+    caption = "Rolling Forecast Losses for GJR-GARCH(1,1)"
+  )
+```
+
+The mean MSE is `r round(loss_gjrgarch$Mean_MSE, 3)`, and the mean QLIKE is `r round(loss_gjrgarch$Mean_QLIKE, 3)`. The previously reported values were approximately 7.08 and 1.068, respectively.
+
+These values summarize the forecast losses but do not establish whether forecasting performance is strong without a benchmark. Comparing GJR-GARCH with the other specifications or a simple variance forecast would provide a clearer assessment.
+
+Although these forecasts are generated sequentially, the model specification was selected using the full dataset. A stricter out-of-sample assessment would select the specification using only the initial training sample before evaluating forecasts on the remaining observations.
+
+# Simulation Study
+
+## Purpose and Design
+
+A simulation study is conducted to examine how GARCH(1,1) parameter estimation changes with sample size. Unlike the earlier first-principles implementation, this simulation uses `rugarch` for both data generation and model estimation.
+
+The study assesses finite-sample bias, variability, and numerical convergence. It does not prove estimator consistency, although improving parameter recovery as the sample size increases would be consistent with the expected large-sample behaviour.
+
+The data-generating model has a zero mean, normally distributed standardized innovations, and the following parameters:
+
+$$
+\omega = 0.05,
+\qquad
+\alpha = 0.08,
+\qquad
+\beta = 0.88.
+$$
+
+Its persistence is (0.96), which is below one. Three sample sizes are considered: 250, 500, and 2,000 observations. Each setting is replicated 500 times, and the random seed is set to 123 for reproducibility.
+
+```{r}
+#| label: project2-chunk-27
+# true values for the synthetic example
+omega_true <- 0.05
+alpha_true <- 0.08
+beta_true  <- 0.88
+
+# true model specification
+true_spec <- ugarchspec(
+  variance.model = list(model = "sGARCH", garchOrder = c(1, 1)),
+  mean.model     = list(armaOrder = c(0, 0), include.mean = FALSE),
+  fixed.pars     = list(omega = omega_true, alpha1 = alpha_true, beta1 = beta_true),
+  distribution.model = "norm"
+)
+
+# sample sizes tested to determine that the estimate function works for for different sample sizes
+sample_sizes <- c(250, 500, 2000)
+n_replications <- 500
+
+run_simulation <- function(n_obs, n_reps, true_spec) {
+  results <- matrix(NA, nrow = n_reps, ncol = 4)
+  colnames(results) <- c("converged", "omega", "alpha1", "beta1")
+  
+  fit_spec <- ugarchspec(
+    variance.model = list(model = "sGARCH", garchOrder = c(1, 1)),
+    mean.model     = list(armaOrder = c(0, 0), include.mean = FALSE),
+    distribution.model = "norm"
+  )
+  
+  for (i in 1:n_reps) {
+    sim = ugarchpath(true_spec, n.sim = n_obs)
+    sim_returns =  as.numeric(fitted(sim))
+    
+    # Estimates model with error handling
+    fit <- tryCatch(
+      ugarchfit(fit_spec, data = sim_returns, solver = "hybrid"),
+      error = function(e) NULL
+    )
+    
+    # convergence check 
+    if (!is.null(fit) && convergence(fit) == 0) {
+      pars <- coef(fit)
+      results[i, ] <- c(1, pars["omega"], pars["alpha1"], pars["beta1"])
+    } else {
+      results[i, ] <- c(0, NA, NA, NA)
+    }
+  }
+  
+  dat <- as.data.frame(results)
+  dat$N <- n_obs
+  return(dat)
+}
+
+# running of simulations
+set.seed(123)
+sim_results <- bind_rows(lapply(sample_sizes, run_simulation, n_reps = n_replications, true_spec = true_spec))
+```
+
+## Bias, Variability, and Convergence
+
+For each sample size, the convergence rate is calculated as the percentage of successful estimations. Bias is estimated as the average parameter estimate minus its true value, while the standard deviation measures variation across replications.
+
+Where estimation fails, bias and standard deviation are calculated using only the converged fits.
+
+```{r}
+#| label: project2-chunk-28
+summary_stats <- sim_results %>%
+  group_by(N) %>%
+  summarise(
+    Total_Reps   = n(),
+    Convergence_Rate = mean(converged) * 100,
+    
+    # bias of estimates
+    Bias_Omega  = mean(omega, na.rm = TRUE) - omega_true,
+    Bias_Alpha  = mean(alpha1, na.rm = TRUE) - alpha_true,
+    Bias_Beta   = mean(beta1, na.rm = TRUE) - beta_true,
+    
+    # standard deviation of the estimates
+    SD_Omega    = sd(omega, na.rm = TRUE),
+    SD_Alpha    = sd(alpha1, na.rm = TRUE),
+    SD_Beta     = sd(beta1, na.rm = TRUE)
+  )
+
+summary_stats |>
+  kable(
+    digits = 4,
+    caption = "GARCH(1,1) Parameter Recovery Across Sample Sizes"
+  )
+
+```
+
+In the reported results, all simulations converged. The absolute bias of the variance intercept decreases as the sample size increases.
+
+The reaction coefficient, $\alpha$, is underestimated in the smaller samples and becomes overestimated as the sample size increases, although the absolute bias becomes smaller. The persistence coefficient, $\beta$, is underestimated across the sample sizes, with the magnitude of the bias also decreasing.
+
+The standard deviations of all three parameter estimates decline as the sample size increases. Overall, the results suggest that larger samples improve estimation precision and bring the estimates closer to their true values under the specification considered.
+
+## Sampling Distributions
+
+Box plots illustrate how the distributions of the parameter estimates change with sample size. Dashed horizontal lines indicate the true parameter values.
+
+```{r}
+#| label: project2-chunk-29
+#| fig-height: 7
+# table created for the true values 
+true_vals <- data.frame(
+  Parameter  = c("omega", "alpha1", "beta1"),
+  True_Value = c(omega_true, alpha_true, beta_true)
+)
+
+# data manipulation of the results so that plotting can occur
+plot_data <- sim_results %>%
+  filter(converged == 1) %>%
+  pivot_longer(cols = c(omega, alpha1, beta1), names_to = "Parameter", values_to = "Estimate")
+
+# box-plot of each parameter value for each of the simulated datasets
+ggplot(plot_data, aes(x = factor(N), y = Estimate, fill = factor(N))) +
+  geom_boxplot(outlier.size = 0.8, alpha = 0.7) +
+  geom_hline(data = true_vals, aes(yintercept = True_Value), color = "red", linetype = "dashed", linewidth = 0.8) +
+  facet_wrap(~ Parameter, scales = "free_y") +
+  theme_minimal() +
+  labs(
+    title = "GARCH(1,1) Sampling Distributions Across Sample Sizes (N)",
+    x = "Sample Size (N)",
+    y = "Parameter Estimate",
+    fill = "Sample Size"
+  )
+```
+
+The narrowing distributions provide visual evidence of improved precision in larger samples. These findings apply to the chosen parameter values and normally distributed innovations. Further simulations would be needed to assess whether the same patterns hold under different persistence levels, innovation distributions, or model misspecification.
+
+# Discussion and Conclusion
+
+The results suggest that the standard GARCH(1,1) model is a useful baseline but is not necessarily the most suitable specification for JSE Top 40 returns. Among the models considered, GJR-GARCH provides a favourable balance between in-sample fit and residual diagnostics.
+
+This supports considering asymmetric volatility models for this dataset. However, selecting GJR-GARCH does not by itself establish that negative shocks have a significantly larger effect than positive shocks. That conclusion also requires examining the estimated asymmetry coefficient and its uncertainty.
+
+The comparison between the first-principles and package implementations highlights the importance of the innovation distribution. Because the custom implementation uses normal innovations and the package model uses Student's t innovations, differences in their estimates cannot be attributed solely to implementation.
+
+The simulation results indicate that larger samples generally improve parameter recovery under the chosen GARCH(1,1) specification. However, the experiment evaluates the `rugarch` estimator and does not directly validate the first-principles estimation function.
+
+# Limitations and Further Work
+
+Structural breaks were not investigated. Changes in the underlying volatility process could affect estimated persistence, and future work could examine whether persistence differs across market regimes or sub samples.
+
+The first-principles implementation assumes normally distributed innovations despite the heavy tails observed in returns. Extending this implementation to use Student's t innovations would allow a more comparable assessment against the package model. Implementing other GARCH specifications from first principles would also deepen the comparison.
+
+Forecast evaluation was limited to GJR-GARCH and used squared daily returns as a noisy volatility proxy. Future work could compare forecasts across all candidate models, include a simple benchmark, and select models entirely within the training sample. Value-at-Risk forecasting and back testing could be investigated separately.
+
+The simulation uses one parameter configuration and one innovation distribution. Additional experiments could consider higher persistence, heavy-tailed innovations, and alternative initialization or burn-in settings. To assess the custom estimator directly, the simulated series would need to be fitted using the first-principles likelihood and optimization functions.
+
+Finally, the empirical analysis focuses on one share index. Applying the same approach to other indices would help assess how broadly the findings apply.
+
+# Reflection
+
+This project strengthened my understanding of the volatility modelling process, from preparing financial data and identifying stylized facts to estimating models and evaluating their performance.
+
+Implementing GARCH(1,1) from first principles helped me understand how its recursive variance equation captures the effects of past innovations and conditional variances. It also clarified how a GARCH model can represent the persistence associated with an infinite-order ARCH process.
+
+I learned that the assumed innovation distribution affects both the likelihood and the resulting parameter estimates. Comparing the normal and Student's t specifications helped me connect the heavy tails observed in the data with the modelling choices made during estimation.
+
+The most challenging part was translating the GARCH equations into code while ensuring that I understood the role of each parameter and the constraints required for estimation. Exploring the wider GARCH family also helped me understand how alternative models represent asymmetry and different forms of volatility persistence.
+
+## References
+
+- **Cowpertwait, P. S., & Metcalfe, A. V.** (2009). *Introductory Time Series with R*. Springer.
+- **Hyndman, R. J., & Athanasopoulos, G.** (2021). *Forecasting: Principles and Practice* (3rd ed.). OTexts. Available at: <https://otexts.com/fpp3/>
+- **Regenstein, J. K.** (2018). *Reproducible Finance with R: Code Flows and Shiny Apps for Portfolio Analysis*. CRC Press.
+- **Ryan, J. A., & Ulrich, J. M.** (2024). *quantmod: Quantitative Financial Modelling Framework*. R package. Available at: <https://CRAN.R-project.org/package=quantmod>
+- **Shumway, R. H., & Stoffer, D. S.** (2017). *Time Series Analysis and Its Applications: With R Examples* (4th ed.). Springer.
+- **Trading Economics.** (2026). *South Africa Top 40 Index Historical Data*. \[External CSV dataset used for continuity patching\]. Available at: <https://tradingeconomics.com/top40:ind>
+- **Yahoo Finance.** (2026). *Historical Data for JSE Top 40 Index*. Retrieved using the `quantmod` package. Available at: <https://finance.yahoo.com/>
+- **Yasutta.** (n.d.). *Volatility Forecasting 1*. RPubs. Available at: <https://rpubs.com/yasutta/VF1>

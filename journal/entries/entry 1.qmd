@@ -1,0 +1,34 @@
+---
+title: "Journal Entry 1"
+date: 27 July 2026
+---
+
+**Date:** 2026-07-27
+
+**Session/topic covered:**
+
+Introduction to Times series and Characteristics of a time series model
+
+**What I did:**
+
+I went over the lecture that Sulaiman taught. Also did the tutorial he gave us to consolidate understanding
+
+**Related tutorial:**
+
+[Section 1 exercises](../../section-1/section%201%20tut%20-%20exercises.qmd)
+
+**What I learned:**
+
+One thing is realized is that a lot of the fundamental concepts that we use for working with cross sectional data as well as stratified data, is quite similar to how we deal with time series data. There are several differences at the surface level but it seems like the underlying concept is the same.
+
+I also that order is very important. This is because usually time periods are related to one another in some way, whether that be though auto correlation or a trend, if you mess up the order is messes with your analyses
+
+**Difficulties or open questions:**
+
+One thing that I am struggling with a bit is the idea of a realization. I'm not sure if I understand it conceptually and what it means in regards to Time series. I also would like to get more comfortable with using and creating time series objects, as well as being able to interpret the analysis
+
+**What to do next:**
+
+Do my own tutorial using another dataset following the ideas I learnt in the follow through and in the lecture
+
+[Back to journal](../index.qmd)

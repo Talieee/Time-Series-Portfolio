@@ -1,0 +1,323 @@
+# ARCH and GARCH: Modelling Conditional Variance
+
+## Purpose
+
+Investigate how ARCH and GARCH models describe volatility clustering, distinguish conditional from unconditional variance, and connect dependence in squared innovations to volatility forecasting and model diagnostics.
+
+## Notation and assumptions
+
+Write the observed process as
+
+$$
+y_t=\mu_t+\varepsilon_t,\qquad \varepsilon_t=\sigma_t z_t,
+$$
+
+where $\mu_t=E(y_t\mid\mathcal F_{t-1})$, $\mathcal F_{t-1}$ denotes information available through time $t-1$, and $z_t$ are independent and identically distributed with mean zero and variance one, independent of $\mathcal F_{t-1}$. The positive quantity $\sigma_t$ is measurable with respect to $\mathcal F_{t-1}$. Set $h_t=\sigma_t^2$.
+
+Follow the course notes' convention:
+
+$$
+\text{ARCH}(q):\quad h_t=\alpha_0+\sum_{i=1}^{q}\alpha_i\varepsilon_{t-i}^2,
+$$
+
+$$
+\text{GARCH}(p,q):\quad h_t=\alpha_0+\sum_{i=1}^{q}\alpha_i\varepsilon_{t-i}^2
++\sum_{j=1}^{p}\beta_j h_{t-j}.
+$$
+
+Assume $\alpha_0>0$, $\alpha_i\geq0$ and $\beta_j\geq0$. Use a causal stationary solution wherever stationarity is specified. State additional moment assumptions when needed. A white-noise sequence has constant finite variance and zero autocovariances at nonzero lags; independence is a stronger property.
+
+## Question 1: Returns and the motivation for volatility models \[10\]
+
+Let $P_t>0$ be an asset price. Define its simple return and log return by
+
+$$
+R_t=\frac{P_t-P_{t-1}}{P_{t-1}},\qquad
+r_t=\log P_t-\log P_{t-1}.
+$$
+
+**(a) \[3\]** Show that $r_t=\log(1+R_t)$, and prove that $$
+\lim_{R_t\to0}\frac{r_t}{R_t}=1.
+$$
+
+**(b) \[2\]** Show that log returns add over time. Explain one reason to model returns rather than price levels.
+
+**(c) \[3\]** A return series has negligible sample autocorrelation, but its squared returns have positive autocorrelation across many lags. Explain why these findings are compatible and what they suggest about the conditional mean and conditional variance.
+
+**(d) \[2\]** Explain how constant-width prediction intervals can misrepresent uncertainty during calm and turbulent periods.
+
+**Your response:**
+
+a)  
+
+b)  
+
+The reason returns instead of prices are modelled is because prices tend to follow a random work in financial data. This makes them very difficult to model. The variance of prices is also unbounded meaning the spread can be very large.
+
+c)  
+
+This is compatible because the returns themselves having no autocorrelation is based on the efficiency market hypothesis that is the returns had a strong linear autocorrelation that traders would exploit this relationship by buying stocks at a lower price than they sell until there is no longer a linear autocorrelation between returns. However the presence of no linear autocorrelation does no imply there is no autocorrelation. it therefore makes sense that the squared returns have a positive correlation amongst many lags. I think it also links to the fact that there is volatility clustering seen when you plot the returns.
+
+d)  
+
+constant width prediction intervals are a problem because the conditional variance is heteroskedastic. Constant width prediction intervals implies the the conditional variance in heteroskedastic. For financial data this is a problem because this means that the risk could possibly be understated and overstated. This would thus impact the decisions that an individual makes. Therefore a prediction interval where the conditional variance is homoskedastic would not work.
+
+## Question 2: Basic properties of ARCH(1) \[15\]
+
+Consider $$
+\varepsilon_t=\sqrt{h_t}z_t,\qquad
+h_t=\alpha_0+\alpha_1\varepsilon_{t-1}^2,
+\qquad 0<\alpha_1<1.
+$$ Assume a causal stationary solution with finite second moment exists.
+
+**(a) \[4\]** Derive $E(\varepsilon_t\mid\mathcal F_{t-1})$ and $\operatorname{Var}(\varepsilon_t\mid\mathcal F_{t-1})$. Justify the use of independence in each derivation.
+
+**(b) \[4\]** Derive the unconditional mean and variance of $\varepsilon_t$, stating where stationarity is used.
+
+**(c) \[4\]** Prove that $\operatorname{Cov}(\varepsilon_t,\varepsilon_{t-k})=0$ for every integer $k\geq1$. Explain why this does not establish independence.
+
+**(d) \[3\]** Explain the parameter restrictions and how the model generates volatility clustering despite the result in part (c).
+
+**Your response:**
+
+a)  
+
+b)  
+
+c)  The covariance only measures linear dependence and so this does not mean that there is non linear independence.
+
+d)  the parameter restriction is due to the unconditional variance as found in question a). \$\\alpha_0 = 1\$ then it would be undefined.
+
+## Question 3: Reading volatility patterns \[15\]
+
+A fitted conditional mean model produces residuals with the following features:
+
+- Their ACF is close to zero at all nonzero lags.
+- Their squared values have positive autocorrelation that declines slowly.
+- Large positive and negative residuals occur in clusters.
+- A normal quantile plot shows more extreme observations in both tails than a normal distribution would suggest.
+
+**(a) \[4\]** A student concludes: “The residuals are white noise, so there is nothing left to model.” Assess this statement. Distinguish what the residual ACF tells you from what it cannot tell you.
+
+**(b) \[3\]** Explain what volatility clustering means in this example. Does a large negative residual imply that the next residual will probably also be negative? Justify your answer.
+
+**(c) \[4\]** Another student proposes adding many AR terms to the conditional mean equation to remove the correlation in squared residuals. Explain whether this addresses the observed problem. What type of model would you investigate instead, and why?
+
+**(d) \[4\]** Suppose an ARCH model assumes Gaussian standardized innovations. A reviewer argues that this contradicts the heavy tails in the residuals. Assess the argument by distinguishing the standardized innovations, the conditional distribution of residuals and their unconditional distribution. No moment derivation is required.
+
+**Your response:**
+
+a\) The acf of residuals tells you if there is is linear autocorrelation present in the data. It cannot tell you if there is non linear autocorrelation nor can it tell you which model is the correct model. You can also use it to determine how many lag are significantly correlated with each other, however it can be very difficutl to conclude the correct model by just visually looking.
+
+b\) It means that large residuals are followed by large residuals and small residuals are followed by small residuals. This means the extent of the volatility appear in same groups of time as thought with the same extent. Yes a large residual implies the next residual will be large as the effect of volatility is relatively persistent and the effect takes a long time to damper off on future time periods.
+
+c\) The problem is that the result to be estimating a lot of parameters, this results in the likelihood surface being flat and makes it difficult to find reasonable estimates for the all the parameter values. Instead it is better to use a GARCH model instead as you can then model the past innovations in such a way that a lot of parameters do not need to be added to the model.
+
+d\) The reviewer's argument is not entirely correct, because it confuses three different objects. The standardized innovations z_t are i.i.d. with mean 0 and standard deviation 1, and under the model they are Gaussian with constant variance. The residuals are a function of these innovations, ε_t = σ_t z_t, so conditional on the past (when σ_t is known) they are also normal, N(0, σ_t²), but with a variance that changes over time. Unconditionally, the residuals are therefore a scale mixture of normals, since each observation is drawn from a normal with a different standard deviation, and this mixture has heavier tails than a single normal with the same overall variance.
+
+## Question 4: Comparing models and interpreting parameters \[15\]
+
+Two GARCH(1,1) models have been proposed for daily returns measured in percentage points:
+
+| Model | $\alpha_0$ | $\alpha_1$ | $\beta_1$ |
+|-------|-----------:|-----------:|----------:|
+| A     |       0.02 |       0.05 |      0.90 |
+| B     |       0.02 |       0.25 |      0.70 |
+
+Both use $$
+h_t=\alpha_0+\alpha_1\varepsilon_{t-1}^2+\beta_1h_{t-1}.
+$$
+
+You may use $$
+s=\alpha_1+\beta_1,\qquad \bar h=\frac{\alpha_0}{1-s}.
+$$
+
+**(a) \[3\]** Calculate each model's persistence and long-run variance. What do these quantities tell you about similarities between the models?
+
+**(b) \[4\]** Suppose yesterday's conditional variance was 0.40 and yesterday's residual was $-2$. Calculate today's conditional variance under each model. Which model reacts more sharply, and which parameter explains the difference?
+
+**(c) \[3\]** Would your answers in part (b) change if the residual were $+2$? Explain the modelling assumption behind your answer, and describe a situation in which it may be inappropriate.
+
+**(d) \[3\]** A student says: “Model A has a larger $\beta_1$, so its forecasts must return to the long-run variance more slowly than Model B's.” Assess this claim.
+
+**(e) \[2\]** Why might a GARCH(1,1) model describe persistent volatility more economically than a high-order ARCH model? Explain the mechanism in words.
+
+**Your response:**
+
+a\)
+
+b\)
+
+Model B reacts more sharply and its due to the alpha 1 parameter because it refers to how sharply volatility jumps in a day. This parameter estimate is higher for model B than it is for model A.
+
+c\) No the residuals are squared and the model assumes symmetry. This means that rises in shocks have the same effect as falls in shocks of the same size.
+
+d\) This claim is false because both models have the same persistence so the half life will be the same. The rate of returning to the long run does not only rely on the memory but also on the reaction as well.
+
+e\) A GARCH(1,1) describes persistent volatility more economically because it is equivalent to an ARCH(∞) model whose weights on past squared residuals decline geometrically. Today's conditional variance depends on yesterday's conditional variance, which in turn contains all earlier shocks, so a single coefficient β₁ controls how slowly the influence of past shocks decays. A pure ARCH model would need many lags, each with its own coefficient, to reproduce the same long memory, which means more parameters to estimate, less precise estimates, and more constraints. GARCH(1,1) achieves a slowly decaying memory with only three parameters.
+
+## Question 5: Forecasting and making sense of risk \[20\]
+
+A GARCH(1,1) model for daily returns measured in percentage points has $$
+\alpha_0=0.02,\qquad \alpha_1=0.10,\qquad \beta_1=0.85.
+$$ At the end of day $T$, the residual is $\varepsilon_T=-2$ and the conditional variance is $h_T=0.60$. Treat the parameters as known. You may use $$
+s=\alpha_1+\beta_1,\qquad
+\bar h=\frac{\alpha_0}{1-s},\qquad
+\widehat h_{T+k\mid T}=\bar h+s^{k-1}(h_{T+1}-\bar h),
+$$ $$
+\text{half-life}=\frac{\log(0.5)}{\log s}.
+$$ No derivation of these formulas is required.
+
+**(a) \[4\]** Calculate tomorrow's conditional variance and standard deviation. Identify the contribution of the constant, the latest squared shock and the previous conditional variance.
+
+**(b) \[4\]** Calculate the long-run variance and the two- and ten-step-ahead variance forecasts. Explain the direction of the forecast path using the economic meaning of the model.
+
+**(c) \[3\]** Calculate the half-life. Explain precisely what is halved: does this mean that the variance itself will halve after this many days?
+
+**(d) \[3\]** Tomorrow's variance is known given the parameters and information at time $T$. A student concludes that tomorrow's return is therefore known too. Explain the mistake. Why is the conditional variance for day $T+2$ not yet known in the same way?
+
+**(e) \[3\]** Assume returns have a constant conditional mean and conditionally uncorrelated future innovations. An analyst estimates ten-day cumulative-return variance by multiplying tomorrow's variance by ten. Explain whether this overstates or understates the model's forecast at each of the two forecast origins. State how the model-based calculation should be performed.
+
+**Your response:**
+
+a\) The previous conditional variance contributes the most followed by the latest squared shock and then lastly the constant.
+
+b\)
+
+c\) The half-life is the number of days it takes for the deviation of the volatility forecast from its long run level to fall by half.
+
+d\) The student’s conclusion is wrong because knowing tomorrow’s variance does not mean we know tomorrow’s return. The return is r\_{T+1} = μ + σ\_{T+1} z\_{T+1}, and although σ\_{T+1} is known at time T, z\_{T+1} is a random innovation that has not happened yet. The variance only tells us how uncertain the return is, so we know the distribution of tomorrow’s return but not its actual value.
+
+The variance for T+1 is known because it relies on values we already have: the parameters, today’s squared shock and today’s conditional variance. For T+2, we need tomorrow’s squared shock, ε²\_{T+1}, which is unknown at time T. This means σ²\_{T+2} is itself random from today’s point of view, so it can’t be calculated, only forecast. We replace the unknown ε²\_{T+1} with its expected value, σ²\_{T+1}.
+
+e\)
+
+The analyst's calculation ignores mean reversion in the conditional variance. Multiplying tomorrow's variance by ten assumes volatility stays at its current level for all ten days. At a turbulent origin, where $\sigma^2_{T+1}$ is above the long-run variance $\bar{\sigma}^2$, the true daily variances decline towards $\bar{\sigma}^2$, so the rule overstates the ten-day variance. At a calm origin, where $\sigma^2_{T+1}$ is below $\bar{\sigma}^2$, the true daily variances rise towards $\bar{\sigma}^2$, so the rule understates it.
+
+Because the mean is constant and the future innovations are conditionally uncorrelated, the correct calculation is the sum of the ten forecast conditional variances:
+
+$$
+\text{Var}\left(\sum_{k=1}^{10} r_{T+k} \mid \mathcal{I}_T\right) = \sum_{k=1}^{10} \hat{\sigma}^2_{T+k},
+$$
+
+where each forecast comes from the recursion
+
+$$
+\hat{\sigma}^2_{T+k} = \bar{\sigma}^2 + (\alpha_1 + \beta_1)^{k-1}\left(\sigma^2_{T+1} - \bar{\sigma}^2\right), \qquad \bar{\sigma}^2 = \frac{\alpha_0}{1 - \alpha_1 - \beta_1}.
+$$
+
+The analyst's rule is the special case where every $\hat{\sigma}^2_{T+k}$ is held fixed at $\sigma^2_{T+1}$.
+
+## Question 6: Testing and diagnosing a fitted model \[15\]
+
+Use a 5% significance level. All results below are hypothetical.
+
+**(a) \[4\]** Before fitting a volatility model, an ARCH-LM auxiliary regression uses five lagged squared residuals, 500 usable observations and $R^2=0.048$. You may use $LM=nR^2$ and the 5% critical value $\chi^2_5=11.07$.
+
+State the null hypothesis, calculate the statistic and interpret the result. Does this result establish that GARCH(1,1) is the correct specification? Explain.
+
+**(b) \[6\]** Three candidate models produce the following p-values. The Ljung–Box tests use appropriate adjustments for the fitted models. Here $\widehat z_t=\widehat\varepsilon_t/\widehat\sigma_t$.
+
+| Diagnostic                    | Model A | Model B | Model C |
+|-------------------------------|--------:|--------:|--------:|
+| Ljung–Box on $\widehat z_t$   |   0.002 |    0.62 |    0.48 |
+| Ljung–Box on $\widehat z_t^2$ |    0.45 |   0.003 |    0.39 |
+| ARCH-LM on $\widehat z_t$     |    0.36 |   0.008 |    0.52 |
+
+For each model, identify which component, if any, these results suggest revisiting. Explain why even Model C cannot be declared “the true model” from these tests.
+
+**(c) \[3\]** Model C's standardized residuals have no obvious serial pattern, but their normal quantile plot shows unusually heavy tails. What part of the specification would you reconsider? Explain why adding more variance lags may not address this issue.
+
+**(d) \[2\]** A colleague checks only the raw residuals after fitting GARCH and rejects the model because their magnitudes still cluster. Explain what should be examined instead and why.
+
+**Your response:**
+
+a\) This means that GARCH(1,1) is either not the right specification or the conditional mean model is wrong.
+
+b\) Model A's conditional mean model requires revisting as the test on the standarized innovation has a p value that is small.
+
+Form Model B I would revisit the Variance (ARCH) model being used based on the p value.
+
+Model C should not just be assumed to be the right model because the tests only determine stationarity not if the right model has be chosen or if this is the best model of all possible models. to determine that the information criterion should be looked at.
+
+c\) I would change the distribution of the innovation to a student t distribution.
+
+d\) The colleague is looking at the wrong object. In a GARCH model the residual is $\varepsilon_t = \sigma_t z_t$, so the raw residuals are *expected* to show clustering in their magnitudes, because the conditional variance $\sigma_t^2$ changes over time. This is exactly the behaviour the model is designed to capture, so clustering in the raw residuals is not evidence against it.
+
+The model's assumption concerns the standardized innovations $z_t$, which should be i.i.d. with mean 0 and constant variance 1. The estimated version is the standardized residuals,
+
+$$
+\hat{z}_t = \frac{\hat{\varepsilon}_t}{\hat{\sigma}_t},
+$$
+
+and these are what should be examined. If the model has captured the volatility dynamics, then:
+
+- the squared standardized residuals should show no remaining autocorrelation, which can be checked with ACF plots and a Ljung-Box test
+- the standardized residuals should pass an ARCH LM test, meaning we fail to reject the null of no remaining ARCH effects
+- the distribution of the standardized residuals should be consistent with the assumed innovation distribution (for example, check a QQ-plot against the normal or Student-t)
+
+Formal tests are useful because visual inspection alone is not always reliable, but they must be applied to the standardized residuals rather than the raw ones. The model should only be rejected if clustering remains in the standardized residuals, since that would indicate misspecification, such as too few lags or a missing asymmetry.
+
+## Question 7: Challenging model claims \[10\]
+
+For each statement, decide whether it is correct, incorrect or requires qualification. Give a short justification and correct any misleading claim. Each part is worth 2 marks.
+
+**(a) \[2\]** “GARCH improves the forecast of tomorrow's return because it forecasts tomorrow's volatility.”
+
+**(b) \[2\]** “If $\alpha_1+\beta_1=1$ and $\alpha_0>0$, we can still use $\alpha_0/(1-\alpha_1-\beta_1)$ as a finite long-run variance.”
+
+**(c) \[2\]** “An estimated persistence of 0.995 proves that volatility shocks last a long time within a single stable regime; there is no need to check for structural breaks.”
+
+**(d) \[2\]** “Because standard GARCH uses squared shocks, it can automatically make a negative shock increase next day's variance more than a positive shock of the same size.” In your response, name an appropriate asymmetric model and explain its purpose.
+
+**(e) \[2\]** “An ARCH(1) process with Gaussian standardized innovations and $\alpha_1=0.7$ has finite variance, so it must have finite kurtosis.” You may use the conditions $\alpha_1<1$ for finite variance and $3\alpha_1^2<1$ for a finite fourth moment. No proof is required.
+
+**Your response:**
+
+\(a\) Incorrect
+
+GARCH forecasts the conditional variance, not the return itself. With a constant conditional mean, the forecast of tomorrow's return is unchanged. What GARCH improves is the forecast of the uncertainty around the return, so the prediction intervals and VaR are better. The statement should say that GARCH improves the forecast of tomorrow's volatility, not the return.
+
+\(b\) Incorrect
+
+If $\alpha_1+\beta_1=1$, the denominator $1-\alpha_1-\beta_1$ is zero, so $\alpha_0/(1-\alpha_1-\beta_1)$ is undefined and there is no finite long-run variance. This is the IGARCH case. The variance forecasts do not revert to a long-run level, and with $\alpha_0>0$ they keep drifting upwards as the horizon grows.
+
+\(c\) Incorrect
+
+A persistence of 0.995 does not prove this. Very high estimated persistence can be caused by structural breaks or regime shifts in the level of variance, which make volatility look more persistent than it really is. Breaks should be checked, for example by estimating on sub-samples or testing for a change in the unconditional variance. A persistence of 0.995 also gives a half-life of about 138 days, so the estimate itself is very sensitive.
+
+\(d\) Incorrect
+
+Standard GARCH depends on $\varepsilon_{t-1}^2$, and the square removes the sign. A negative shock and a positive shock of the same size therefore have exactly the same effect on next day's variance. To allow negative shocks to have a larger effect, the GJR-GARCH is used.
+
+\(e\) Incorrect
+
+With $\alpha_1=0.7$ we have $\alpha_1<1$, so the variance is finite. But the fourth moment needs $3\alpha_1^2<1$, and here $3(0.7)^2=1.47>1$. So the fourth moment is not finite, which means the kurtosis is not finite either. Finite variance does not imply finite kurtosis.
+
+## Portfolio reflection — unmarked
+
+After answering the questions, write a short reflection addressing:
+
+1.  Which distinction was most important to your understanding: returns versus squared returns, conditional versus unconditional variance, or reaction versus persistence? Explain using one example from your answers.
+2.  Describe one model claim you would now challenge and the evidence you would ask for.
+3.  What additional practical work would demonstrate your ability to fit and assess ARCH/GARCH models in R?
+
+**Your reflection:**
+
+The distinction that mattered most to me was returns (residuals) versus squared returns (squared residuals). The returns themselves are essentially uncorrelated, but their squares are autocorrelated, and that autocorrelation is the volatility clustering that GARCH models. This helped me with the question about the colleague who rejected the model because the raw residuals still clustered. The raw residuals are expected to cluster, since $\varepsilon_t = \sigma_t z_t$ and $\sigma_t$ changes over time, so the right check is whether the squared standardized residuals still show autocorrelation, for example with a Ljung-Box or ARCH LM test. If they do not, the model has captured the volatility dynamics. The same idea explains why the ten-day variance can be found by summing the daily variances: the returns are uncorrelated, so the covariance terms drop out.
+
+Having understood this, there are claims I would now challenge. I would challenge the claim that a symmetric GARCH(1,1) is adequate, because it uses squared shocks, so a negative and a positive shock of the same size have the same effect on tomorrow's variance. I would ask for a sign bias test on the standardized residuals, or a GJR-GARCH fit showing whether the asymmetry parameter $\gamma$ is significantly different from zero. I would also challenge any claim that a high persistence, such as 0.995, proves stable long memory, and ask for the standard error of $\alpha_1 + \beta_1$ and a check for structural breaks, for example by fitting on sub-samples.
+
+To show that I can fit and assess these models in R, I would work through a full example with the `rugarch` package on a real return series. I would fit a GARCH(1,1) and a GJR-GARCH with normal and Student-t innovations, and report the robust standard errors. I would then check the standardized residuals and their squares with ACF plots, the Ljung-Box test and the ARCH LM test, and compare the models using information criteria. Finally, I would produce multi-day volatility forecasts and compare them with the square root of time rule, then compute and backtest the value at risk.
+
+## Difficulties:
+
+The hardest part of the tutorial was explaining and justifying the reasoning behind each claim. It is easy to think you understand something until you are asked to explain it. Having to justify my answers made me consolidate my understanding and check that I really knew what I was talking about. The questions were structured so that they applied the theory rather than just recalling it, which helped me test my theoretical understanding and strengthen my weaker areas in volatility modelling.
+
+## Source and adaptation note
+
+Aligned with Chapter 7, “Conditional Variance Models,” in *TSA_Hons_July_2026_Part1_Notes*, particularly the learning outcomes on p. 76 and the material on pp. 77–90.
+
+Question 1(a) adapts the supplied textbook Problem 7.6. Questions 1 and 2 retain the original tutorial's foundation derivations. Questions 3–7 use original hypothetical scenarios to assess conceptual understanding, parameter interpretation, forecasting, testing, diagnostics and limitations. Ideas from the supplied ARCH/GARCH problems inform the tutorial, but their general-order proofs are not required here. Textbook problem numbering is separate from the course notes' section numbering. Add the textbook's full bibliographic details when available.
+
+**Authorship disclosure:** Tutorial questions prepared with AI assistance and aligned to the supplied course notes. Solutions, calculations and reflection are my own work.

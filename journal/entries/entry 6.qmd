@@ -1,0 +1,32 @@
+---
+title: "Journal Entry 6"
+date: 31 August 2026
+---
+
+**Date:** 2026-08-31
+
+**Session/topic covered:**
+
+Introduction to Time series in R
+
+**What I did:**
+
+In our lecture with Sulaiman, we went over how to do statistical modelling of time series in R from EDA, forecasting to ARIMA, SARIMA modelling. We were able to see what the application was using packages like fable, tstibble and more.
+
+**Related tutorial:**
+
+[Section 1 exercises](../../section-1/section%201%20tut%20-%20exercises.qmd)
+
+**What I learned:**
+
+I learnt the procedure as well as what it looks like to do the time series statistical modelling for each section of work we did in R. It was also good consolidation on all the work we have done and how it works using different packages. One thing I learnt was how to use table view, where you can look at the different packages and how the packages work in R.
+
+**Difficulties or open questions:**
+
+I would like to practice more and would like to know how to code some of the stuff from first principles such as sarima and arima family of models. I also would like to go over volatility modelling and exponential smoothing as it relates to my second projects for my time series projects.
+
+**What to do next:**
+
+Do exercises 1 & 2 to consolidate and start with both projects for time series section A. Also Go over volatility modelling.
+
+[Back to journal](../index.qmd)

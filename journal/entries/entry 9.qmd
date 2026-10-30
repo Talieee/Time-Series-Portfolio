@@ -1,0 +1,59 @@
+---
+title: "Journal Entry 9"
+date: 21 September 2026
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+**Date:** 2026-09-21
+
+**Session/topic covered:**
+
+Bootstrapping for exponential smoothing and Time series regression.
+
+**What I did:**
+
+Went over the lecture and went through the notes.
+
+**Related tutorial:**
+
+[Exponential smoothing
+tutorial](../../section-2/exponential%20smoothing%20prac.qmd)
+
+**What I learned:**
+
+In the lecture, we went over the last bit of exponential smoothing,
+which was in particular the bootstrapping of the residuals
+
+ARMAX Definitions
+
+- Regression with ARMA errors
+- Vector Auto-regressive Models
+- GARMA models
+
+forecasting and construction of prediction interval
+
+estimating parameters
+
+problems associated with using regression models for auto-correlated
+data.
+
+**Difficulties or open questions:**
+
+I would like to go over the idea of bootstrapping the residuals to
+obtain new beta coefficients for then constructing prediction intervals
+in the future. I think I get the main idea but I want to consolidate my
+understanding. It was mentioned in the lecture that sometimes there is
+there s no sine and cosine pair and its either one or the other. How
+would we know when there is a case like that, would we have to have an
+idea of the underlying model? We briefly covered the graph that helps
+determine the frequency that explains the data. I would like to learn
+how to do use it more.
+
+**What to do next:**
+
+Do a tutorial to fit the ARMAX MODELS, REGRESSION WITH ARMA ERROS , VAR
+MODELS AND GARMA MODELS.
+
+[Back to journal](../index.qmd)

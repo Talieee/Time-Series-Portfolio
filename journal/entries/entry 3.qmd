@@ -1,0 +1,34 @@
+---
+title: "Journal Entry 3"
+date: 17 August 2026
+---
+
+**Date:** 2026-08-17
+
+**Session/topic covered:**
+
+Forecasting methods, and Cross validation techniques and performance metrics
+
+**What I did:**
+
+Went over the lecture content and attended the Lecture on these concepts.
+
+**Related analysis:**
+
+[Project 1: Forecasting influenza — analysis and code](../../projects/project-01/code.qmd)
+
+**What I learned:**
+
+I learnt about the 4 different benchmark forecasting method, and how it is important to do more than 1 method even thought the are different recommended forecasts for different time series with components. There is no better method it all depends on the data as well as the question we are trying to answer. It seems that for time series there can be quite a bit of subjectivity and it comes down to your data and the question you are trying to answer. Similar to cross sectional data residuals and performance measures are found to be calculated the same except the out of sample error cannot be randomized, it needs to be ordered.
+
+We also covered cross validation and the difference in regards to cross sectional data and time series data. Time series data we cannot do a random split, reason being that successive. I also learnt that every training set must precede the validation set or else there will be temporal leakage. The lecture also covered. The lecture also covered the accuracy measured used such as MAE, RMSE, MAPE AND MASE and as well as when to use which metric. The lecture then covered the walk forward, expanding window validation and sliding window validation.
+
+**Difficulties or open questions:**
+
+I am unsure about the fundamental difference between expanding window and walk forward validation.
+
+**What to do next:**
+
+Do a tutorial on how to do cross validation for a time series as well as do the exercise in the slides on page 72 of the slides.
+
+[Back to journal](../index.qmd)

@@ -1,0 +1,292 @@
+---
+title: "Exponential Smoothing prac"
+format: html
+editor: visual
+---
+
+## Question 1
+
+### 1. For the marathon data set in library fpp2 write your own functions to implement simple exponential smoothing. You need to calculate error sums of squares and estimate the parameters 𝛼 and ℓ0. The function should take arguments y (the time series), alpha (the smoothing parameter 𝛼) and level (the initial level ℓ0). It should return the forecast of the next observation in the series. Does it give the same forecast as ses()?
+
+```{r}
+#| warning: False
+#| message: False
+# library for the dataset
+library(fpp2)
+
+dat_q1 <- marathon 
+
+# function for simple exponential smoothing
+simp_ets <- function(y, alpha, level){
+  n <- length(y)
+  yhat <- numeric(n)
+  yhat[1] <- level
+  
+  for (i in 2:n){
+    yhat[i] <- alpha * y[i-1] + (1 - alpha) * yhat[i-1]
+  }
+  
+  next_fc <- alpha * y[n] + (1 - alpha) * yhat[n]
+  
+  return(list(forecast = next_fc, fitted = yhat))
+}
+
+# fitted using the ses function
+fit <- ses(y = dat_q1, h = 1)
+
+# optimal values extracted for mine
+res <- simp_ets(y = dat_q1, alpha = fit$model$par[1], level = fit$model$par[2])
+
+# comparison using a data frame to display as a table
+data.frame(
+  My_Forecast = res$forecast, 
+  SES_Forecast = as.numeric(fit$mean)
+)
+
+```
+
+Yes the values are the same
+
+### 2. Use simple exponential smoothing to obtain a point forecast for 2017, and a prediction interval for 2017. With and without the ses() function. The estimates should be exactly the same.
+
+```{r}
+# for the manual prediction intervals
+sig <- sd(dat_q1 - fit$fitted)
+pi_l_manual <- res$forecast - 1.96 * sig
+pi_u_manual <- res$forecast + 1.96 * sig
+
+# using ses
+fit_pi <- ses(y = dat_q1, h = 1, level = 95)
+pi_l_ses <- fit_pi$lower[1]
+pi_u_ses <- fit_pi$upper[1]
+
+data.frame(
+  Method = c("Manual", "ses() Function"),
+  Forecast = c(res$forecast, as.numeric(fit_pi$mean)),
+  Lower_PI = c(pi_l_manual, pi_l_ses),
+  Upper_PI = c(pi_u_manual, pi_u_ses)
+)
+```
+
+I think they are off a bit because I used 1.96.
+
+### 3. Plot the time series and add fitted values
+
+```{r}
+autoplot(dat_q1, series = "Data") +
+  autolayer(fit$fitted, series = "Fitted") +
+  ggtitle("Boston Marathon Winning Times with SES Fitted Values") +
+  ylab("Minutes") + xlab("Year")
+```
+
+The fit seems to be quite bad. Its not able to capture much variation in the data
+
+### 4. Obtain an estimate for 𝜎
+
+```{r}
+sig
+```
+
+## Question 2
+
+Consider the oil series (annual oil production in Saudi Arabia, in library fpp2). Use the ses() function in R to find the optimal values of 𝛼 and ℓ0, and generate forecasts for the next four years. Compute a 95% prediction interval for the first forecast using 𝑦̂±1.96×𝑠, where 𝑠 is the standard deviation of the residuals. Compare your interval with the interval produced by R.
+
+```{r}
+# loading of data
+oil_ts <- oil
+
+# forecasting into the next 4 years 
+fit2 <- ses(oil_ts, h = 4)
+
+# calculates prediction intervals
+lower_pi <- fit2$mean[1] - 1.96*sd(fit2$residuals)
+upper_pi <- fit2$mean[1] + 1.96*sd(fit2$residuals)
+
+# ses prediction intervals
+my_pi <- c(lower_pi, upper_pi)
+r_pi <- c(fit2$lower[1,2], fit2$upper[1,2])
+
+data.frame(Method = c("Manual", "ses() Function"),
+  Forecast = c(res$forecast, as.numeric(fit_pi$mean)),
+  Lower_PI = c(lower_pi, r_pi[1]),
+  Upper_PI = c(upper_pi, r_pi[2]))
+```
+
+## Question 3
+
+```{r}
+ses_sse <- function(par, y) {
+  alpha <- par[1]
+  level <- par[2]
+  
+  n <- length(y)
+  y_hat <- numeric(n)
+  y_hat[1] <- level
+  
+  for (i in 2:n) {
+    y_hat[i] <- alpha * y[i-1] + (1 - alpha) * y_hat[i-1]
+  }
+  
+  errors <- y - y_hat
+  return(sum(errors^2)) # returns SSE
+}
+
+oil_subset <- window(oil, start=1996, end=2013)
+
+
+opt_res <- optim(par = c(0.5, oil_subset[1]), 
+                 fn = ses_sse, 
+                 y = oil_subset,
+                 method = "L-BFGS-B",
+                 lower = c(0, -Inf),
+                 upper = c(1, Inf))
+
+
+
+# ses()
+fit_oil_sub <- ses(oil_subset, h=1)
+
+data.frame(
+  Parameter = c("Alpha", "Initial Level (l0)"),
+  Manual_optim = c(opt_res$par[1], opt_res$par[2]),
+  SES_function = c(as.numeric(fit_oil_sub$model$par["alpha"]), as.numeric(fit_oil_sub$model$par["l"]))
+)
+```
+
+The values are quite close.
+
+## Question 4
+
+### 1. Data set books contains the daily sales of paperback and hardcover books at the same store. The task is to forecast the next four days’ sales for paperback and hardcover books. Plot the series and discuss the main features of the data. Use the ses() function to forecast each series, and plot the forecasts. Compute the RMSE values for the training data in each case.
+
+```{r}
+# plot
+autoplot(books) + ggtitle("Daily Books Sales")
+
+# datasets
+pb <- books[,1]
+hc <- books[,2]
+
+# fitting ses on the data 
+ses_pb <- ses(pb, h=4)
+ses_hc <- ses(hc, h=4)
+
+# calculating RMSE
+rmse_ses_pb <- accuracy(ses_pb)[,"RMSE"]
+rmse_ses_hc <- accuracy(ses_hc)[,"RMSE"]
+
+rmse_ses_pb
+rmse_ses_hc
+```
+
+need to do the interpretation still.
+
+### 2. Now apply Holt’s linear method to the paperback and hardback series and compute four-day forecasts in each case. Compare the RMSE measures of Holt’s method for the two series to those of simple exponential smoothing in a.). Remember that Holt’s method is using one more parameter than SES. Discuss the merits of the two forecasting methods for these data sets.
+
+```{r}
+# forecasts
+holt_pb <- holt(pb, h=4)
+holt_hc <- holt(hc, h=4)
+
+# performance RMSE 
+rmse_holt_pb <- accuracy(holt_pb)[,"RMSE"]
+rmse_holt_hc <- accuracy(holt_hc)[,"RMSE"]
+
+rmse_holt_pb
+rmse_holt_hc
+```
+
+### 3. Compare the forecasts for the two series using both methods. Which do you think is best?
+
+```{r}
+autoplot(pb) +
+  autolayer(ses_pb, series="SES", PI=FALSE) +
+  autolayer(holt_pb, series="Holt", PI=FALSE) +
+  ggtitle("Paperback Forecasts: SES vs Holt")
+
+autoplot(hc) +
+  autolayer(ses_hc, series="SES", PI=FALSE) +
+  autolayer(holt_hc, series="Holt", PI=FALSE) +
+  ggtitle("Hardcover Forecasts: SES vs Holt")
+```
+
+Not really sure, but I think holt winters
+
+### 4. Calculate a 95% prediction interval for the first forecast for each series, using the RMSE values and assuming normal errors. Compare your intervals with those produced using ses() and holt().
+
+```{r}
+# Paperback
+pi_ses_pb_man <- c(ses_pb$mean[1] - 1.96 * rmse_ses_pb, ses_pb$mean[1] + 1.96 * rmse_ses_pb)
+pi_holt_pb_man <- c(holt_pb$mean[1] - 1.96 * rmse_holt_pb, holt_pb$mean[1] + 1.96 * rmse_holt_pb)
+
+# Hardcover
+pi_ses_hc_man <- c(ses_hc$mean[1] - 1.96 * rmse_ses_hc, ses_hc$mean[1] + 1.96 * rmse_ses_hc)
+pi_holt_hc_man <- c(holt_hc$mean[1] - 1.96 * rmse_holt_hc, holt_hc$mean[1] + 1.96 * rmse_holt_hc)
+
+
+data.frame(
+  Method = c("SES Manual", "SES Function", "Holt Manual", "Holt Function"),
+  Lower_95 = c(pi_ses_pb_man[1], ses_pb$lower[1, "95%"], pi_holt_pb_man[1], holt_pb$lower[1, "95%"]),
+  Upper_95 = c(pi_ses_pb_man[2], ses_pb$upper[1, "95%"], pi_holt_pb_man[2], holt_pb$upper[1, "95%"])
+)
+ 
+```
+
+values are close, might be because I used 1.96
+
+## Question 5
+
+Simulate data using the state-space model formulation of simple exponential smoothing (and Holt’s exponential smoothing if you want). Then estimate the parameters using optim, and the R functions.
+
+```{r}
+# function for ses for exponential smoothing
+simulate_ses <- function(n, alpha, l0, sigma) {
+  y <- numeric(n)
+  l <- numeric(n)
+  e <- rnorm(n, 0, sigma)
+  
+  l[1] <- l0
+  y[1] <- l[1] + e[1] 
+  
+  for(t in 2:n) {
+    y[t] <- l[t-1] + e[t]           
+    l[t] <- l[t-1] + alpha * e[t]    
+  }
+  
+  return(ts(y))
+}
+
+# simulating data
+set.seed(123)
+sim_data <- simulate_ses(n=100, alpha=0.3, l0=10, sigma=1)
+
+# finding optimal values
+sim_opt <- optim(par = c(0.5, sim_data[1]), 
+                 fn = ses_sse, 
+                 y = sim_data,
+                 method = "L-BFGS-B",
+                 lower = c(0, -Inf),
+                 upper = c(1, Inf))
+
+
+opt_alpha <- sim_opt$par[1]
+opt_l0 <- sim_opt$par[2]
+
+data.frame(
+  Source = c("True Parameters", "Manual optim()"),
+  Alpha = c(0.3, opt_alpha),
+  Initial_Level_l0 = c(10, opt_l0)
+)
+```
+
+relatively close to the true parameter value
+
+# Reflection
+
+This tutorial helped me connect the exponential smoothing equations to their implementation in R. Writing the simple exponential smoothing function made the role of the smoothing parameter and initial level clearer. My function produced the same point forecast as `ses()` when using the package’s estimated parameters, which helped me check the updating calculation. Estimating parameters separately using `optim()` then helped me understand how minimising the sum of squared errors relates to fitting the model.
+
+Comparing simple exponential smoothing with Holt’s linear method helped me distinguish between modelling a changing level and explicitly including a trend. However, I found interpreting the book-sales results more difficult than producing the forecasts. I still need to justify which method is more suitable for each series using the plots and accuracy measures. I also need to correct my reference to Holt–Winters in this exercise, since the comparison uses Holt’s linear method without seasonality. The reported training RMSE values describe in-sample fit; evaluating future forecasting performance would require a chronological test set or time series cross-validation.
+
+Prediction intervals were another area where I need more understanding. My manual intervals were close to the package intervals, but I should investigate differences in variance estimation and the forecast-variance calculation rather than assume the discrepancy is only caused by using 1.96.
+
+The simulation exercise helped connect the state space formulation to parameter estimation because the generating parameters were known. However, a single simulation is not enough to establish how reliably the parameters can be recovered. My next steps are to finish the written interpretations, check the interval calculations, and repeat the simulation across different parameter values and sample sizes.

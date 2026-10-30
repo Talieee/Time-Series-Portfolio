@@ -1,0 +1,193 @@
+---
+title: "Spectral analysis"
+author: "Natalie Chidikwindi"
+format:
+  html:
+    toc: true
+    embed-resources: true
+    html-math-method: katex
+execute:
+  warning: false
+  message: false
+---
+
+Spectral analysis looks at a time series in terms of its frequencies. This helps identify repeating patterns that may be less obvious from the time plot alone.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+theme_set(theme_minimal(base_size = 12))
+```
+## Frequency, period and R's frequency argument
+
+Following the notes, use $m$ for period in observations, $f=1/m$ for cycles per observation and $\omega=2\pi f$ for radians per observation. The Nyquist limit is $f_N=1/2$. R's `ts(..., frequency = 12)` describes 12 observations per time unit, which is appropriate for monthly observations indexed in years; it does not set $f=12$.
+
+```{r}
+units <- data.frame(example = c("Monthly annual cycle", "Quarterly annual cycle",
+                               "Hourly daily cycle", "Daily weekly cycle"),
+                    period = c(12, 4, 24, 7)) |>
+  mutate(f = 1 / period, omega = 2 * pi * f)
+units
+```
+
+For consistency, the helper below deliberately converts inputs to plain numeric vectors. Every plotted frequency is therefore **cycles per observation**, regardless of a `ts` object's time scale. To convert monthly results to cycles per year, multiply the frequency by 12. A spectral *density* must also be divided by 12 when changing that horizontal scale if its integrated power is to stay the same.
+
+```{r}
+spectrum_df <- function(x, spans = NULL, taper = 0.1, detrend = TRUE,
+                        pad = 0, fast = FALSE) {
+  s <- spec.pgram(as.numeric(x), spans = spans, taper = taper,
+                  detrend = detrend, demean = !detrend,
+                  pad = pad, fast = fast, plot = FALSE)
+  data.frame(frequency = as.numeric(s$freq), power = as.numeric(s$spec))
+}
+
+plot_spectrum <- function(d, title = NULL) {
+  ggplot(d, aes(frequency, pmax(power, .Machine$double.eps))) +
+    geom_line(colour = "steelblue") + scale_y_log10() +
+    labs(x = "Frequency (cycles per observation)",
+         y = "Spectral ordinate (log scale)", title = title)
+}
+
+top_peaks <- function(d, number = 5) {
+  # Local maxima, so a broad peak is not reported as five adjacent frequencies.
+  k <- which(d$power > c(-Inf, head(d$power, -1)) &
+               d$power >= c(tail(d$power, -1), -Inf))
+  d[k, ] |> arrange(desc(power)) |> slice_head(n = number) |>
+    mutate(period_observations = 1 / frequency)
+}
+```
+
+A frequency of 0.2 gives a period of 5 quarters, or 1.25 years, and an angular frequency of $0.4\pi$ radians per observation. To study a weekly cycle, the sampling interval needs to be less than 3.5 days. Daily observations would be a useful choice.
+ 
+## Compute the raw periodogram yourself
+
+For centered values $x_t$, calculate $I_j=|\sum_t x_t e^{-2\pi ijt/n}|^2/n$. We retain positive frequencies. This is the two-sided-density convention restricted to the positive grid, matching `spec.pgram()` with preprocessing switched off. Other books use a factor of two or $2\pi$; compare definitions before comparing ordinates.
+
+```{r}
+raw_periodogram <- function(x) {
+  x <- as.numeric(x) - mean(x)
+  n <- length(x)
+  j <- seq_len(floor(n / 2))
+  data.frame(frequency = j / n, power = Mod(fft(x)[j + 1])^2 / n)
+}
+
+set.seed(24)
+n <- 240
+t <- seq_len(n)
+wave <- 2 * cos(2*pi*t/24) + rnorm(n, sd = 0.7)
+ggplot(data.frame(t, wave), aes(t, wave)) + geom_line() +
+  labs(x = "Observation", y = "Value")
+manual <- raw_periodogram(wave)
+builtin <- spectrum_df(wave, taper = 0, detrend = FALSE)
+stopifnot(isTRUE(all.equal(manual$power, builtin$power, tolerance = 1e-8)))
+plot_spectrum(manual, "A noisy cycle with period 24") +
+  geom_vline(xintercept = 1/24, linetype = 2)
+top_peaks(manual, 3)
+
+# Parseval check: double interior positive frequencies, but not the Nyquist bin.
+weights <- ifelse(abs(manual$frequency - 0.5) < 1e-12, 1, 2)
+c(variance_divisor_n = mean((wave - mean(wave))^2),
+  spectral_sum = sum(weights * manual$power) / n,
+  R_sample_variance = var(wave))
+stopifnot(abs(sum(weights * manual$power)/n - mean((wave - mean(wave))^2)) < 1e-8)
+```
+
+The finite-sample equality uses variance with divisor $n$; `var()` uses $n-1$. A single positive-frequency ordinate is not itself a fraction of total variance. With this convention the full frequency range, or the correctly weighted positive half, is needed.
+
+The main peak should be near $1/24$, which corresponds to a cycle every 24 observations. Increasing the noise or reducing the amplitude makes the cycle harder to identify. The estimated period may not be exact because the periodogram only evaluates a grid of frequencies. An off-grid cycle spreads its power across nearby frequencies.
+
+## Seasonal harmonics
+
+```{r}
+set.seed(61)
+tm <- 1:240
+seasonal_examples <- bind_rows(
+  data.frame(t = tm, y = 5 * sin(2*pi*tm/12) + rnorm(240, sd = 0.2),
+             pattern = "Smooth annual wave"),
+  data.frame(t = tm, y = 10 * as.integer(tm %% 12 == 0) + rnorm(240, sd = 0.2),
+             pattern = "One spike every December"))
+season_spectra <- bind_rows(lapply(split(seasonal_examples, seasonal_examples$pattern), function(d) {
+  transform(spectrum_df(d$y, taper = 0, detrend = FALSE), pattern = d$pattern[1])
+}))
+ggplot(season_spectra, aes(frequency, power)) + geom_line() +
+  scale_y_log10() + geom_vline(xintercept = (1:6)/12, linetype = 2, alpha = 0.4) +
+  facet_wrap(~pattern) + labs(x = "Cycles per month", y = "Spectral ordinate")
+```
+
+Peaks at 12, 6 and 4 months can be harmonics of the same annual pattern. A sharp seasonal spike needs several frequencies to represent its shape, while a smooth annual wave is mainly represented by the annual frequency. The ACF shows repetition at seasonal lags, while the spectrum shows the frequencies contributing to that repetition.
+
+## Leakage, tapering and padding
+
+A finite observation window spreads an off-grid sinusoid across adjacent Fourier frequencies. Tapering softens the edges, but broadens the main peak. Padding interpolates the frequency grid; it does not add observations or improve the underlying resolution.
+
+```{r}
+off_grid <- cos(2*pi*(1:120)/17.3)
+leakage <- bind_rows(
+  transform(spectrum_df(off_grid, taper = 0, detrend = FALSE), method = "No taper"),
+  transform(spectrum_df(off_grid, taper = 0.1, detrend = FALSE), method = "10% taper"),
+  transform(spectrum_df(off_grid, taper = 0.1, detrend = FALSE, pad = 4),
+            method = "10% taper; padded grid"))
+ggplot(leakage, aes(frequency, power)) + geom_line() +
+  geom_vline(xintercept = 1/17.3, linetype = 2) +
+  facet_wrap(~method, ncol = 1) + coord_cartesian(xlim = c(0.02, 0.12)) +
+  labs(x = "Cycles per observation", y = "Spectral ordinate")
+```
+
+Tapering reduces leakage away from the main peak but makes the peak wider. Padding gives a finer frequency grid, but it does not add information or resolve cycles that the sample is too short to separate. Sampling can also cause aliasing: frequencies above the Nyquist limit of 0.5 cycles per observation can appear as lower frequencies.
+
+## Smoothing and interpreting peaks
+
+The raw periodogram is noisy, even for a long series. Smoothing reduces this variability, but too much smoothing can hide narrow peaks or merge nearby cycles.
+
+```{r}
+set.seed(71)
+ar2 <- as.numeric(arima.sim(list(ar = c(1.5, -0.75)), n = 1024))
+smoothing <- bind_rows(lapply(c(1, 9, 25), function(span) {
+  transform(spectrum_df(ar2, spans = if (span == 1) NULL else span), span = span)
+}))
+ggplot(smoothing, aes(frequency, power)) + geom_line() +
+  scale_y_log10() + facet_wrap(~span) +
+  labs(x = "Cycles per observation", y = "Spectral ordinate")
+```
+
+I would use moderate smoothing, such as span 9, as a starting point for identifying a broad peak. The larger span gives a smoother estimate but loses detail. For two close seasonal frequencies, less smoothing would be more appropriate. A broad peak can represent a stochastic cycle, so the peaks in the time plot do not have to be equally spaced.
+
+A large peak alone does not establish seasonality. Fisher's statistic, $g=\max(I_j)/\sum I_j$, tests peak concentration against a white-noise background. Rejection can also result from serial dependence, so it does not by itself prove a deterministic cycle. Trends and structural breaks can also produce low-frequency power.
+
+## Application: monthly CO2
+
+I remove a quadratic trend while retaining the seasonal pattern. The frequencies are measured in cycles per month.
+
+```{r}
+co2_y <- as.numeric(co2)
+co2_t <- seq_along(co2_y)
+co2_trend <- lm(co2_y ~ co2_t + I(co2_t^2))
+co2_resid <- residuals(co2_trend)
+ggplot(data.frame(t = as.numeric(time(co2)), value = co2_resid), aes(t, value)) +
+  geom_line() + labs(x = "Year", y = "CO2 after quadratic detrending")
+co2_spec <- spectrum_df(co2_resid, spans = 3, detrend = FALSE)
+plot_spectrum(co2_spec, "Detrended monthly CO2") +
+  geom_vline(xintercept = (1:6)/12, linetype = 2, alpha = 0.3)
+top_peaks(co2_spec)
+```
+
+```{r}
+acf(co2_resid, lag.max = 36, main = "ACF of detrended monthly CO2")
+```
+
+The annual cycle corresponds to $f=1/12$, giving a period of 12 months. Peaks near $2/12$ and $3/12$ would represent harmonics with periods of 6 and 4 months. These can describe the shape of the same annual pattern. The time plot and ACF provide a useful check on the seasonal interpretation.
+
+Removing the trend helps separate long-term growth from seasonality. If I also removed the fitted seasonal component, I would be checking for remaining cycles in the residuals. Seasonal differencing at lag 12 also removes power at the annual frequency and its harmonics, so it would change the question being investigated.
+
+# Reflection
+
+Through this tutorial, I learnt how spectral analysis can be used to identify repeating patterns by looking at frequencies rather than lags. My main learning was that several peaks do not necessarily mean that there are several unrelated cycles. They can be harmonics that describe the shape of one seasonal pattern.
+
+The CO2 example helped me understand why the preparation of a series matters. Removing a trend can make seasonality easier to identify, but removing the seasonal component would take out the pattern I wanted to investigate. I also learnt that a large peak needs to be interpreted alongside the time plot and ACF, as trends, structural breaks and serial dependence can affect the spectrum.
+
+I would like to explore how to choose an appropriate amount of smoothing and how to test whether a peak remains after accounting for an ARMA background.
+
+## Reference
+
+Course notes: *TSA Hons July 2026 Part 1 Notes*, Chapter 8, printed pages 91–103.
+

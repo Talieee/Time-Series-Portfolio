@@ -1,37 +1,45 @@
 ---
-title: "Section 1"
+title: "Section 1 Overview"
 ---
 
-Smaller pieces of work for Section 1: for each teaching session, evidence of a model fitted to
-data, code implementing the fitting from first principles where relevant, a reflection on what
-was learned and what was difficult, and any model comparisons — plus one idea explored beyond
-what lectures/notes covered.
+This section contains tutorials, journal entries and projects covering time series exploration, forecasting, ARIMA models, volatility modelling, spectral analysis and structural breaks.
 
-## Worked tutorials
+## Exploring and forecasting time series
 
-### [Tutorial / session topic]
+- [Section 1 tutorial exercises](section%201%20tut%20-%20exercises.qmd)
+- [Journal Entry 1: Introduction to time series](../journal/entries/entry%201.qmd)
+- [Journal Entry 2: Forecasting, exploration and decomposition](../journal/entries/entry%202.qmd)
+- [Journal Entry 3: Forecasting methods, cross-validation and accuracy measures](../journal/entries/entry%203.qmd)
+- [Journal Entry 4: Lag operators, stationarity and differencing](../journal/entries/entry%204.qmd)
+- [Journal Entry 5: ARMA, ARIMA and SARIMA models](../journal/entries/entry%205.qmd)
+- [Journal Entry 6: Time series modelling in R](../journal/entries/entry%206.qmd)
 
-[Reflection on your progress: what you did, what clicked, what didn't.]
+### Project 1: Forecasting influenza cases in Australia
 
-## Implementation
+- [One-page project summary](../projects/project-01/index.qmd)
+- [Detailed analysis and R code](../projects/project-01/code.qmd)
 
-### [Method implemented]
+## ARCH and GARCH models
 
-[Implementation using data and statistical software — link to code if it lives elsewhere.]
+- [ARCH/GARCH practical lab](arch%20garch%20lab.qmd)
+- [ARCH/GARCH theoretical tutorial](ARCH_GARCH_Theoretical_Tutorial.qmd)
+- [Journal Entry 8: ARCH and GARCH models](../journal/entries/entry%208.qmd)
 
-```{r}
-# code
-```
+### Project 2: GARCH modelling of financial data
 
-## Overview
+- [One-page project summary](../projects/project-02/index.qmd)
+- [Detailed analysis and R code](../projects/project-02/Project%202.qmd)
 
-### [Topic]
+## Spectral analysis
 
-[Key concepts, the most challenging aspects, and your understanding — a page or two, not a
-full write-up.]
+- [Spectral analysis tutorial](spectral%20analysis%20tut.qmd)
+- [Journal Entry 11: Spectral analysis](../journal/entries/entry%2011.qmd)
 
-## Beyond the notes
+## Structural breaks
 
-### [Idea explored that wasn't directly covered in lectures/notes]
+- [Structural breaks tutorial](Structural%20breaks%20tut.qmd)
+- [Journal Entry 14: Structural breaks](../journal/entries/entry%2014.qmd)
 
-[What you explored and why, and what you found.]
+------------------------------------------------------------------------
+
+[Home](../index.qmd) · [Learning journal](../journal/index.qmd) · [Section 2](../section-2/section-2.qmd)

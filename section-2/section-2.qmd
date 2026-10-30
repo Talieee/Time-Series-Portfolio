@@ -1,37 +1,45 @@
 ---
-title: "Section 2"
+title: "Section 2 Overview"
 ---
 
-Smaller pieces of work for Section 2: for each teaching session, evidence of a model fitted to
-data, code implementing the fitting from first principles where relevant, a reflection on what
-was learned and what was difficult, and any model comparisons — plus one idea explored beyond
-what lectures/notes covered.
+This section contains tutorials, journal entries and projects covering exponential smoothing, time series regression, state space models, Kalman filtering and Hidden Markov models.
 
-## Worked tutorials
+## Exponential smoothing
 
-### [Tutorial / session topic]
+- [Exponential smoothing tutorial](exponential%20smoothing%20prac.qmd)
+- [Journal Entry 7: Introduction to exponential smoothing](../journal/entries/entry%207.qmd)
+- [Journal Entry 9: Exponential smoothing, bootstrapping and time series regression](../journal/entries/entry%209.qmd)
 
-[Reflection on your progress: what you did, what clicked, what didn't.]
+### Related project: Forecasting influenza cases in Australia
 
-## Implementation
+- [One-page project summary](../projects/project-01/index.qmd)
+- [Detailed analysis and R code](../projects/project-01/code.qmd)
 
-### [Method implemented]
+## Time series regression
 
-[Implementation using data and statistical software — link to code if it lives elsewhere.]
+- [Journal Entry 9: Time series regression](../journal/entries/entry%209.qmd)
 
-```{r}
-# code
-```
+### Project 3: Crime and economic indicators in South Africa
 
-## Overview
+- [One-page project summary](../projects/project-03/index.qmd)
+- [Detailed analysis and R code](../projects/project-03/Project%203.qmd)
 
-### [Topic]
+## State space models and Kalman filtering
 
-[Key concepts, the most challenging aspects, and your understanding — a page or two, not a
-full write-up.]
+- [State space models tutorial](SSM%20prac.qmd)
+- [Journal Entry 10: State space models and dynamic linear models](../journal/entries/entry%2010.qmd)
+- [Journal Entry 12: Kalman filtering, smoothing and forecasting](../journal/entries/entry%2012.qmd)
 
-## Beyond the notes
+### Project 4: State estimation under uncertainty
 
-### [Idea explored that wasn't directly covered in lectures/notes]
+- [One-page project summary](../projects/project-04/index.qmd)
+- [Detailed analysis and R code](../projects/project-04/Project%204.qmd)
 
-[What you explored and why, and what you found.]
+## Hidden Markov models
+
+- [Hidden Markov models tutorial](HMM%20tutorial.qmd)
+- [Journal Entry 13: Hidden Markov models](../journal/entries/entry%2013.qmd)
+
+------------------------------------------------------------------------
+
+[Home](../index.qmd) · [Learning journal](../journal/index.qmd) · [Section 1](../section-1/section-1.qmd)

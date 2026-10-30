@@ -1,0 +1,49 @@
+---
+title: "Project 2: GARCH Modelling of Financial Data"
+---
+
+**Section:**
+
+Section 1 - volatility modelling.
+
+**Type:**
+
+First-principles implementation, model comparison and simulation study.
+
+## Aim
+
+This project investigates financial volatility using daily FTSE/JSE Top 40 Index returns. The aims were to implement GARCH(1,1) from first principles, compare alternative GARCH specifications, and investigate how sample size affects parameter recovery in simulated data.
+
+## Data and source
+
+Daily index prices were obtained from Yahoo Finance using the ticker `^J200.JO`, requesting observations from 2 January 2017 to 12 October 2026. Adjusted closing prices were converted to daily log returns. Twenty missing prices were supplemented using the secondary dataset `SA40.csv`.
+
+For the simulation study, GARCH(1,1) data were generated with parameters omega = 0.05, alpha = 0.08 and beta = 0.88. Sample sizes of 250, 500 and 2,000 were investigated, with 500 replications per sample size.
+
+## Methods
+
+Exploratory plots, return and squared-return autocorrelations, distributional checks and ARCH-LM tests were used to assess volatility clustering and conditional heteroskedasticity.
+
+I implemented the GARCH(1,1) variance recursion and Gaussian likelihood, estimating parameters through constrained numerical optimisation. The estimates were compared with a package implementation using Student’s t innovations.
+
+Standard GARCH, integrated GARCH, GJR-GARCH, exponential GARCH and component GARCH models were compared using AIC, BIC and residual diagnostics. The selected model was evaluated using rolling one-step-ahead variance forecasts, with squared returns as a noisy variance proxy and MSE and QLIKE as loss measures.
+
+The simulation study examined parameter bias, variability and numerical convergence using the package estimator.
+
+## Key findings
+
+The returns displayed volatility clustering, heavy tails and persistent dependence in squared returns, supporting the use of conditional variance models.
+
+Although eGARCH achieved the lowest AIC and BIC, dependence remained in its squared standardised residuals. GJR-GARCH offered a better balance between fit and diagnostics and was selected as the preferred specification.
+
+Differences between the manual and package estimates could not be attributed solely to implementation because their innovation distributions differed. In the simulation, parameter estimates generally became more precise as sample size increased.
+
+## Limitations and next steps
+
+The simulation assessed the package estimator rather than directly validating my custom estimator. I would apply my own estimation function to simulated data and compare implementations under matching innovation assumptions.
+
+Only GJR-GARCH was evaluated using rolling forecasts, so the results do not establish that it forecasts better than the alternatives. I would compare all candidate models with a simple benchmark, select models within the training data, and investigate structural breaks and different market regimes.
+
+## Detailed analysis and code
+
+[View the detailed analysis and R code](Project%202.qmd)

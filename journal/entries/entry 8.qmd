@@ -1,0 +1,43 @@
+---
+title: "Journal Entry 8"
+date: 16 September 2026
+---
+
+**Date:** 2026-09-16
+
+**Session/topic covered:**
+
+ARCH & GARCH models and how to implement them in R.
+
+**What I did:**
+
+Went over lecture content and answered the tutorial questions.
+
+**Related tutorials:**
+
+- [ARCH/GARCH practical lab](../../section-1/arch%20garch%20lab.qmd)
+- [ARCH/GARCH theoretical tutorial](../../section-1/ARCH_GARCH_Theoretical_Tutorial.qmd)
+
+**What I learned:**
+
+I learnt about ARCH and GARCH modelling in R and how these models describe conditional variance and its changes over time. I understood that autoregressive models can still be used to model the conditional mean, while ARCH/GARCH models describe the conditional variance of the innovations. These models are commonly used in financial applications to capture changes in volatility.
+
+I also learnt about the stylized facts of financial returns, which are patterns commonly observed in financial data, such as volatility clustering. An ARCH model represents the conditional variance as a function of past squared innovations, whereas a GARCH model also includes lagged conditional variances. I learnt that these models describe the variance of innovations from a mean model, which we estimate using residuals. Transforming financial prices into returns is a separate data preparation step and is different from obtaining residuals. I also learnt about common pitfalls when fitting and assessing ARCH/GARCH models.
+
+In R, I worked through the modelling process step by step, from preparing the data to fitting, checking and selecting a model. The session also emphasized that the GARCH family is large. Although we mainly covered GARCH(1,1), there are many other specifications to explore. I look forward to investigating some of these in my time series project and applying this knowledge in my future career.
+
+**Difficulties or open questions:**
+
+The ARCH-LM test checks for the normality of the residuals, to determine if a garch/arch model is correct but it was mentioned that even if it doesn't pass the test its still possible to justify. My question is when would we be able to differentiate when to bypass the LM test and what counts as a reasonable justification. I also want to go through the mechanics of volatility modelling as it was not covered in full detail but rather just the overview in the lecture period.
+
+**What to do next:**
+
+Do a more in depth tutorial and have a look at the different types of volatility models that weren't covered in class. Go through class notes and additional textbooks to consolidate my understanding and to start on my time series project.
+
+**Follow-up — 18 September 2026:**
+
+I revisited my understanding of the ARCH-LM test and realized that I had confused testing for ARCH effects with testing for normality. The ARCH-LM test checks whether past squared residuals help explain current squared residuals, rather than whether the residuals follow a normal distribution.
+
+Before fitting a volatility model, the test can provide evidence of ARCH effects. After fitting an ARCH/GARCH model, applying it to the standardized residuals helps assess whether ARCH effects remain. A significant result suggests that the fitted model has not fully captured the conditional variance dynamics. A non-significant result means there is insufficient evidence of remaining ARCH effects, rather than proving that the model is correct.
+
+[Back to journal](../index.qmd)

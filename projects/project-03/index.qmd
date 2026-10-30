@@ -1,0 +1,53 @@
+---
+title: "Project 3: Crime and Economic Indicators in South Africa"
+---
+
+**Section:**
+
+Section 2 - time series regression and ARIMAX modelling.
+
+**Type:**
+
+Real-world data analysis and model comparison.
+
+## Aim
+
+This project investigates whether economic indicators help explain recorded crime in South Africa and improve forecasts beyond models based on crime history alone. It considers murder, aggravated robbery, residential burglary and vehicle theft, using GDP, inflation and unemployment as potential predictors.
+
+The analysis examines statistical associations rather than causal effects.
+
+## Data and source
+
+The analysis combined annual observations for 2005–2025, giving 21 observations where the datasets could be matched.
+
+Recorded crime data came from SAPS Annual Crime Records accessed through DataFirst. GDP and unemployment series were obtained from FRED, while inflation was calculated from Statistics South Africa CPI data accessed through DataFirst.
+
+The CPI files were placed on a common scale before calculating inflation. Crime reporting periods were identified by their starting year and matched with the economic series.
+
+## Methods
+
+Time plots, ACF and PACF plots, stationarity tests and differencing were used to investigate the series. Cross-correlation functions helped identify potential relationships between crime and economic indicators.
+
+Baseline ARIMA models were compared with ARIMAX models containing selected economic predictors. The data were divided chronologically into a 2005–2022 training period and a 2023–2025 test period.
+
+Models were assessed using information criteria, with particular emphasis on AICc because of the small sample. Residual plots and Ljung–Box tests checked remaining serial dependence. Test-set forecasts were evaluated using RMSE, MAE, MAPE and MASE.
+
+## Key findings
+
+The crime categories followed different patterns: murder generally increased over much of the later period, while residential burglary and vehicle theft showed broader declines.
+
+GDP was statistically significant in the selected in-sample ARIMAX models for murder, residential burglary and vehicle theft. However, adding economic predictors did not consistently improve forecasts. For aggravated robbery and vehicle theft, simpler baseline models performed better under the reported test-set accuracy ranking than models preferred in-sample.
+
+The results highlight the distinction between explanatory associations, in-sample fit and forecasting performance.
+
+## Limitations and next steps
+
+The dataset contained only 21 annual observations, including three test observations, limiting the reliability of estimation and forecast comparisons. Crime reporting periods, inflation periods and calendar-year economic data were also not perfectly aligned.
+
+The ARIMAX forecasts used realised test-period economic values, making them conditional forecasts rather than fully prospective forecasts.
+
+I would seek higher-frequency data, harmonise reporting periods, use prewhitening when investigating cross-correlations, and forecast economic predictors or construct scenarios. Population-adjusted crime rates could also provide a more informative basis for comparison.
+
+## Detailed analysis and code
+
+[View the detailed analysis and R code](Project%203.qmd)
