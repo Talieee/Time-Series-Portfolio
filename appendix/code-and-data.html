@@ -91,7 +91,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../Index.html"> 
+    <a class="nav-link" href="../Index.qmd"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -337,7 +337,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Some analyses download data and therefore require an internet connection. External data may change after the original analysis. Simulation results depend on the random seeds and settings specified in the code.</p>
 <p>The rendered website provides the results for reading, while the source files provide the code needed to reproduce them.</p>
 <hr>
-<p><a href="../index.qmd">Home</a> · <a href="../projects/index.html">Projects</a> · <a href="../journal/index.html">Learning journal</a></p>
+<p><a href="../Index.html">Home</a> · <a href="../projects/index.html">Projects</a> · <a href="../journal/index.html">Learning journal</a></p>
 
 
 </section>
@@ -416,7 +416,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/Talieee\.github\.io\/Time-Series-Portfolio\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -155,7 +155,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../Index.html"> 
+    <a class="nav-link" href="../Index.qmd"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -548,12 +548,12 @@ The following object is masked from 'package:ggplot2':
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>vals[(n <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(n <span class="sc">+</span> h), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>     observed   predicted     lower    upper
-[1,]       NA -0.50214757 -4.070063 3.065768
-[2,]       NA -0.03525138 -2.827661 2.757158
-[3,]       NA  0.14680006 -3.837350 4.130950
-[4,]       NA  0.13757498 -5.919035 6.194185
-[5,]       NA  0.03692888 -3.970251 4.044109</code></pre>
+<pre><code>     observed     predicted     lower    upper
+[1,]       NA  1.989404e-03 -3.691658 3.695637
+[2,]       NA -2.028785e-03 -5.746013 5.741956
+[3,]       NA  1.551689e-04 -2.877076 2.877387
+[4,]       NA -4.142107e-04 -4.967466 4.966638
+[5,]       NA -9.748918e-05 -3.383688 3.383493</code></pre>
 </div>
 </div>
 <p>The code below shows the appending of the 5 values because appending five missing values extends the observation vector to include the forecast horizon. At each future time point, the filter predicts the state and observation. Because the future observation is missing, it skips the observation update and carries the predicted state forward to generate the next forecast.</p>
@@ -1333,7 +1333,7 @@ F-statistic: 34.98 on 1 and 185 DF,  p-value: 1.577e-08</code></pre>
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/Talieee\.github\.io\/Time-Series-Portfolio\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
