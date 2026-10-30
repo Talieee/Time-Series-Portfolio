@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Natalie Chidikwindi">
+
+<title>Forecasting Influenza Cases in Australia Using SARIMA and Exponential Smoothing Models – Natalie Chidikwindi — Time Series Portfolio</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2af0430c0724a252a33c7a0e9b17275b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Natalie Chidikwindi — Time Series Portfolio</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../Index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../journal/index.html"> 
+<span class="menu-text">Journal</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 1</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-1">    
+        <li>
+    <a class="dropdown-item" href="../../section-1/section-1.html">
+ <span class="dropdown-text">Section 1 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/section 1 tut - exercises.html">
+ <span class="dropdown-text">Time Series Exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/arch garch lab.html">
+ <span class="dropdown-text">ARCH/GARCH Practical Lab</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/ARCH_GARCH_Theoretical_Tutorial.html">
+ <span class="dropdown-text">ARCH/GARCH Theory</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/spectral analysis tut.html">
+ <span class="dropdown-text">Spectral Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-1/Structural breaks tut.html">
+ <span class="dropdown-text">Structural Breaks</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-2" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 2</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-2">    
+        <li>
+    <a class="dropdown-item" href="../../section-2/section-2.html">
+ <span class="dropdown-text">Section 2 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-2/exponential smoothing prac.html">
+ <span class="dropdown-text">Exponential Smoothing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-2/SSM prac.html">
+ <span class="dropdown-text">State Space Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../section-2/HMM tutorial.html">
+ <span class="dropdown-text">Hidden Markov Models</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../reflective-commentary.html"> 
+<span class="menu-text">Reflective Commentary</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../ai-use-log.html"> 
+<span class="menu-text">AI Use Log</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../appendix/code-and-data.html"> 
+<span class="menu-text">Code &amp; Data</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">Data &amp; Preparation</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory data Analysis</a></li>
+  <li><a href="#traintest-split-and-variance-stabilisation" id="toc-traintest-split-and-variance-stabilisation" class="nav-link" data-scroll-target="#traintest-split-and-variance-stabilisation">Train–Test Split and Variance Stabilisation</a></li>
+  <li><a href="#sarima-model-fitting" id="toc-sarima-model-fitting" class="nav-link" data-scroll-target="#sarima-model-fitting">SARIMA Model Fitting</a></li>
+  <li><a href="#candidate-model-selection" id="toc-candidate-model-selection" class="nav-link" data-scroll-target="#candidate-model-selection">Candidate Model Selection</a></li>
+  <li><a href="#exponential-smoothing" id="toc-exponential-smoothing" class="nav-link" data-scroll-target="#exponential-smoothing">Exponential smoothing</a></li>
+  <li><a href="#residual-diagnostics" id="toc-residual-diagnostics" class="nav-link" data-scroll-target="#residual-diagnostics">Residual Diagnostics</a>
+  <ul class="collapse">
+  <li><a href="#sarima-residual-diagnostics" id="toc-sarima-residual-diagnostics" class="nav-link" data-scroll-target="#sarima-residual-diagnostics">SARIMA Residual Diagnostics</a></li>
+  <li><a href="#ets-residual-diagnostics" id="toc-ets-residual-diagnostics" class="nav-link" data-scroll-target="#ets-residual-diagnostics">ETS Residual Diagnostics</a></li>
+  </ul></li>
+  <li><a href="#forecasting-and-model-comparison" id="toc-forecasting-and-model-comparison" class="nav-link" data-scroll-target="#forecasting-and-model-comparison">Forecasting and Model Comparison</a>
+  <ul class="collapse">
+  <li><a href="#in-sample-model-fit" id="toc-in-sample-model-fit" class="nav-link" data-scroll-target="#in-sample-model-fit">In-Sample Model Fit</a>
+  <ul class="collapse">
+  <li><a href="#sarima-parameter-estimates-and-fitted-values" id="toc-sarima-parameter-estimates-and-fitted-values" class="nav-link" data-scroll-target="#sarima-parameter-estimates-and-fitted-values">SARIMA Parameter Estimates and Fitted Values</a></li>
+  <li><a href="#ets-parameter-estimates-and-fitted-values" id="toc-ets-parameter-estimates-and-fitted-values" class="nav-link" data-scroll-target="#ets-parameter-estimates-and-fitted-values">ETS Parameter Estimates and Fitted Values</a></li>
+  </ul></li>
+  <li><a href="#out-of-sample-forecasting-20182019" id="toc-out-of-sample-forecasting-20182019" class="nav-link" data-scroll-target="#out-of-sample-forecasting-20182019">Out-of-Sample Forecasting (2018–2019)</a></li>
+  <li><a href="#benchmarks-vs-model-forecasts" id="toc-benchmarks-vs-model-forecasts" class="nav-link" data-scroll-target="#benchmarks-vs-model-forecasts">Benchmarks vs model forecasts</a></li>
+  <li><a href="#forecast-accuracy-evaluation" id="toc-forecast-accuracy-evaluation" class="nav-link" data-scroll-target="#forecast-accuracy-evaluation">Forecast Accuracy Evaluation</a></li>
+  </ul></li>
+  <li><a href="#limitations-and-reflection" id="toc-limitations-and-reflection" class="nav-link" data-scroll-target="#limitations-and-reflection">Limitations and Reflection</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Forecasting Influenza Cases in Australia Using SARIMA and Exponential Smoothing Models</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Natalie Chidikwindi </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Influenza is a respiratory illness characterized by symptoms such as fever, headache, sore throat and cough. It spreads rapidly and causes seasonal epidemics, which can increase mortality and place additional pressure on healthcare systems. Identifying periods during which influenza cases are likely to increase can help healthcare providers and the public prepare more effectively.</p>
+<p>Forecasting future influenza cases can support this planning by providing estimates of expected case numbers over time. Seasonality is particularly important in influenza dynamics because case numbers tend to rise during particular periods of the year. Accurate forecasts may therefore assist with resource planning, public-health communication and intervention strategies.</p>
+<p>This project is a comparative time-series study that evaluates two modelling approaches for describing and forecasting monthly influenza notifications in Australia. The first approach uses seasonal autoregressive integrated moving average (SARIMA) models, while the second uses exponential smoothing state-space (ETS) models. The project aims to determine which approach provides a more suitable model of historical influenza notifications and produces more accurate out-of-sample forecasts.</p>
+<p>The project addresses the following research questions:</p>
+<ul>
+<li><p>Which model, SARIMA or exponential smoothing, produces more accurate out-of-sample forecasts of monthly influenza notifications? -</p></li>
+<li><p>Do the selected SARIMA and ETS models produce residuals that are approximately uncorrelated, indicating that the main temporal structure in the data has been captured?</p></li>
+</ul>
+</section>
+<section id="data-preparation" class="level1">
+<h1>Data &amp; Preparation</h1>
+<p>The data used in this project were obtained from the Australian National Notifiable Disease Surveillance System (NNDSS) and cover the period from 1 January 2008 to 31 December 2019. The original dataset contains weekly influenza notifications, with weeks ending on a Friday. Cases are recorded according to state or territory, age group, sex, Indigenous status and influenza subtype.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#packages for coding</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># for clean data manipulation</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) <span class="co"># to read in an excel spreadsheet because my data is a spreadsheet</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibble) <span class="co"># time series modelling</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate) <span class="co"># date manipulation</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co"># plotting</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#time series plotting</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fabletools)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(feasts)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fable)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#importing the 4 sheets of data into R</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>nd1 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">'nndss-public-dataset-influenza-laboratory-confirmed.xlsx'</span>, <span class="at">sheet =</span> <span class="st">'2008-2015'</span>, <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>nd2 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">'nndss-public-dataset-influenza-laboratory-confirmed.xlsx'</span>, <span class="at">sheet =</span> <span class="st">'2016-2018'</span>, <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>nd3 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">'nndss-public-dataset-influenza-laboratory-confirmed.xlsx'</span>, <span class="at">sheet =</span> <span class="st">'2019-2021'</span>, <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>nd4 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">'nndss-public-dataset-influenza-laboratory-confirmed.xlsx'</span>, <span class="at">sheet =</span> <span class="st">'2022-2024'</span>, <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#combined into 1 data frame</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>nndss_data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(nd1, nd2, nd3, nd4)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># filtered the data to stop and the end of 2019.</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>nndss_data <span class="ot">&lt;-</span> nndss_data <span class="sc">|&gt;</span> </span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Week Ending (Friday)</span><span class="st">`</span> <span class="sc">&lt;=</span> <span class="st">'2019-12-31'</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregated the data to give the total number of flu cases regardless of the flu type</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>nndss_data <span class="ot">&lt;-</span> nndss_data <span class="sc">|&gt;</span> </span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Week Ending (Friday)</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Flu_Cases =</span> <span class="fu">n</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For this project, the weekly records were aggregated to produce the total number of laboratory-confirmed influenza notifications per month. The data were not separated by state or territory, age group, sex, Indigenous status or influenza subtype. This aggregation was chosen because the aim of the project was to model and forecast national monthly influenza patterns.</p>
+<p>It is important to note that notification data may underestimate the true number of influenza infections in the community. A case is included only if an individual seeks healthcare, is tested, receives a diagnosis and the case is subsequently reported to health authorities. The extent of under-reporting is unknown and may vary over time, by jurisdiction and by influenza subtype.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#converting to a tsibble - time series object</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># weekly aggregation</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>flu_data_weekly <span class="ot">&lt;-</span> nndss_data <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Week Ending (Friday)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">as.Date</span>(<span class="st">`</span><span class="at">Week Ending (Friday)</span><span class="st">`</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span>  <span class="st">`</span><span class="at">Week Ending (Friday)</span><span class="st">`</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># monthly aggregation</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>flu_data_monthly <span class="ot">&lt;-</span> flu_data_weekly <span class="sc">|&gt;</span> </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">index_by</span>(<span class="at">Month =</span> <span class="fu">yearmonth</span>(<span class="st">`</span><span class="at">Week Ending (Friday)</span><span class="st">`</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Flu_Cases =</span> <span class="fu">sum</span>(Flu_Cases))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># yearly aggregation</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>flu_data_yearly <span class="ot">&lt;-</span> flu_data_weekly <span class="sc">|&gt;</span> </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">index_by</span>(<span class="at">Year =</span> <span class="fu">year</span>(<span class="st">`</span><span class="at">Week Ending (Friday)</span><span class="st">`</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Flu_Cases =</span> <span class="fu">sum</span>(Flu_Cases))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>After aggregation, the final dataset contained 144 monthly observations, covering January 2008 to December 2019. No missing values were identified in the final aggregated dataset.</p>
+</section>
+<section id="exploratory-data-analysis" class="level1">
+<h1>Exploratory data Analysis</h1>
+<p>The weekly influenza notification data were aggregated into monthly and yearly totals to examine broad patterns in influenza notifications over time.</p>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>flu_data_yearly <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(Flu_Cases)<span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Yearly Flu Aggregation"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>flu_data_monthly <span class="sc">|&gt;</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(Flu_Cases)<span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Monthly Flu Aggregation"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-yearly-monthly-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-yearly-monthly-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-yearly-monthly-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-yearly-monthly-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Yearly and Monthly Influenza Cases in Australia (2008–2019)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-yearly-monthly-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-yearly-monthly-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-yearly-monthly-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-yearly-monthly-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Yearly and Monthly Influenza Cases in Australia (2008–2019)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>The monthly series shows a clear seasonal pattern. Influenza notifications generally increase during the middle of the year, reach a peak during the Australian winter months, and then decline towards the end of the year and the beginning of the following year. The yearly totals suggest an overall increase in reported influenza notifications over the study period, although this trend is not smooth. Large peaks are visible in 2009, 2017 and 2019, while the total number of notifications declined sharply in 2018.</p>
+<p>The peak in 2009 coincides with the H1N1 influenza pandemic and may have been partly explained by the rapid spread of this strain. The high notification count in 2017 may have been influenced by factors such as circulating influenza strains, vaccine effectiveness, healthcare-seeking behaviour, testing practices and reporting patterns. Similarly, the increase in 2019 may have reflected differences in circulating strains, population immunity, vaccination coverage or surveillance practices. However, the NNDSS data used in this project do not include the additional information required to determine the specific causes of these increases. These explanations should therefore be regarded as possible contributors rather than confirmed causes.</p>
+<p>Seasonal plots were used to assess whether the timing and magnitude of seasonality remained consistent over the study period.</p>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#shows weekly and monthly time series spread of flu cases</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#monthly seasonality</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>flu_data_monthly <span class="sc">|&gt;</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_season</span>(Flu_Cases, <span class="at">period =</span> <span class="st">"year"</span>)<span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Monthly seasonality"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#weekly seasonality</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>flu_data_weekly <span class="sc">|&gt;</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_season</span>(Flu_Cases, <span class="at">period =</span> <span class="st">"year"</span>)<span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Weekly seasonality"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-seasonal-plots-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-seasonal-plots-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-seasonal-plots-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-seasonal-plots-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Seasonal Distributions Across Monthly and Weekly Frequencies
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-seasonal-plots-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-seasonal-plots-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-seasonal-plots-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-seasonal-plots-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Seasonal Distributions Across Monthly and Weekly Frequencies
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>The seasonal plots confirm that influenza notifications tend to rise during the middle of each year. However, the size of the seasonal peak differs across years. Earlier years, particularly from approximately 2010 to 2013, show relatively similar seasonal patterns, whereas the peaks in 2017 and 2019 are substantially larger. This suggests that the timing of influenza seasonality is fairly consistent, but the magnitude of the seasonal effect varies over time.</p>
+<p>The subseries plot provides a clearer view of the average monthly pattern.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sub-series plot (shows plot of monthly data from 2008 -2019)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>flu_data_monthly <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_subseries</span>(Flu_Cases)<span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Monthly Sub-series Plot"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-subseries" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-subseries-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-subseries-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-subseries-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Monthly Subseries Distribution of Influenza Notifications
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Influenza notifications begin to increase from approximately June, are highest on average in August, and then generally decline until October. This pattern is consistent with the timing of the Australian winter, which occurs mainly from June to August.</p>
+<p>To separate the observed series into its underlying components, an STL decomposition was applied.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># STL decomposition into trend, seasonality, residuals and full plot</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>flu_data_monthly <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">STL</span>(Flu_Cases <span class="sc">~</span> <span class="fu">trend</span>() <span class="sc">+</span> <span class="fu">season</span>(<span class="at">period =</span> <span class="st">"1 year"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">components</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"STL Decomposition of Monthly Flu Cases"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-stl-original" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-stl-original-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-stl-original-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stl-original-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: STL Decomposition of Monthly Influenza Notifications
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The trend component is non-linear, with marked departures from the general pattern around 2009, 2017 and 2019. The seasonal component shows increasing variation over time, suggesting that the seasonal amplitude may be proportional to the level of the series. This indicates that the data may display multiplicative seasonal behaviour.</p>
+<p>The remainder component fluctuates around zero for much of the series but contains large deviations in years with unusually high notification counts. These deviations indicate that events or factors other than the usual trend and seasonal pattern may have affected influenza notifications during those years.</p>
+<p>Overall, the exploratory analysis provides evidence of strong annual seasonality, changing seasonal amplitude and a non-linear long-term pattern. These characteristics motivated the use of both SARIMA and ETS models.</p>
+</section>
+<section id="traintest-split-and-variance-stabilisation" class="level1">
+<h1>Train–Test Split and Variance Stabilisation</h1>
+<p>To compare forecasting performance, the monthly influenza data were divided into training and test sets using an approximately 80:20 split. The training set covers January 2008 to December 2017 and contains 120 monthly observations. The test set covers January 2018 to December 2019 and contains 24 monthly observations.</p>
+<p>This split was selected because the test set contains two complete annual seasonal cycles. It therefore allows model performance to be evaluated across more than one influenza season. Keeping the final two years as the test set also provides an out-of-sample evaluation period that includes the substantial increase in notifications observed in 2019.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split into test and train set</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 2008- 2017</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> flu_data_monthly <span class="sc">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter_index</span>(. <span class="sc">~</span> <span class="st">"2017 Dec"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#2018 - 2019</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> flu_data_monthly <span class="sc">|&gt;</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter_index</span>(<span class="st">"2018 Jan"</span> <span class="sc">~</span> .)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Before fitting SARIMA models, a variance-stabilising transformation was considered. The exploratory analysis suggested that the seasonal amplitude increased as the level of the series increased. This indicates multiplicative seasonality and suggests that the variance may not be constant over time.</p>
+<p>The Box–Cox transformation is defined as <span class="math display">\[y_t^{(\lambda)} =
+\begin{cases}
+\dfrac{y_t^\lambda - 1}{\lambda}, &amp; \lambda \neq 0, \\[8pt]
+\log(y_t), &amp; \lambda = 0,
+\end{cases}\]</span></p>
+<p>where <span class="math inline">\(y_t\)</span> is the original number of influenza notifications in month <span class="math inline">\(t\)</span>, <span class="math inline">\(y_t^{(\lambda)}\)</span> is the transformed value, and <span class="math inline">\(\lambda\)</span> is the transformation parameter. When <span class="math inline">\(\lambda=1\)</span>, the data remain approximately on their original scale. When <span class="math inline">\(\lambda=0\)</span>, the transformation becomes the natural logarithm, provided that <span class="math inline">\(y_t &gt; 0\)</span>.</p>
+<p>The optimal value of <span class="math inline">\(\lambda\)</span> was estimated using the Guerrero method on the training data only. The test data were excluded from this step to prevent information leakage. Estimating the transformation parameter using only the training data ensures that the modelling procedure reflects the information that would have been available at the end of 2017.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculating optimal lambda</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>optim_lambda <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(Flu_Cases, <span class="at">features =</span> guerrero)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># performing a log transform on the data using the optimal lambda value</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#training data</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>train_trans <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Flu_Cases_Trans =</span> <span class="fu">box_cox</span>(Flu_Cases, <span class="at">lambda =</span> optim_lambda<span class="sc">$</span>lambda_guerrero)) <span class="sc">|&gt;</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Month, Flu_Cases_Trans)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#test data</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>test_trans <span class="ot">&lt;-</span> test_data <span class="sc">|&gt;</span> </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Flu_Cases_Trans =</span> <span class="fu">box_cox</span>(Flu_Cases, <span class="at">lambda =</span> optim_lambda<span class="sc">$</span>lambda_guerrero)) <span class="sc">|&gt;</span> </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Month, Flu_Cases_Trans)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The estimated Guerrero value was <span class="math inline">\(\lambda = -0.07\)</span>, which is close to zero. A logarithmic transformation was therefore used as a simple and interpretable approximation to the Box–Cox transformation: <span class="math display">\[y_t^{(0)} = \log(y_t).\]</span></p>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>train_trans <span class="sc">|&gt;</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(Flu_Cases_Trans)<span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Tranformed Monthly training data"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>train_trans <span class="sc">|&gt;</span> </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_season</span>(Flu_Cases_Trans, <span class="at">period =</span> <span class="st">"year"</span>) <span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Transformed Seasonality"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-transformed-series-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-transformed-series-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-transformed-series-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-transformed-series-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Transformed Training Series and Seasonality Plots
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-transformed-series-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-transformed-series-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-transformed-series-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-transformed-series-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Transformed Training Series and Seasonality Plots
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Compared with the original series, the seasonal peaks are more similar in size after transformation, suggesting that the variance has been stabilized. The transformed series still displays an upward movement over time, while the 2009 peak remains noticeably unusual.</p>
+<p>An STL decomposition was then applied to the transformed training data.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>train_trans <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">STL</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="fu">trend</span>() <span class="sc">+</span> <span class="fu">season</span>(<span class="at">period =</span> <span class="st">"1 year"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">components</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"STL Decomposition (Transformed Data)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-stl-transformed" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-stl-transformed-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-stl-transformed-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stl-transformed-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: STL Decomposition of the Transformed Training Data
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The trend component appears more gradual than in the original series, and the seasonal component shows a more consistent pattern across years. Although the remainder fluctuates around zero for much of the series, the large deviation around 2009 remains visible.</p>
+<p>The transformed series was used for SARIMA modelling because the model requires the series to be made approximately stationary through transformation and differencing. The original series was retained for ETS modelling because ETS models can directly accommodate evolving level and seasonal components.</p>
+</section>
+<section id="sarima-model-fitting" class="level1">
+<h1>SARIMA Model Fitting</h1>
+<p>Seasonal autoregressive integrated moving-average (SARIMA) models extend ordinary ARIMA models by allowing both non-seasonal and seasonal patterns to be modelled. The autoregressive (AR) component models the current value of a time series using previous values. The moving-average (MA) component models the current value using previous forecast errors. The integrated (I) component refers to differencing, which can be used to remove non-stationary behaviour.</p>
+<p>A SARIMA model is written as <span class="math display">\[\text{SARIMA}(p,d,q)(P,D,Q)_s.\]</span> The non-seasonal component, <span class="math inline">\((p,d,q)\)</span>, captures short-term patterns in the series, while the seasonal component, <span class="math inline">\((P,D,Q)_s\)</span>, captures repeating patterns after each seasonal cycle. Since the data are monthly and influenza seasonality occurs annually, the seasonal period is <span class="math inline">\(s=12\)</span>.The general form of a SARIMA model is <span class="math display">\[\Phi_P(B^s)\phi_p(B)(1-B)^d(1-B^s)^D y_t = \Theta_Q(B^s)\theta_q(B)\varepsilon_t.\]</span> Here, <span class="math inline">\(y_t\)</span> denotes the transformed influenza series at time <span class="math inline">\(t\)</span>, <span class="math inline">\(B\)</span> is the backshift operator (<span class="math inline">\(By_t=y_{t-1}\)</span>, <span class="math inline">\(B^{12}y_t=y_{t-12}\)</span>) and <span class="math inline">\(\varepsilon_t\)</span> is a random error term.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>train_trans<span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(Flu_Cases_Trans, <span class="at">features =</span> <span class="fu">c</span>(unitroot_ndiffs, unitroot_nsdiffs, unitroot_kpss))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  ndiffs nsdiffs kpss_stat kpss_pvalue
+   &lt;int&gt;   &lt;int&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+1      1       1      1.34        0.01</code></pre>
+</div>
+</div>
+<p>The initial test results indicated that one seasonal difference (<span class="math inline">\(D=1\)</span>) and one non-seasonal difference (<span class="math inline">\(d=1\)</span>) may be required. In addition, the small KPSS <span class="math inline">\(p\)</span>-value provided evidence against the null hypothesis of stationarity.</p>
+<p>Seasonal differencing was applied first because the exploratory analysis showed strong annual seasonality:</p>
+<p><span class="math display">\[(1-B^{12})y_t = y_t - y_{t-12}.\]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sdiff_dat <span class="ot">&lt;-</span> train_trans <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">season_diff =</span> <span class="fu">difference</span>(Flu_Cases_Trans, <span class="at">lag =</span> <span class="dv">12</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#test for stationarity</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>sdiff_dat <span class="sc">|&gt;</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(season_diff, <span class="at">features =</span> <span class="fu">c</span>(unitroot_ndiffs, unitroot_nsdiffs, unitroot_kpss))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  ndiffs nsdiffs kpss_stat kpss_pvalue
+   &lt;int&gt;   &lt;int&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+1      0       0    0.0347         0.1</code></pre>
+</div>
+</div>
+<p>The results indicated that no further seasonal or non-seasonal differencing was required (<span class="math inline">\(d=0, D=1\)</span>). The larger KPSS <span class="math inline">\(p\)</span>-value indicated that there was insufficient evidence to reject the null hypothesis of stationarity.</p>
+</section>
+<section id="candidate-model-selection" class="level1">
+<h1>Candidate Model Selection</h1>
+<p>Autocorrelation function (ACF) and partial autocorrelation function (PACF) plots of the seasonally differenced training series were used to identify plausible autoregressive and moving-average orders.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sdiff_dat <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_tsdisplay</span>(season_diff, <span class="at">plot_type =</span> <span class="st">"partial"</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Diagnostic Plots: Seasonally Differenced Training Data"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-acf-pacf-sdiff" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-acf-pacf-sdiff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-acf-pacf-sdiff-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-acf-pacf-sdiff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: ACF and PACF Diagnostics for Seasonally Differenced Training Data
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The PACF showed significant non-seasonal spikes at lags 1 and 2, suggesting a non-seasonal autoregressive order of 2. The ACF and PACF also showed structure around the seasonal lag of 12 months.The initial baseline model was specified as <span class="math display">\[\text{SARIMA}(2,0,0)(1,1,0)_{12}.\]</span> Because identifying AR and MA orders from ACF and PACF plots involves visual judgement, additional plausible models were fitted. An automatically selected ARIMA model was also fitted as a data-driven comparison.</p>
+<p>Candidate models were specified and compared using AIC, AICc, and BIC metrics.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all the sarima models chosen and fitted </span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>sarima_models <span class="ot">&lt;-</span> train_trans <span class="sc">|&gt;</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">baseline =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>)),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">baseline_nc =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>)),</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">model1 =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">1</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>)),  </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">model1_nc =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">1</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>)),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">model2 =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">1</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>)),</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">model2_nc =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">1</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>)),</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">model3 =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="fu">pdq</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>)),</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">model3_nc =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> <span class="fu">pdq</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>) <span class="sc">+</span> <span class="fu">PDQ</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>)),</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">auto_stepwise =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans),</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">auto_search =</span> <span class="fu">ARIMA</span>(Flu_Cases_Trans, <span class="at">stepwise =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank models by AIC to find the best fit</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>sarima_models <span class="sc">|&gt;</span> </span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glance</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AICc) <span class="sc">|&gt;</span> </span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, AIC, AICc, BIC) <span class="sc">|&gt;</span> </span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">AIC</th>
+<th style="text-align: right;">AICc</th>
+<th style="text-align: right;">BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">model3</td>
+<td style="text-align: right;">52.59838</td>
+<td style="text-align: right;">53.43007</td>
+<td style="text-align: right;">68.69117</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">auto_stepwise</td>
+<td style="text-align: right;">52.59838</td>
+<td style="text-align: right;">53.43007</td>
+<td style="text-align: right;">68.69117</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">auto_search</td>
+<td style="text-align: right;">52.59838</td>
+<td style="text-align: right;">53.43007</td>
+<td style="text-align: right;">68.69117</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">model2</td>
+<td style="text-align: right;">60.60932</td>
+<td style="text-align: right;">61.19755</td>
+<td style="text-align: right;">74.01997</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">model2_nc</td>
+<td style="text-align: right;">60.60932</td>
+<td style="text-align: right;">61.19755</td>
+<td style="text-align: right;">74.01997</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">baseline</td>
+<td style="text-align: right;">63.61479</td>
+<td style="text-align: right;">64.20303</td>
+<td style="text-align: right;">77.02545</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">baseline_nc</td>
+<td style="text-align: right;">70.61361</td>
+<td style="text-align: right;">71.00196</td>
+<td style="text-align: right;">81.34214</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">model1</td>
+<td style="text-align: right;">72.60653</td>
+<td style="text-align: right;">73.19476</td>
+<td style="text-align: right;">86.01718</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">model1_nc</td>
+<td style="text-align: right;">72.60653</td>
+<td style="text-align: right;">73.19476</td>
+<td style="text-align: right;">86.01718</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The model with the strongest in-sample fit was Candidate 3, <span class="math inline">\(\text{SARIMA}(2,0,0)(2,1,0)_{12}\)</span>, which obtained the lowest AIC, AICc, and BIC values. Its model equation is: <span class="math display">\[(1 - \phi_1 B - \phi_2 B^2)(1 - \Phi_1 B^{12} - \Phi_2 B^{24})(1 - B^{12})y_t = \varepsilon_t.\]</span> The selected SARIMA model was subsequently assessed using residual diagnostics and out-of-sample forecasting performance.</p>
+</section>
+<section id="exponential-smoothing" class="level1">
+<h1>Exponential smoothing</h1>
+<p>The second family of models fitted to the influenza data was exponential smoothing state-space models. These models were considered because the exploratory analysis showed strong annual seasonality and an evolving level over time. ETS models describe the series through evolving level, trend, and seasonal components.</p>
+<p>The notation for an ETS model is <span class="math display">\[\text{ETS}(E,T,S),\]</span> where <span class="math inline">\(E\)</span> denotes the error component, <span class="math inline">\(T\)</span> denotes the trend component, and <span class="math inline">\(S\)</span> denotes the seasonal component. Each component may be additive (<span class="math inline">\(A\)</span>), multiplicative (<span class="math inline">\(M\)</span>), or absent (<span class="math inline">\(N\)</span>). The trend component may also be damped (<span class="math inline">\(A_d\)</span>).</p>
+<p>The exploratory analysis indicated that the size of the seasonal influenza peaks increased when the overall number of notifications was higher. Therefore, models with multiplicative seasonality were fitted. Models with both additive and multiplicative errors were evaluated because the residual plots did not provide conclusive evidence regarding the error structure.</p>
+<p>Simple exponential smoothing models were not explored because they contain neither a trend nor a seasonal component. Instead, models with additive, damped additive, and absent trend components were evaluated.</p>
+<p>The selected model was <span class="math inline">\(\text{ETS}(M,N,M)\)</span>, which features multiplicative errors, no explicit trend component, and multiplicative seasonality. Its observation equation is <span class="math display">\[y_t = \ell_{t-1} s_{t-m} (1 + \varepsilon_t),\]</span> where <span class="math inline">\(y_t\)</span> is the observed value, <span class="math inline">\(\ell_{t-1}\)</span> is the level at time <span class="math inline">\(t-1\)</span>, <span class="math inline">\(s_{t-m}\)</span> is the seasonal index from the previous seasonal cycle, <span class="math inline">\(m = 12\)</span> is the seasonal period, and <span class="math inline">\(\varepsilon_t\)</span> is the multiplicative error.</p>
+<p>The level updating equation is <span class="math display">\[\ell_t = \ell_{t-1} (1 + \alpha \varepsilon_t),\]</span> and the seasonal updating equation is <span class="math display">\[s_t = s_{t-m} (1 + \gamma \varepsilon_t).\]</span> The <span class="math inline">\(h\)</span>-step-ahead forecast is given by <span class="math display">\[\hat{y}_{t+h\mid t} = \ell_t s_{t+h-m(k+1)},\]</span> where <span class="math inline">\(k\)</span> is the integer part of <span class="math inline">\((h-1)/m\)</span>. The parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\gamma\)</span> represent the level and seasonal smoothing parameters, respectively.</p>
+<p>Candidate ETS models are presented in the table</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ETS model fitting of candidates</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ets_models <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">baseline =</span> <span class="fu">ETS</span>(Flu_Cases <span class="sc">~</span> <span class="fu">error</span>(<span class="st">"A"</span>) <span class="sc">+</span> <span class="fu">trend</span>(<span class="st">"N"</span>) <span class="sc">+</span> <span class="fu">season</span>(<span class="st">"M"</span>)),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">model1 =</span> <span class="fu">ETS</span>(Flu_Cases <span class="sc">~</span> <span class="fu">error</span>(<span class="st">"A"</span>) <span class="sc">+</span> <span class="fu">trend</span>(<span class="st">"Ad"</span>) <span class="sc">+</span> <span class="fu">season</span>(<span class="st">"M"</span>)),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">model2 =</span> <span class="fu">ETS</span>(Flu_Cases <span class="sc">~</span> <span class="fu">error</span>(<span class="st">"M"</span>) <span class="sc">+</span> <span class="fu">trend</span>(<span class="st">"A"</span>) <span class="sc">+</span> <span class="fu">season</span>(<span class="st">"M"</span>)),</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">model3 =</span> <span class="fu">ETS</span>(Flu_Cases <span class="sc">~</span> <span class="fu">error</span>(<span class="st">"M"</span>) <span class="sc">+</span> <span class="fu">trend</span>(<span class="st">"Ad"</span>) <span class="sc">+</span> <span class="fu">season</span>(<span class="st">"M"</span>)),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">model4 =</span> <span class="fu">ETS</span>(Flu_Cases <span class="sc">~</span> <span class="fu">error</span>(<span class="st">"M"</span>) <span class="sc">+</span> <span class="fu">trend</span>(<span class="st">"N"</span>) <span class="sc">+</span> <span class="fu">season</span>(<span class="st">"M"</span>)),</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">model5 =</span> <span class="fu">ETS</span>(Flu_Cases <span class="sc">~</span> <span class="fu">error</span>(<span class="st">"A"</span>) <span class="sc">+</span> <span class="fu">trend</span>(<span class="st">"A"</span>) <span class="sc">+</span> <span class="fu">season</span>(<span class="st">"M"</span>)),</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">auto_ets =</span> <span class="fu">ETS</span>(Flu_Cases)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>ets_models <span class="sc">|&gt;</span> </span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glance</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AICc) <span class="sc">|&gt;</span> </span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, AIC, AICc, BIC) <span class="sc">|&gt;</span> </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">AIC</th>
+<th style="text-align: right;">AICc</th>
+<th style="text-align: right;">BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">model4</td>
+<td style="text-align: right;">2283.959</td>
+<td style="text-align: right;">2288.574</td>
+<td style="text-align: right;">2325.771</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">auto_ets</td>
+<td style="text-align: right;">2283.959</td>
+<td style="text-align: right;">2288.574</td>
+<td style="text-align: right;">2325.771</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">model2</td>
+<td style="text-align: right;">2284.400</td>
+<td style="text-align: right;">2290.400</td>
+<td style="text-align: right;">2331.788</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">model3</td>
+<td style="text-align: right;">2296.266</td>
+<td style="text-align: right;">2303.038</td>
+<td style="text-align: right;">2346.440</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">model5</td>
+<td style="text-align: right;">2648.573</td>
+<td style="text-align: right;">2654.573</td>
+<td style="text-align: right;">2695.960</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">model1</td>
+<td style="text-align: right;">2652.918</td>
+<td style="text-align: right;">2659.690</td>
+<td style="text-align: right;">2703.093</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">baseline</td>
+<td style="text-align: right;">2679.896</td>
+<td style="text-align: right;">2684.512</td>
+<td style="text-align: right;">2721.708</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The candidate model comparison shows that Candidate 4, <span class="math inline">\(\text{ETS}(M,N,M)\)</span>, achieved the lowest AIC, AICc, and BIC. Its observation and updating equations are: <span class="math display">\[y_t = \ell_{t-1}s_{t-12}(1+\varepsilon_t), \quad \ell_t = \ell_{t-1}(1+\alpha\varepsilon_t), \quad s_t = s_{t-12}(1+\gamma\varepsilon_t).\]</span> <span class="math display">\[\hat{y}_{t+h\mid t} = \ell_t s_{t+h-12(k+1)}.\]</span> This model incorporates multiplicative errors, no explicit trend component, and multiplicative seasonality. Although the original data displayed an overall upward trend in notifications, the information criteria suggested that including an explicit trend parameter did not improve in-sample fit once multiplicative seasonal variation was accounted for.</p>
+</section>
+<section id="residual-diagnostics" class="level1">
+<h1>Residual Diagnostics</h1>
+<p>Residual diagnostics were conducted for the selected SARIMA and ETS models to assess whether they adequately captured the temporal structure in the training data. A well-specified forecasting model should produce residuals that are approximately uncorrelated, have a mean close to zero, and display no clear remaining pattern over time.</p>
+<section id="sarima-residual-diagnostics" class="level2">
+<h2 class="anchored" data-anchor-id="sarima-residual-diagnostics">SARIMA Residual Diagnostics</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sarima_models <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model3) <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"SARIMA Residual Diagnostics"</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>sarima_models <span class="sc">|&gt;</span> </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model3) <span class="sc">|&gt;</span> </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.innov, ljung_box, <span class="at">lag =</span> <span class="dv">24</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .model lb_stat  lb_pvalue
+  &lt;chr&gt;    &lt;dbl&gt;      &lt;dbl&gt;
+1 model3    71.8 0.00000115</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="fig-sarima-residuals" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sarima-residuals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-sarima-residuals-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sarima-residuals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: Residual Diagnostic Plots for SARIMA(2,0,0)(2,1,0)[12]
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The residual ACF plot contains several significant spikes, suggesting that some autocorrelation remains after fitting the model. In addition, the residual histogram appears right-skewed rather than symmetric around zero. These results suggest that the SARIMA model does not fully capture all of the temporal structure in the influenza series.</p>
+<p>The residual ACF plot contains several significant spikes, and the histogram appears right-skewed. The Ljung–Box test rejects the null hypothesis of no autocorrelation (<span class="math inline">\(p &lt; 0.05\)</span>).</p>
+</section>
+<section id="ets-residual-diagnostics" class="level2">
+<h2 class="anchored" data-anchor-id="ets-residual-diagnostics">ETS Residual Diagnostics</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-ets-residuals</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Residual Diagnostic Plots for ETS(M,N,M)"</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>ets_models <span class="sc">|&gt;</span> </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model4) <span class="sc">|&gt;</span> </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ETS Residual Diagnostics"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="code_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ets_models <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model4) <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.innov, ljung_box, <span class="at">lag =</span> <span class="dv">24</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .model lb_stat lb_pvalue
+  &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 model4    48.6   0.00216</code></pre>
+</div>
+</div>
+<p>The ETS residual ACF shows fewer significant spikes, but the histogram displays left skewness, and the Ljung–Box test similarly rejects the null hypothesis of residual independence (<span class="math inline">\(p &lt; 0.05\)</span>). This remaining dependence may reflect unmodeled epidemiological factors or unusual epidemic years(2009, 2017, 2019).</p>
+</section>
+</section>
+<section id="forecasting-and-model-comparison" class="level1">
+<h1>Forecasting and Model Comparison</h1>
+<section id="in-sample-model-fit" class="level2">
+<h2 class="anchored" data-anchor-id="in-sample-model-fit">In-Sample Model Fit</h2>
+<p>The selected SARIMA and ETS models were first examined using their fitted values on the training data. Parameter estimates were obtained using maximum likelihood estimation. The maximum likelihood procedure selects parameter values that make the observed training data most probable under the fitted model.</p>
+<section id="sarima-parameter-estimates-and-fitted-values" class="level3">
+<h3 class="anchored" data-anchor-id="sarima-parameter-estimates-and-fitted-values">SARIMA Parameter Estimates and Fitted Values</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># best sarima model coefficients</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>sarima_models <span class="sc">|&gt;</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model3) <span class="sc">|&gt;</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">report</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: Flu_Cases_Trans 
+Model: ARIMA(2,0,0)(2,1,0)[12] w/ drift 
+
+Coefficients:
+         ar1      ar2     sar1     sar2  constant
+      0.8381  -0.2764  -0.7226  -0.4409    0.1664
+s.e.  0.1201   0.1064   0.1156   0.1126    0.0293
+
+sigma^2 estimated as 0.08197:  log likelihood=-20.3
+AIC=52.6   AICc=53.43   BIC=68.69</code></pre>
+</div>
+</div>
+<p>Based on the AIC, AICc, and BIC comparison, the selected SARIMA model was <span class="math display">\[\text{SARIMA}(2,0,0)(2,1,0)_{12}.\]</span> The model equation is <span class="math display">\[(1-\phi_1B-\phi_2B^2)(1-\Phi_1B^{12}-\Phi_2B^{24})(1-B^{12})y_t = \varepsilon_t.\]</span> Here, <span class="math inline">\(y_t\)</span> is the log-transformed monthly influenza count at time <span class="math inline">\(t\)</span>, <span class="math inline">\(B\)</span> is the backshift operator, and <span class="math inline">\(\varepsilon_t\)</span> is the random error term. The parameters <span class="math inline">\(\phi_1\)</span> and <span class="math inline">\(\phi_2\)</span> represent non-seasonal autoregressive coefficients at lags 1 and 2 months. The parameters <span class="math inline">\(\Phi_1\)</span> and <span class="math inline">\(\Phi_2\)</span> represent seasonal autoregressive coefficients at lags 12 and 24 months. The term <span class="math inline">\((1-B^{12})\)</span> applies one seasonal difference to remove annual non-stationarity.</p>
+<p>The coefficient estimates indicate that the transformed influenza series is related to both recent observations and observations from previous influenza seasons. However, the signs and sizes of the coefficients should be interpreted with care. In a SARIMA model with seasonal differencing and multiple autoregressive terms, an individual coefficient does not establish a causal effect. For example, a negative seasonal autoregressive coefficient does not demonstrate that vaccination caused lower influenza counts. Instead, it indicates an inverse conditional relationship after accounting for the other model terms.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot fitted values</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>sarima_models <span class="sc">|&gt;</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model3) <span class="sc">|&gt;</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month)) <span class="sc">+</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Flu_Cases_Trans, <span class="at">color =</span> <span class="st">"Actual Data"</span>)) <span class="sc">+</span> </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted, <span class="at">color =</span> <span class="st">"Fitted Values"</span>)) <span class="sc">+</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Actual Data"</span> <span class="ot">=</span> <span class="st">"black"</span>, <span class="st">"Fitted Values"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"SARIMA: Training Data vs Fitted Values"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-sarima-fitted" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sarima-fitted-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-sarima-fitted-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sarima-fitted-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: Fitted Values vs Actual Transformed Data (SARIMA)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure~<span class="math inline">\(\ref{fig:sarima-fitted}\)</span> overlays the fitted SARIMA values on the transformed training data. The model captures the broad annual seasonal pattern. However, it appears to underestimate case numbers during certain periods between 2010 and 2011 and displays greater month-to-month variation than the observed series during non-peak periods.</p>
+</section>
+<section id="ets-parameter-estimates-and-fitted-values" class="level3">
+<h3 class="anchored" data-anchor-id="ets-parameter-estimates-and-fitted-values">ETS Parameter Estimates and Fitted Values</h3>
+<p>The selected exponential smoothing model was <span class="math display">\[\text{ETS}(M,N,M).\]</span> This notation indicates multiplicative errors, no explicit trend component, and multiplicative seasonality. The one-step-ahead observation equation is <span class="math display">\[y_t = \ell_{t-1} s_{t-12} (1 + \varepsilon_t),\]</span> where <span class="math inline">\(y_t\)</span> is the observed monthly influenza count, <span class="math inline">\(\ell_{t-1}\)</span> is the level estimated at the previous time step, <span class="math inline">\(s_{t-12}\)</span> is the seasonal index from the corresponding month in the preceding year, and <span class="math inline">\(\varepsilon_t\)</span> is the multiplicative error term.Level and seasonal updating are defined as <span class="math display">\[\ell_t = \ell_{t-1}(1 + \alpha \varepsilon_t), \quad s_t = s_{t-12}(1 + \gamma \varepsilon_t).\]</span> The <span class="math inline">\(h\)</span>-step-ahead forecast is <span class="math display">\[\hat{y}_{t+h\mid t} = \ell_t s_{t+h-12(k+1)},\]</span> where <span class="math inline">\(k\)</span> is the integer part of <span class="math inline">\((h-1)/12\)</span>.Parameter estimates for the fitted model are presented below:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model 4 coefficients</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>ets_models <span class="sc">|&gt;</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model4) <span class="sc">|&gt;</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">report</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: Flu_Cases 
+Model: ETS(M,N,M) 
+  Smoothing parameters:
+    alpha = 0.9389075 
+    gamma = 0.06109211 
+
+  Initial states:
+     l[0]     s[0]     s[-1]     s[-2]    s[-3]    s[-4]    s[-5]     s[-6]
+ 2437.365 0.240438 0.4125256 0.8980181 3.552026 3.445413 1.569757 0.9995316
+     s[-7]      s[-8]     s[-9]    s[-10]    s[-11]
+ 0.3315577 0.08096066 0.1243929 0.1409229 0.2044564
+
+  sigma^2:  0.4631
+
+     AIC     AICc      BIC 
+2283.959 2288.574 2325.771 </code></pre>
+</div>
+</div>
+<p>The estimate of <span class="math inline">\(\alpha\)</span> was close to one, indicating that the estimated level responds strongly to recent observations. The estimate of <span class="math inline">\(\gamma\)</span> was close to zero, suggesting that the seasonal pattern changes slowly over time and is influenced more by historical seasonal information than by the most recent observation. The model contains 12 initial seasonal states because the data have an annual seasonal cycle of 12 months.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot fitted values</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>ets_models <span class="sc">|&gt;</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model4) <span class="sc">|&gt;</span> </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month)) <span class="sc">+</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Flu_Cases, <span class="at">color =</span> <span class="st">"Actual Data"</span>)) <span class="sc">+</span> </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted, <span class="at">color =</span> <span class="st">"Fitted Values"</span>)) <span class="sc">+</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Actual Data"</span> <span class="ot">=</span> <span class="st">"black"</span>, <span class="st">"Fitted Values"</span> <span class="ot">=</span> <span class="st">"blue"</span>)) <span class="sc">+</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ETS: Training Data vs Fitted Values"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-ets-fitted" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ets-fitted-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-ets-fitted-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ets-fitted-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13: Fitted Values vs Actual Data (ETS)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure~<span class="math inline">\(\ref{fig:ets-fitted}\)</span> overlays the fitted ETS values on the original training data. The model generally captures lower influenza-count periods, but it may overestimate or underestimate some major seasonal peaks. This is consistent with the residual diagnostics, which indicated that the model did not completely remove all autocorrelation.</p>
+</section>
+</section>
+<section id="out-of-sample-forecasting-20182019" class="level2">
+<h2 class="anchored" data-anchor-id="out-of-sample-forecasting-20182019">Out-of-Sample Forecasting (2018–2019)</h2>
+<p>The selected SARIMA and ETS models were used to forecast the test period from January 2018 to December 2019. Four benchmark forecasting methods were also included: mean, naive, seasonal naive and drift forecasts. These benchmark methods provide simple reference points against which the more complex models can be assessed.</p>
+<p>Because the SARIMA model was fitted to the log-transformed series, its forecasts were back-transformed to the original influenza-count scale before comparison with the observed test data and the ETS forecasts. All reported accuracy measures were calculated using the original monthly counts.</p>
+<p>The table summarizes the benchmark approaches.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># benchmarks fitted on the training data</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>benchmark_models <span class="ot">&lt;-</span> train_data <span class="sc">|&gt;</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mean =</span> <span class="fu">MEAN</span>(Flu_Cases),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Naive =</span> <span class="fu">NAIVE</span>(Flu_Cases),</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Seasonal_Naive =</span> <span class="fu">SNAIVE</span>(Flu_Cases),</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Drift =</span> <span class="fu">RW</span>(Flu_Cases <span class="sc">~</span> <span class="fu">drift</span>()) </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Out-of-sample forecasts</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>benchmark_fc <span class="ot">&lt;-</span> benchmark_models <span class="sc">|&gt;</span> </span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">new_data =</span> test_data)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>sarima_fc <span class="ot">&lt;-</span> sarima_models <span class="sc">|&gt;</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model3) <span class="sc">|&gt;</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">new_data =</span> test_trans)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>ets_fc <span class="ot">&lt;-</span> ets_models <span class="sc">|&gt;</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model4) <span class="sc">|&gt;</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">new_data =</span> test_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot of forecast vs actual test data</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>sarima_fc <span class="sc">|&gt;</span> </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(train_trans) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(test_trans, Flu_Cases_Trans, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"SARIMA Forecast vs Actual (2018-2019)"</span>, <span class="at">y =</span> <span class="st">"Log(Flu Cases)"</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>ets_fc <span class="sc">|&gt;</span> </span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(train_data) <span class="sc">+</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(test_data, Flu_Cases, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ETS Forecast vs Actual (2018-2019)"</span>, <span class="at">y =</span> <span class="st">"Flu Cases"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-model-forecasts-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-model-forecasts-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-model-forecasts-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-model-forecasts-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14: SARIMA and ETS Out-of-Sample Forecasts vs Test Data
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-model-forecasts-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-model-forecasts-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-model-forecasts-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-model-forecasts-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15: SARIMA and ETS Out-of-Sample Forecasts vs Test Data
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="benchmarks-vs-model-forecasts" class="level2">
+<h2 class="anchored" data-anchor-id="benchmarks-vs-model-forecasts">Benchmarks vs model forecasts</h2>
+<p>The benchmark methods evaluated include mean, naive, seasonal naive, and drift models.</p>
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>benchmark_fc <span class="sc">|&gt;</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.model <span class="sc">==</span> <span class="st">"Mean"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(train_data) <span class="sc">+</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(test_data, Flu_Cases, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mean Forecast vs Actual"</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>benchmark_fc <span class="sc">|&gt;</span> </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.model <span class="sc">==</span> <span class="st">"Naive"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(train_data) <span class="sc">+</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(test_data, Flu_Cases, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Naive Forecast vs Actual"</span>)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>benchmark_fc <span class="sc">|&gt;</span> </span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.model <span class="sc">==</span> <span class="st">"Seasonal_Naive"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(train_data) <span class="sc">+</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(test_data, Flu_Cases, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Seasonal Naive vs Actual"</span>)</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>benchmark_fc <span class="sc">|&gt;</span> </span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.model <span class="sc">==</span> <span class="st">"Drift"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(train_data) <span class="sc">+</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(test_data, Flu_Cases, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Drift Forecast vs Actual"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-nrow="2" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-benchmark-forecasts-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-benchmark-forecasts-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-benchmark-forecasts-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-benchmark-forecasts-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16: Benchmark Method Out-of-Sample Forecasts
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-benchmark-forecasts-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-benchmark-forecasts-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-benchmark-forecasts-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-benchmark-forecasts-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;17: Benchmark Method Out-of-Sample Forecasts
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-benchmark-forecasts-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-benchmark-forecasts-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-benchmark-forecasts-3.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-benchmark-forecasts-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;18: Benchmark Method Out-of-Sample Forecasts
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-benchmark-forecasts-4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-benchmark-forecasts-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="code_files/figure-html/fig-benchmark-forecasts-4.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-benchmark-forecasts-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;19: Benchmark Method Out-of-Sample Forecasts
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Figure~<span class="math inline">\(\ref{fig:benchmark-forecasts}\)</span> shows the benchmark forecasts against the observed test data. The seasonal naive forecast was visually closer to the observed data than the other benchmark methods, which is expected because the influenza data exhibit strong yearly seasonality. However, visual comparison alone is insufficient, so formal forecast accuracy measures were also used.</p>
+<p>The SARIMA forecast plot shows the SARIMA forecasts and their 80% and 95% prediction intervals. The intervals covered many observed test values, although the model appears to overestimate influenza counts during parts of 2018. The prediction intervals widen during high-season periods, reflecting greater uncertainty when forecasting influenza peaks.</p>
+<p>The ETS forecast plot shows the ETS forecasts and prediction intervals. The ETS model produced relatively narrow intervals during lower-incidence periods and wider intervals during seasonal peaks. This pattern reflects the greater uncertainty associated with forecasting periods in which influenza notifications are expected to increase substantially.</p>
+</section>
+<section id="forecast-accuracy-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="forecast-accuracy-evaluation">Forecast Accuracy Evaluation</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to expand code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Back-transform SARIMA forecasts to flu cases </span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>sarima_raw <span class="ot">&lt;-</span> sarima_fc <span class="sc">|&gt;</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Forecast_Raw =</span> <span class="fu">inv_box_cox</span>(.mean, optim_lambda<span class="sc">$</span>lambda_guerrero)) <span class="sc">|&gt;</span> </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(<span class="fu">as_tibble</span>(test_data), <span class="at">by =</span> <span class="st">"Month"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.model =</span> <span class="st">"SARIMA(2,0,0)(2,1,0)[12]"</span>,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RMSE =</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((Flu_Cases <span class="sc">-</span> Forecast_Raw)<span class="sc">^</span><span class="dv">2</span>)),</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">MAE =</span> <span class="fu">mean</span>(<span class="fu">abs</span>(Flu_Cases <span class="sc">-</span> Forecast_Raw)),</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">MAPE =</span> <span class="fu">mean</span>(<span class="fu">abs</span>((Flu_Cases <span class="sc">-</span> Forecast_Raw) <span class="sc">/</span> Flu_Cases)) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>benchmark_raw <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(benchmark_fc, test_data)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ETS accuracy </span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>ets_raw <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(ets_fc, test_data) <span class="sc">|&gt;</span> </span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.model, RMSE, MAE, MAPE)</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co"># table format for comparison</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(sarima_raw, benchmark_raw, ets_raw) <span class="sc">|&gt;</span> </span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(MAPE) <span class="sc">|&gt;</span> </span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 8%">
+<col style="width: 6%">
+<col style="width: 10%">
+<col style="width: 8%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.model</th>
+<th style="text-align: right;">RMSE</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: right;">MAPE</th>
+<th style="text-align: left;">.type</th>
+<th style="text-align: right;">ME</th>
+<th style="text-align: right;">MPE</th>
+<th style="text-align: right;">MASE</th>
+<th style="text-align: right;">RMSSE</th>
+<th style="text-align: right;">ACF1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Drift</td>
+<td style="text-align: right;">23490.47</td>
+<td style="text-align: right;">13014.00</td>
+<td style="text-align: right;">59.522</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">12865.432</td>
+<td style="text-align: right;">50.858</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">0.826</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Naive</td>
+<td style="text-align: right;">23679.31</td>
+<td style="text-align: right;">13230.58</td>
+<td style="text-align: right;">61.508</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">13106.083</td>
+<td style="text-align: right;">54.137</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">0.827</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mean</td>
+<td style="text-align: right;">21990.61</td>
+<td style="text-align: right;">11712.26</td>
+<td style="text-align: right;">70.577</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">9728.642</td>
+<td style="text-align: right;">-10.703</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">0.827</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">model4</td>
+<td style="text-align: right;">18245.92</td>
+<td style="text-align: right;">11537.59</td>
+<td style="text-align: right;">94.773</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Seasonal_Naive</td>
+<td style="text-align: right;">30437.73</td>
+<td style="text-align: right;">18316.58</td>
+<td style="text-align: right;">160.478</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">-5438.583</td>
+<td style="text-align: right;">-98.915</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: right;">0.604</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SARIMA(2,0,0)(2,1,0)[12]</td>
+<td style="text-align: right;">39073.74</td>
+<td style="text-align: right;">22913.19</td>
+<td style="text-align: right;">202.831</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>shows that ETS(M,N,M) achieved the lowest RMSE and MAE, making it the most accurate model according to these two measures. The drift model obtained the lowest MAPE. This difference is possible because RMSE, MAE and MAPE weight forecasting errors differently. RMSE gives greater weight to large errors, MAE treats all absolute errors equally and MAPE measures error relative to the observed value.</p>
+<p>Although the selected SARIMA model achieved the strongest in-sample fit among the SARIMA candidates, it performed worst during the out-of-sample forecast comparison. This demonstrates that low AIC, AICC or BIC values do not guarantee the best future forecasting performance. A possible explanation is that the SARIMA model’s fitted dependence structure did not generalize well to the 2018–2019 period, particularly given the unusual behaviour of influenza notifications during that period.</p>
+<p>Based on the out-of-sample results, the ETS(M,N,M) model was the best-performing model according to RMSE and MAE. However, the drift model performed best according to MAPE. Therefore, the conclusion that ETS was the best model should be stated with respect to the selected accuracy measures rather than as an unqualified claim.</p>
+</section>
+</section>
+<section id="limitations-and-reflection" class="level1">
+<h1>Limitations and Reflection</h1>
+<p>Although the selected ETS(M,N,M) model achieved the lowest RMSE and MAE in the out-of-sample forecast comparison, it has important limitations. In particular, the selected model contains no explicit trend component. The exploratory analysis suggested that influenza notifications showed non-linear long-term variation, including substantial changes in particular years. Therefore, the selected model may not fully capture longer-term changes in influenza notification levels.</p>
+<p>The unusually high influenza notification counts in 2009, 2017 and 2019 may also have affected model estimation and forecasting performance. These years contain observations that differ substantially from the usual seasonal pattern. Possible contributors include changes in circulating influenza strains, vaccination effectiveness, testing practices, healthcare-seeking behaviour and reporting. However, the dataset used in this project did not include variables that would allow these explanations to be tested directly.</p>
+<p>The SARIMA and ETS residual diagnostics also indicated remaining autocorrelation. This suggests that time and seasonality alone were not sufficient to explain all variation in influenza notifications. With additional time, future work could investigate models that include external predictors, such as temperature, rainfall, vaccination coverage, influenza subtype, testing rates or state-level information. Modelling influenza notifications separately by state or influenza subtype may also reveal patterns hidden by the national aggregation used in this project.</p>
+<p>The analysis was deliberately restricted to data from 2008 to 2019. Data from 2020 onward were excluded because the COVID–19 pandemic, public-health restrictions and changes in healthcare-seeking and testing behaviour could represent a structural break in the influenza series. Including this period without explicitly modelling such changes could distort the estimated seasonal patterns and lead to misleading forecasts.</p>
+<p>Finally, the test set contained only 24 monthly observations. Although this provided two complete seasonal cycles, it is still a relatively short period for evaluating forecast performance. A longer dataset or rolling-origin forecast evaluation would provide stronger evidence about whether the ETS model consistently outperforms SARIMA and the benchmark methods.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<p><a href="https://www.geeksforgeeks.org/r-language/how-to-use-readxl-package-to-read-data-in-r/" class="uri">https://www.geeksforgeeks.org/r-language/how-to-use-readxl-package-to-read-data-in-r/</a></p>
+<p><a href="https://www.r-bloggers.com/2024/07/time-series-forecasting-in-r-from-moving-averages-to-seasonal-arima/" class="uri">https://www.r-bloggers.com/2024/07/time-series-forecasting-in-r-from-moving-averages-to-seasonal-arima/</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Natalie Chidikwindi · CHDNAT002</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Time Series Portfolio · 2026</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

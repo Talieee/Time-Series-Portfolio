@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>arch_garch_theoretical_tutorial – Natalie Chidikwindi — Time Series Portfolio</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-2af0430c0724a252a33c7a0e9b17275b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Natalie Chidikwindi — Time Series Portfolio</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../Index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../journal/index.html"> 
+<span class="menu-text">Journal</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 1</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-1">    
+        <li>
+    <a class="dropdown-item" href="../section-1/section-1.html">
+ <span class="dropdown-text">Section 1 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/section 1 tut - exercises.html">
+ <span class="dropdown-text">Time Series Exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/arch garch lab.html">
+ <span class="dropdown-text">ARCH/GARCH Practical Lab</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/ARCH_GARCH_Theoretical_Tutorial.html">
+ <span class="dropdown-text">ARCH/GARCH Theory</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/spectral analysis tut.html">
+ <span class="dropdown-text">Spectral Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/Structural breaks tut.html">
+ <span class="dropdown-text">Structural Breaks</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-2" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 2</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-2">    
+        <li>
+    <a class="dropdown-item" href="../section-2/section-2.html">
+ <span class="dropdown-text">Section 2 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/exponential smoothing prac.html">
+ <span class="dropdown-text">Exponential Smoothing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/SSM prac.html">
+ <span class="dropdown-text">State Space Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/HMM tutorial.html">
+ <span class="dropdown-text">Hidden Markov Models</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../reflective-commentary.html"> 
+<span class="menu-text">Reflective Commentary</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../ai-use-log.html"> 
+<span class="menu-text">AI Use Log</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../appendix/code-and-data.html"> 
+<span class="menu-text">Code &amp; Data</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#arch-and-garch-modelling-conditional-variance" id="toc-arch-and-garch-modelling-conditional-variance" class="nav-link active" data-scroll-target="#arch-and-garch-modelling-conditional-variance">ARCH and GARCH: Modelling Conditional Variance</a>
+  <ul class="collapse">
+  <li><a href="#purpose" id="toc-purpose" class="nav-link" data-scroll-target="#purpose">Purpose</a></li>
+  <li><a href="#notation-and-assumptions" id="toc-notation-and-assumptions" class="nav-link" data-scroll-target="#notation-and-assumptions">Notation and assumptions</a></li>
+  <li><a href="#question-1-returns-and-the-motivation-for-volatility-models-10" id="toc-question-1-returns-and-the-motivation-for-volatility-models-10" class="nav-link" data-scroll-target="#question-1-returns-and-the-motivation-for-volatility-models-10">Question 1: Returns and the motivation for volatility models [10]</a></li>
+  <li><a href="#question-2-basic-properties-of-arch1-15" id="toc-question-2-basic-properties-of-arch1-15" class="nav-link" data-scroll-target="#question-2-basic-properties-of-arch1-15">Question 2: Basic properties of ARCH(1) [15]</a></li>
+  <li><a href="#question-3-reading-volatility-patterns-15" id="toc-question-3-reading-volatility-patterns-15" class="nav-link" data-scroll-target="#question-3-reading-volatility-patterns-15">Question 3: Reading volatility patterns [15]</a></li>
+  <li><a href="#question-4-comparing-models-and-interpreting-parameters-15" id="toc-question-4-comparing-models-and-interpreting-parameters-15" class="nav-link" data-scroll-target="#question-4-comparing-models-and-interpreting-parameters-15">Question 4: Comparing models and interpreting parameters [15]</a></li>
+  <li><a href="#question-5-forecasting-and-making-sense-of-risk-20" id="toc-question-5-forecasting-and-making-sense-of-risk-20" class="nav-link" data-scroll-target="#question-5-forecasting-and-making-sense-of-risk-20">Question 5: Forecasting and making sense of risk [20]</a></li>
+  <li><a href="#question-6-testing-and-diagnosing-a-fitted-model-15" id="toc-question-6-testing-and-diagnosing-a-fitted-model-15" class="nav-link" data-scroll-target="#question-6-testing-and-diagnosing-a-fitted-model-15">Question 6: Testing and diagnosing a fitted model [15]</a></li>
+  <li><a href="#question-7-challenging-model-claims-10" id="toc-question-7-challenging-model-claims-10" class="nav-link" data-scroll-target="#question-7-challenging-model-claims-10">Question 7: Challenging model claims [10]</a></li>
+  <li><a href="#portfolio-reflection-unmarked" id="toc-portfolio-reflection-unmarked" class="nav-link" data-scroll-target="#portfolio-reflection-unmarked">Portfolio reflection — unmarked</a></li>
+  <li><a href="#difficulties" id="toc-difficulties" class="nav-link" data-scroll-target="#difficulties">Difficulties:</a></li>
+  <li><a href="#source-and-adaptation-note" id="toc-source-and-adaptation-note" class="nav-link" data-scroll-target="#source-and-adaptation-note">Source and adaptation note</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<section id="arch-and-garch-modelling-conditional-variance" class="level1">
+<h1>ARCH and GARCH: Modelling Conditional Variance</h1>
+<section id="purpose" class="level2">
+<h2 class="anchored" data-anchor-id="purpose">Purpose</h2>
+<p>Investigate how ARCH and GARCH models describe volatility clustering, distinguish conditional from unconditional variance, and connect dependence in squared innovations to volatility forecasting and model diagnostics.</p>
+</section>
+<section id="notation-and-assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="notation-and-assumptions">Notation and assumptions</h2>
+<p>Write the observed process as</p>
+<p><span class="math display">\[
+y_t=\mu_t+\varepsilon_t,\qquad \varepsilon_t=\sigma_t z_t,
+\]</span></p>
+<p>where <span class="math inline">\(\mu_t=E(y_t\mid\mathcal F_{t-1})\)</span>, <span class="math inline">\(\mathcal F_{t-1}\)</span> denotes information available through time <span class="math inline">\(t-1\)</span>, and <span class="math inline">\(z_t\)</span> are independent and identically distributed with mean zero and variance one, independent of <span class="math inline">\(\mathcal F_{t-1}\)</span>. The positive quantity <span class="math inline">\(\sigma_t\)</span> is measurable with respect to <span class="math inline">\(\mathcal F_{t-1}\)</span>. Set <span class="math inline">\(h_t=\sigma_t^2\)</span>.</p>
+<p>Follow the course notes’ convention:</p>
+<p><span class="math display">\[
+\text{ARCH}(q):\quad h_t=\alpha_0+\sum_{i=1}^{q}\alpha_i\varepsilon_{t-i}^2,
+\]</span></p>
+<p><span class="math display">\[
+\text{GARCH}(p,q):\quad h_t=\alpha_0+\sum_{i=1}^{q}\alpha_i\varepsilon_{t-i}^2
++\sum_{j=1}^{p}\beta_j h_{t-j}.
+\]</span></p>
+<p>Assume <span class="math inline">\(\alpha_0&gt;0\)</span>, <span class="math inline">\(\alpha_i\geq0\)</span> and <span class="math inline">\(\beta_j\geq0\)</span>. Use a causal stationary solution wherever stationarity is specified. State additional moment assumptions when needed. A white-noise sequence has constant finite variance and zero autocovariances at nonzero lags; independence is a stronger property.</p>
+</section>
+<section id="question-1-returns-and-the-motivation-for-volatility-models-10" class="level2">
+<h2 class="anchored" data-anchor-id="question-1-returns-and-the-motivation-for-volatility-models-10">Question 1: Returns and the motivation for volatility models [10]</h2>
+<p>Let <span class="math inline">\(P_t&gt;0\)</span> be an asset price. Define its simple return and log return by</p>
+<p><span class="math display">\[
+R_t=\frac{P_t-P_{t-1}}{P_{t-1}},\qquad
+r_t=\log P_t-\log P_{t-1}.
+\]</span></p>
+<p><strong>(a) [3]</strong> Show that <span class="math inline">\(r_t=\log(1+R_t)\)</span>, and prove that <span class="math display">\[
+\lim_{R_t\to0}\frac{r_t}{R_t}=1.
+\]</span></p>
+<p><strong>(b) [2]</strong> Show that log returns add over time. Explain one reason to model returns rather than price levels.</p>
+<p><strong>(c) [3]</strong> A return series has negligible sample autocorrelation, but its squared returns have positive autocorrelation across many lags. Explain why these findings are compatible and what they suggest about the conditional mean and conditional variance.</p>
+<p><strong>(d) [2]</strong> Explain how constant-width prediction intervals can misrepresent uncertainty during calm and turbulent periods.</p>
+<p><strong>Your response:</strong></p>
+<ol type="a">
+<li></li>
+<li></li>
+</ol>
+<p>The reason returns instead of prices are modelled is because prices tend to follow a random work in financial data. This makes them very difficult to model. The variance of prices is also unbounded meaning the spread can be very large.</p>
+<ol start="3" type="a">
+<li></li>
+</ol>
+<p>This is compatible because the returns themselves having no autocorrelation is based on the efficiency market hypothesis that is the returns had a strong linear autocorrelation that traders would exploit this relationship by buying stocks at a lower price than they sell until there is no longer a linear autocorrelation between returns. However the presence of no linear autocorrelation does no imply there is no autocorrelation. it therefore makes sense that the squared returns have a positive correlation amongst many lags. I think it also links to the fact that there is volatility clustering seen when you plot the returns.</p>
+<ol start="4" type="a">
+<li></li>
+</ol>
+<p>constant width prediction intervals are a problem because the conditional variance is heteroskedastic. Constant width prediction intervals implies the the conditional variance in heteroskedastic. For financial data this is a problem because this means that the risk could possibly be understated and overstated. This would thus impact the decisions that an individual makes. Therefore a prediction interval where the conditional variance is homoskedastic would not work.</p>
+</section>
+<section id="question-2-basic-properties-of-arch1-15" class="level2">
+<h2 class="anchored" data-anchor-id="question-2-basic-properties-of-arch1-15">Question 2: Basic properties of ARCH(1) [15]</h2>
+<p>Consider <span class="math display">\[
+\varepsilon_t=\sqrt{h_t}z_t,\qquad
+h_t=\alpha_0+\alpha_1\varepsilon_{t-1}^2,
+\qquad 0&lt;\alpha_1&lt;1.
+\]</span> Assume a causal stationary solution with finite second moment exists.</p>
+<p><strong>(a) [4]</strong> Derive <span class="math inline">\(E(\varepsilon_t\mid\mathcal F_{t-1})\)</span> and <span class="math inline">\(\operatorname{Var}(\varepsilon_t\mid\mathcal F_{t-1})\)</span>. Justify the use of independence in each derivation.</p>
+<p><strong>(b) [4]</strong> Derive the unconditional mean and variance of <span class="math inline">\(\varepsilon_t\)</span>, stating where stationarity is used.</p>
+<p><strong>(c) [4]</strong> Prove that <span class="math inline">\(\operatorname{Cov}(\varepsilon_t,\varepsilon_{t-k})=0\)</span> for every integer <span class="math inline">\(k\geq1\)</span>. Explain why this does not establish independence.</p>
+<p><strong>(d) [3]</strong> Explain the parameter restrictions and how the model generates volatility clustering despite the result in part (c).</p>
+<p><strong>Your response:</strong></p>
+<ol type="a">
+<li></li>
+<li></li>
+<li><p>The covariance only measures linear dependence and so this does not mean that there is non linear independence.</p></li>
+<li><p>the parameter restriction is due to the unconditional variance as found in question a). $\alpha_0 = 1$ then it would be undefined.</p></li>
+</ol>
+</section>
+<section id="question-3-reading-volatility-patterns-15" class="level2">
+<h2 class="anchored" data-anchor-id="question-3-reading-volatility-patterns-15">Question 3: Reading volatility patterns [15]</h2>
+<p>A fitted conditional mean model produces residuals with the following features:</p>
+<ul>
+<li>Their ACF is close to zero at all nonzero lags.</li>
+<li>Their squared values have positive autocorrelation that declines slowly.</li>
+<li>Large positive and negative residuals occur in clusters.</li>
+<li>A normal quantile plot shows more extreme observations in both tails than a normal distribution would suggest.</li>
+</ul>
+<p><strong>(a) [4]</strong> A student concludes: “The residuals are white noise, so there is nothing left to model.” Assess this statement. Distinguish what the residual ACF tells you from what it cannot tell you.</p>
+<p><strong>(b) [3]</strong> Explain what volatility clustering means in this example. Does a large negative residual imply that the next residual will probably also be negative? Justify your answer.</p>
+<p><strong>(c) [4]</strong> Another student proposes adding many AR terms to the conditional mean equation to remove the correlation in squared residuals. Explain whether this addresses the observed problem. What type of model would you investigate instead, and why?</p>
+<p><strong>(d) [4]</strong> Suppose an ARCH model assumes Gaussian standardized innovations. A reviewer argues that this contradicts the heavy tails in the residuals. Assess the argument by distinguishing the standardized innovations, the conditional distribution of residuals and their unconditional distribution. No moment derivation is required.</p>
+<p><strong>Your response:</strong></p>
+<p>a) The acf of residuals tells you if there is is linear autocorrelation present in the data. It cannot tell you if there is non linear autocorrelation nor can it tell you which model is the correct model. You can also use it to determine how many lag are significantly correlated with each other, however it can be very difficutl to conclude the correct model by just visually looking.</p>
+<p>b) It means that large residuals are followed by large residuals and small residuals are followed by small residuals. This means the extent of the volatility appear in same groups of time as thought with the same extent. Yes a large residual implies the next residual will be large as the effect of volatility is relatively persistent and the effect takes a long time to damper off on future time periods.</p>
+<p>c) The problem is that the result to be estimating a lot of parameters, this results in the likelihood surface being flat and makes it difficult to find reasonable estimates for the all the parameter values. Instead it is better to use a GARCH model instead as you can then model the past innovations in such a way that a lot of parameters do not need to be added to the model.</p>
+<p>d) The reviewer’s argument is not entirely correct, because it confuses three different objects. The standardized innovations z_t are i.i.d. with mean 0 and standard deviation 1, and under the model they are Gaussian with constant variance. The residuals are a function of these innovations, ε_t = σ_t z_t, so conditional on the past (when σ_t is known) they are also normal, N(0, σ_t²), but with a variance that changes over time. Unconditionally, the residuals are therefore a scale mixture of normals, since each observation is drawn from a normal with a different standard deviation, and this mixture has heavier tails than a single normal with the same overall variance.</p>
+</section>
+<section id="question-4-comparing-models-and-interpreting-parameters-15" class="level2">
+<h2 class="anchored" data-anchor-id="question-4-comparing-models-and-interpreting-parameters-15">Question 4: Comparing models and interpreting parameters [15]</h2>
+<p>Two GARCH(1,1) models have been proposed for daily returns measured in percentage points:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th style="text-align: right;"><span class="math inline">\(\alpha_0\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(\alpha_1\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(\beta_1\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.90</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.70</td>
+</tr>
+</tbody>
+</table>
+<p>Both use <span class="math display">\[
+h_t=\alpha_0+\alpha_1\varepsilon_{t-1}^2+\beta_1h_{t-1}.
+\]</span></p>
+<p>You may use <span class="math display">\[
+s=\alpha_1+\beta_1,\qquad \bar h=\frac{\alpha_0}{1-s}.
+\]</span></p>
+<p><strong>(a) [3]</strong> Calculate each model’s persistence and long-run variance. What do these quantities tell you about similarities between the models?</p>
+<p><strong>(b) [4]</strong> Suppose yesterday’s conditional variance was 0.40 and yesterday’s residual was <span class="math inline">\(-2\)</span>. Calculate today’s conditional variance under each model. Which model reacts more sharply, and which parameter explains the difference?</p>
+<p><strong>(c) [3]</strong> Would your answers in part (b) change if the residual were <span class="math inline">\(+2\)</span>? Explain the modelling assumption behind your answer, and describe a situation in which it may be inappropriate.</p>
+<p><strong>(d) [3]</strong> A student says: “Model A has a larger <span class="math inline">\(\beta_1\)</span>, so its forecasts must return to the long-run variance more slowly than Model B’s.” Assess this claim.</p>
+<p><strong>(e) [2]</strong> Why might a GARCH(1,1) model describe persistent volatility more economically than a high-order ARCH model? Explain the mechanism in words.</p>
+<p><strong>Your response:</strong></p>
+<p>a)</p>
+<p>b)</p>
+<p>Model B reacts more sharply and its due to the alpha 1 parameter because it refers to how sharply volatility jumps in a day. This parameter estimate is higher for model B than it is for model A.</p>
+<p>c) No the residuals are squared and the model assumes symmetry. This means that rises in shocks have the same effect as falls in shocks of the same size.</p>
+<p>d) This claim is false because both models have the same persistence so the half life will be the same. The rate of returning to the long run does not only rely on the memory but also on the reaction as well.</p>
+<p>e) A GARCH(1,1) describes persistent volatility more economically because it is equivalent to an ARCH(∞) model whose weights on past squared residuals decline geometrically. Today’s conditional variance depends on yesterday’s conditional variance, which in turn contains all earlier shocks, so a single coefficient β₁ controls how slowly the influence of past shocks decays. A pure ARCH model would need many lags, each with its own coefficient, to reproduce the same long memory, which means more parameters to estimate, less precise estimates, and more constraints. GARCH(1,1) achieves a slowly decaying memory with only three parameters.</p>
+</section>
+<section id="question-5-forecasting-and-making-sense-of-risk-20" class="level2">
+<h2 class="anchored" data-anchor-id="question-5-forecasting-and-making-sense-of-risk-20">Question 5: Forecasting and making sense of risk [20]</h2>
+<p>A GARCH(1,1) model for daily returns measured in percentage points has <span class="math display">\[
+\alpha_0=0.02,\qquad \alpha_1=0.10,\qquad \beta_1=0.85.
+\]</span> At the end of day <span class="math inline">\(T\)</span>, the residual is <span class="math inline">\(\varepsilon_T=-2\)</span> and the conditional variance is <span class="math inline">\(h_T=0.60\)</span>. Treat the parameters as known. You may use <span class="math display">\[
+s=\alpha_1+\beta_1,\qquad
+\bar h=\frac{\alpha_0}{1-s},\qquad
+\widehat h_{T+k\mid T}=\bar h+s^{k-1}(h_{T+1}-\bar h),
+\]</span> <span class="math display">\[
+\text{half-life}=\frac{\log(0.5)}{\log s}.
+\]</span> No derivation of these formulas is required.</p>
+<p><strong>(a) [4]</strong> Calculate tomorrow’s conditional variance and standard deviation. Identify the contribution of the constant, the latest squared shock and the previous conditional variance.</p>
+<p><strong>(b) [4]</strong> Calculate the long-run variance and the two- and ten-step-ahead variance forecasts. Explain the direction of the forecast path using the economic meaning of the model.</p>
+<p><strong>(c) [3]</strong> Calculate the half-life. Explain precisely what is halved: does this mean that the variance itself will halve after this many days?</p>
+<p><strong>(d) [3]</strong> Tomorrow’s variance is known given the parameters and information at time <span class="math inline">\(T\)</span>. A student concludes that tomorrow’s return is therefore known too. Explain the mistake. Why is the conditional variance for day <span class="math inline">\(T+2\)</span> not yet known in the same way?</p>
+<p><strong>(e) [3]</strong> Assume returns have a constant conditional mean and conditionally uncorrelated future innovations. An analyst estimates ten-day cumulative-return variance by multiplying tomorrow’s variance by ten. Explain whether this overstates or understates the model’s forecast at each of the two forecast origins. State how the model-based calculation should be performed.</p>
+<p><strong>Your response:</strong></p>
+<p>a) The previous conditional variance contributes the most followed by the latest squared shock and then lastly the constant.</p>
+<p>b)</p>
+<p>c) The half-life is the number of days it takes for the deviation of the volatility forecast from its long run level to fall by half.</p>
+<p>d) The student’s conclusion is wrong because knowing tomorrow’s variance does not mean we know tomorrow’s return. The return is r_{T+1} = μ + σ_{T+1} z_{T+1}, and although σ_{T+1} is known at time T, z_{T+1} is a random innovation that has not happened yet. The variance only tells us how uncertain the return is, so we know the distribution of tomorrow’s return but not its actual value.</p>
+<p>The variance for T+1 is known because it relies on values we already have: the parameters, today’s squared shock and today’s conditional variance. For T+2, we need tomorrow’s squared shock, ε²_{T+1}, which is unknown at time T. This means σ²_{T+2} is itself random from today’s point of view, so it can’t be calculated, only forecast. We replace the unknown ε²_{T+1} with its expected value, σ²_{T+1}.</p>
+<p>e)</p>
+<p>The analyst’s calculation ignores mean reversion in the conditional variance. Multiplying tomorrow’s variance by ten assumes volatility stays at its current level for all ten days. At a turbulent origin, where <span class="math inline">\(\sigma^2_{T+1}\)</span> is above the long-run variance <span class="math inline">\(\bar{\sigma}^2\)</span>, the true daily variances decline towards <span class="math inline">\(\bar{\sigma}^2\)</span>, so the rule overstates the ten-day variance. At a calm origin, where <span class="math inline">\(\sigma^2_{T+1}\)</span> is below <span class="math inline">\(\bar{\sigma}^2\)</span>, the true daily variances rise towards <span class="math inline">\(\bar{\sigma}^2\)</span>, so the rule understates it.</p>
+<p>Because the mean is constant and the future innovations are conditionally uncorrelated, the correct calculation is the sum of the ten forecast conditional variances:</p>
+<p><span class="math display">\[
+\text{Var}\left(\sum_{k=1}^{10} r_{T+k} \mid \mathcal{I}_T\right) = \sum_{k=1}^{10} \hat{\sigma}^2_{T+k},
+\]</span></p>
+<p>where each forecast comes from the recursion</p>
+<p><span class="math display">\[
+\hat{\sigma}^2_{T+k} = \bar{\sigma}^2 + (\alpha_1 + \beta_1)^{k-1}\left(\sigma^2_{T+1} - \bar{\sigma}^2\right), \qquad \bar{\sigma}^2 = \frac{\alpha_0}{1 - \alpha_1 - \beta_1}.
+\]</span></p>
+<p>The analyst’s rule is the special case where every <span class="math inline">\(\hat{\sigma}^2_{T+k}\)</span> is held fixed at <span class="math inline">\(\sigma^2_{T+1}\)</span>.</p>
+</section>
+<section id="question-6-testing-and-diagnosing-a-fitted-model-15" class="level2">
+<h2 class="anchored" data-anchor-id="question-6-testing-and-diagnosing-a-fitted-model-15">Question 6: Testing and diagnosing a fitted model [15]</h2>
+<p>Use a 5% significance level. All results below are hypothetical.</p>
+<p><strong>(a) [4]</strong> Before fitting a volatility model, an ARCH-LM auxiliary regression uses five lagged squared residuals, 500 usable observations and <span class="math inline">\(R^2=0.048\)</span>. You may use <span class="math inline">\(LM=nR^2\)</span> and the 5% critical value <span class="math inline">\(\chi^2_5=11.07\)</span>.</p>
+<p>State the null hypothesis, calculate the statistic and interpret the result. Does this result establish that GARCH(1,1) is the correct specification? Explain.</p>
+<p><strong>(b) [6]</strong> Three candidate models produce the following p-values. The Ljung–Box tests use appropriate adjustments for the fitted models. Here <span class="math inline">\(\widehat z_t=\widehat\varepsilon_t/\widehat\sigma_t\)</span>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Diagnostic</th>
+<th style="text-align: right;">Model A</th>
+<th style="text-align: right;">Model B</th>
+<th style="text-align: right;">Model C</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ljung–Box on <span class="math inline">\(\widehat z_t\)</span></td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: right;">0.48</td>
+</tr>
+<tr class="even">
+<td>Ljung–Box on <span class="math inline">\(\widehat z_t^2\)</span></td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.39</td>
+</tr>
+<tr class="odd">
+<td>ARCH-LM on <span class="math inline">\(\widehat z_t\)</span></td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">0.008</td>
+<td style="text-align: right;">0.52</td>
+</tr>
+</tbody>
+</table>
+<p>For each model, identify which component, if any, these results suggest revisiting. Explain why even Model C cannot be declared “the true model” from these tests.</p>
+<p><strong>(c) [3]</strong> Model C’s standardized residuals have no obvious serial pattern, but their normal quantile plot shows unusually heavy tails. What part of the specification would you reconsider? Explain why adding more variance lags may not address this issue.</p>
+<p><strong>(d) [2]</strong> A colleague checks only the raw residuals after fitting GARCH and rejects the model because their magnitudes still cluster. Explain what should be examined instead and why.</p>
+<p><strong>Your response:</strong></p>
+<p>a) This means that GARCH(1,1) is either not the right specification or the conditional mean model is wrong.</p>
+<p>b) Model A’s conditional mean model requires revisting as the test on the standarized innovation has a p value that is small.</p>
+<p>Form Model B I would revisit the Variance (ARCH) model being used based on the p value.</p>
+<p>Model C should not just be assumed to be the right model because the tests only determine stationarity not if the right model has be chosen or if this is the best model of all possible models. to determine that the information criterion should be looked at.</p>
+<p>c) I would change the distribution of the innovation to a student t distribution.</p>
+<p>d) The colleague is looking at the wrong object. In a GARCH model the residual is <span class="math inline">\(\varepsilon_t = \sigma_t z_t\)</span>, so the raw residuals are <em>expected</em> to show clustering in their magnitudes, because the conditional variance <span class="math inline">\(\sigma_t^2\)</span> changes over time. This is exactly the behaviour the model is designed to capture, so clustering in the raw residuals is not evidence against it.</p>
+<p>The model’s assumption concerns the standardized innovations <span class="math inline">\(z_t\)</span>, which should be i.i.d. with mean 0 and constant variance 1. The estimated version is the standardized residuals,</p>
+<p><span class="math display">\[
+\hat{z}_t = \frac{\hat{\varepsilon}_t}{\hat{\sigma}_t},
+\]</span></p>
+<p>and these are what should be examined. If the model has captured the volatility dynamics, then:</p>
+<ul>
+<li>the squared standardized residuals should show no remaining autocorrelation, which can be checked with ACF plots and a Ljung-Box test</li>
+<li>the standardized residuals should pass an ARCH LM test, meaning we fail to reject the null of no remaining ARCH effects</li>
+<li>the distribution of the standardized residuals should be consistent with the assumed innovation distribution (for example, check a QQ-plot against the normal or Student-t)</li>
+</ul>
+<p>Formal tests are useful because visual inspection alone is not always reliable, but they must be applied to the standardized residuals rather than the raw ones. The model should only be rejected if clustering remains in the standardized residuals, since that would indicate misspecification, such as too few lags or a missing asymmetry.</p>
+</section>
+<section id="question-7-challenging-model-claims-10" class="level2">
+<h2 class="anchored" data-anchor-id="question-7-challenging-model-claims-10">Question 7: Challenging model claims [10]</h2>
+<p>For each statement, decide whether it is correct, incorrect or requires qualification. Give a short justification and correct any misleading claim. Each part is worth 2 marks.</p>
+<p><strong>(a) [2]</strong> “GARCH improves the forecast of tomorrow’s return because it forecasts tomorrow’s volatility.”</p>
+<p><strong>(b) [2]</strong> “If <span class="math inline">\(\alpha_1+\beta_1=1\)</span> and <span class="math inline">\(\alpha_0&gt;0\)</span>, we can still use <span class="math inline">\(\alpha_0/(1-\alpha_1-\beta_1)\)</span> as a finite long-run variance.”</p>
+<p><strong>(c) [2]</strong> “An estimated persistence of 0.995 proves that volatility shocks last a long time within a single stable regime; there is no need to check for structural breaks.”</p>
+<p><strong>(d) [2]</strong> “Because standard GARCH uses squared shocks, it can automatically make a negative shock increase next day’s variance more than a positive shock of the same size.” In your response, name an appropriate asymmetric model and explain its purpose.</p>
+<p><strong>(e) [2]</strong> “An ARCH(1) process with Gaussian standardized innovations and <span class="math inline">\(\alpha_1=0.7\)</span> has finite variance, so it must have finite kurtosis.” You may use the conditions <span class="math inline">\(\alpha_1&lt;1\)</span> for finite variance and <span class="math inline">\(3\alpha_1^2&lt;1\)</span> for a finite fourth moment. No proof is required.</p>
+<p><strong>Your response:</strong></p>
+<p>(a) Incorrect</p>
+<p>GARCH forecasts the conditional variance, not the return itself. With a constant conditional mean, the forecast of tomorrow’s return is unchanged. What GARCH improves is the forecast of the uncertainty around the return, so the prediction intervals and VaR are better. The statement should say that GARCH improves the forecast of tomorrow’s volatility, not the return.</p>
+<p>(b) Incorrect</p>
+<p>If <span class="math inline">\(\alpha_1+\beta_1=1\)</span>, the denominator <span class="math inline">\(1-\alpha_1-\beta_1\)</span> is zero, so <span class="math inline">\(\alpha_0/(1-\alpha_1-\beta_1)\)</span> is undefined and there is no finite long-run variance. This is the IGARCH case. The variance forecasts do not revert to a long-run level, and with <span class="math inline">\(\alpha_0&gt;0\)</span> they keep drifting upwards as the horizon grows.</p>
+<p>(c) Incorrect</p>
+<p>A persistence of 0.995 does not prove this. Very high estimated persistence can be caused by structural breaks or regime shifts in the level of variance, which make volatility look more persistent than it really is. Breaks should be checked, for example by estimating on sub-samples or testing for a change in the unconditional variance. A persistence of 0.995 also gives a half-life of about 138 days, so the estimate itself is very sensitive.</p>
+<p>(d) Incorrect</p>
+<p>Standard GARCH depends on <span class="math inline">\(\varepsilon_{t-1}^2\)</span>, and the square removes the sign. A negative shock and a positive shock of the same size therefore have exactly the same effect on next day’s variance. To allow negative shocks to have a larger effect, the GJR-GARCH is used.</p>
+<p>(e) Incorrect</p>
+<p>With <span class="math inline">\(\alpha_1=0.7\)</span> we have <span class="math inline">\(\alpha_1&lt;1\)</span>, so the variance is finite. But the fourth moment needs <span class="math inline">\(3\alpha_1^2&lt;1\)</span>, and here <span class="math inline">\(3(0.7)^2=1.47&gt;1\)</span>. So the fourth moment is not finite, which means the kurtosis is not finite either. Finite variance does not imply finite kurtosis.</p>
+</section>
+<section id="portfolio-reflection-unmarked" class="level2">
+<h2 class="anchored" data-anchor-id="portfolio-reflection-unmarked">Portfolio reflection — unmarked</h2>
+<p>After answering the questions, write a short reflection addressing:</p>
+<ol type="1">
+<li>Which distinction was most important to your understanding: returns versus squared returns, conditional versus unconditional variance, or reaction versus persistence? Explain using one example from your answers.</li>
+<li>Describe one model claim you would now challenge and the evidence you would ask for.</li>
+<li>What additional practical work would demonstrate your ability to fit and assess ARCH/GARCH models in R?</li>
+</ol>
+<p><strong>Your reflection:</strong></p>
+<p>The distinction that mattered most to me was returns (residuals) versus squared returns (squared residuals). The returns themselves are essentially uncorrelated, but their squares are autocorrelated, and that autocorrelation is the volatility clustering that GARCH models. This helped me with the question about the colleague who rejected the model because the raw residuals still clustered. The raw residuals are expected to cluster, since <span class="math inline">\(\varepsilon_t = \sigma_t z_t\)</span> and <span class="math inline">\(\sigma_t\)</span> changes over time, so the right check is whether the squared standardized residuals still show autocorrelation, for example with a Ljung-Box or ARCH LM test. If they do not, the model has captured the volatility dynamics. The same idea explains why the ten-day variance can be found by summing the daily variances: the returns are uncorrelated, so the covariance terms drop out.</p>
+<p>Having understood this, there are claims I would now challenge. I would challenge the claim that a symmetric GARCH(1,1) is adequate, because it uses squared shocks, so a negative and a positive shock of the same size have the same effect on tomorrow’s variance. I would ask for a sign bias test on the standardized residuals, or a GJR-GARCH fit showing whether the asymmetry parameter <span class="math inline">\(\gamma\)</span> is significantly different from zero. I would also challenge any claim that a high persistence, such as 0.995, proves stable long memory, and ask for the standard error of <span class="math inline">\(\alpha_1 + \beta_1\)</span> and a check for structural breaks, for example by fitting on sub-samples.</p>
+<p>To show that I can fit and assess these models in R, I would work through a full example with the <code>rugarch</code> package on a real return series. I would fit a GARCH(1,1) and a GJR-GARCH with normal and Student-t innovations, and report the robust standard errors. I would then check the standardized residuals and their squares with ACF plots, the Ljung-Box test and the ARCH LM test, and compare the models using information criteria. Finally, I would produce multi-day volatility forecasts and compare them with the square root of time rule, then compute and backtest the value at risk.</p>
+</section>
+<section id="difficulties" class="level2">
+<h2 class="anchored" data-anchor-id="difficulties">Difficulties:</h2>
+<p>The hardest part of the tutorial was explaining and justifying the reasoning behind each claim. It is easy to think you understand something until you are asked to explain it. Having to justify my answers made me consolidate my understanding and check that I really knew what I was talking about. The questions were structured so that they applied the theory rather than just recalling it, which helped me test my theoretical understanding and strengthen my weaker areas in volatility modelling.</p>
+</section>
+<section id="source-and-adaptation-note" class="level2">
+<h2 class="anchored" data-anchor-id="source-and-adaptation-note">Source and adaptation note</h2>
+<p>Aligned with Chapter 7, “Conditional Variance Models,” in <em>TSA_Hons_July_2026_Part1_Notes</em>, particularly the learning outcomes on p.&nbsp;76 and the material on pp.&nbsp;77–90.</p>
+<p>Question 1(a) adapts the supplied textbook Problem 7.6. Questions 1 and 2 retain the original tutorial’s foundation derivations. Questions 3–7 use original hypothetical scenarios to assess conceptual understanding, parameter interpretation, forecasting, testing, diagnostics and limitations. Ideas from the supplied ARCH/GARCH problems inform the tutorial, but their general-order proofs are not required here. Textbook problem numbering is separate from the course notes’ section numbering. Add the textbook’s full bibliographic details when available.</p>
+<p><strong>Authorship disclosure:</strong> Tutorial questions prepared with AI assistance and aligned to the supplied course notes. Solutions, calculations and reflection are my own work.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Natalie Chidikwindi · CHDNAT002</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Time Series Portfolio · 2026</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

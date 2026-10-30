@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>SSM Prac – Natalie Chidikwindi — Time Series Portfolio</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-2af0430c0724a252a33c7a0e9b17275b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Natalie Chidikwindi — Time Series Portfolio</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../Index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../journal/index.html"> 
+<span class="menu-text">Journal</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 1</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-1">    
+        <li>
+    <a class="dropdown-item" href="../section-1/section-1.html">
+ <span class="dropdown-text">Section 1 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/section 1 tut - exercises.html">
+ <span class="dropdown-text">Time Series Exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/arch garch lab.html">
+ <span class="dropdown-text">ARCH/GARCH Practical Lab</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/ARCH_GARCH_Theoretical_Tutorial.html">
+ <span class="dropdown-text">ARCH/GARCH Theory</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/spectral analysis tut.html">
+ <span class="dropdown-text">Spectral Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-1/Structural breaks tut.html">
+ <span class="dropdown-text">Structural Breaks</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-section-2" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Section 2</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-section-2">    
+        <li>
+    <a class="dropdown-item" href="../section-2/section-2.html">
+ <span class="dropdown-text">Section 2 Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/exponential smoothing prac.html">
+ <span class="dropdown-text">Exponential Smoothing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/SSM prac.html">
+ <span class="dropdown-text">State Space Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../section-2/HMM tutorial.html">
+ <span class="dropdown-text">Hidden Markov Models</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../reflective-commentary.html"> 
+<span class="menu-text">Reflective Commentary</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../ai-use-log.html"> 
+<span class="menu-text">AI Use Log</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../appendix/code-and-data.html"> 
+<span class="menu-text">Code &amp; Data</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages">packages</a></li>
+  <li><a href="#question-1" id="toc-question-1" class="nav-link" data-scroll-target="#question-1">Question 1</a>
+  <ul class="collapse">
+  <li><a href="#use-the-kalman-filter-for-parameter-estimation-and-to-fit-the-model.-write-your-own-code-for-the-kalman-filter-not-using-r-package-functions." id="toc-use-the-kalman-filter-for-parameter-estimation-and-to-fit-the-model.-write-your-own-code-for-the-kalman-filter-not-using-r-package-functions." class="nav-link" data-scroll-target="#use-the-kalman-filter-for-parameter-estimation-and-to-fit-the-model.-write-your-own-code-for-the-kalman-filter-not-using-r-package-functions.">2. Use the Kalman Filter for parameter estimation and to fit the model. Write your own code for the Kalman Filter, not using R package functions.</a></li>
+  <li><a href="#forecast-up-to-h-5-with-prediction-intervals." id="toc-forecast-up-to-h-5-with-prediction-intervals." class="nav-link" data-scroll-target="#forecast-up-to-h-5-with-prediction-intervals.">3. Forecast up to <span class="math inline">\(h = 5\)</span>, with prediction intervals.</a></li>
+  <li><a href="#plot-data-with-fitted-and-filtered-level-estimates." id="toc-plot-data-with-fitted-and-filtered-level-estimates." class="nav-link" data-scroll-target="#plot-data-with-fitted-and-filtered-level-estimates.">4. Plot data with fitted and filtered level estimates.</a></li>
+  <li><a href="#calculate-the-residuals-and-show-an-autocorrelation-plot." id="toc-calculate-the-residuals-and-show-an-autocorrelation-plot." class="nav-link" data-scroll-target="#calculate-the-residuals-and-show-an-autocorrelation-plot.">5.Calculate the residuals and show an autocorrelation plot.</a></li>
+  </ul></li>
+  <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2">Question 2</a>
+  <ul class="collapse">
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">1.</a></li>
+  <li><a href="#find-the-values-of-sigma_02and-sigma_12-that-make-the-observations-stationary." id="toc-find-the-values-of-sigma_02and-sigma_12-that-make-the-observations-stationary." class="nav-link" data-scroll-target="#find-the-values-of-sigma_02and-sigma_12-that-make-the-observations-stationary.">2. Find the values of <span class="math inline">\(\sigma_0^{2}\)</span>and <span class="math inline">\(\sigma_1^{2}\)</span> that make the observations, stationary.</a></li>
+  <li><a href="#generate-n-100-observations-with-sigma_w-1sigma_v-1-and-using-the-values-of-sigma_02-andsigma_12-found-in-b.-do-a-time-plot-of-x_t-and-ofy_t-and-compare-the-two-processes.-also-compare-the-sample-acf-and-pacf-of-x_t-and-of-y_t." id="toc-generate-n-100-observations-with-sigma_w-1sigma_v-1-and-using-the-values-of-sigma_02-andsigma_12-found-in-b.-do-a-time-plot-of-x_t-and-ofy_t-and-compare-the-two-processes.-also-compare-the-sample-acf-and-pacf-of-x_t-and-of-y_t." class="nav-link" data-scroll-target="#generate-n-100-observations-with-sigma_w-1sigma_v-1-and-using-the-values-of-sigma_02-andsigma_12-found-in-b.-do-a-time-plot-of-x_t-and-ofy_t-and-compare-the-two-processes.-also-compare-the-sample-acf-and-pacf-of-x_t-and-of-y_t.">3. Generate <span class="math inline">\(n = 100\)</span> observations with <span class="math inline">\(\sigma_w = 1\)</span>,<span class="math inline">\(\sigma_v = 1\)</span> and using the values of <span class="math inline">\(\sigma_0^2\)</span> and<span class="math inline">\(\sigma_1^2\)</span> found in (b). Do a time plot of <span class="math inline">\(x_t\)</span> and of<span class="math inline">\(y_t\)</span> and compare the two processes. Also, compare the sample ACF and PACF of <span class="math inline">\(x_t\)</span> and of <span class="math inline">\(y_t\)</span>.</a></li>
+  <li><a href="#repeat-c-but-with-sigma_v-10." id="toc-repeat-c-but-with-sigma_v-10." class="nav-link" data-scroll-target="#repeat-c-but-with-sigma_v-10.">4. Repeat (c), but with <span class="math inline">\(\sigma_v = 10\)</span>.</a></li>
+  <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3">Question 3</a></li>
+  <li><a href="#question-4" id="toc-question-4" class="nav-link" data-scroll-target="#question-4">Question 4</a>
+  <ul class="collapse">
+  <li><a href="#write-some-r-code-to-implement-the-kalman-filter-using-the-above-state-space-model." id="toc-write-some-r-code-to-implement-the-kalman-filter-using-the-above-state-space-model." class="nav-link" data-scroll-target="#write-some-r-code-to-implement-the-kalman-filter-using-the-above-state-space-model.">2. Write some R code to implement the Kalman filter using the above state space model.</a></li>
+  <li><a href="#estimate-the-parameters-a-and-b-by-applying-a-kalman-filter-and-calculate-hatx_tt.-you-will-need-to-write-your-own-code-to-implement-the-kalman-filter.-the-only-parameter-that-has-not-been-specified-is-sigma2.-it-makes-no-difference-what-value-you-use-in-your-code.-why" id="toc-estimate-the-parameters-a-and-b-by-applying-a-kalman-filter-and-calculate-hatx_tt.-you-will-need-to-write-your-own-code-to-implement-the-kalman-filter.-the-only-parameter-that-has-not-been-specified-is-sigma2.-it-makes-no-difference-what-value-you-use-in-your-code.-why" class="nav-link" data-scroll-target="#estimate-the-parameters-a-and-b-by-applying-a-kalman-filter-and-calculate-hatx_tt.-you-will-need-to-write-your-own-code-to-implement-the-kalman-filter.-the-only-parameter-that-has-not-been-specified-is-sigma2.-it-makes-no-difference-what-value-you-use-in-your-code.-why">3. Estimate the parameters <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> by applying a Kalman filter and calculate <span class="math inline">\(\hat{x}_{T|T}\)</span>. You will need to write your own code to implement the Kalman filter. The only parameter that has not been specified is <span class="math inline">\(\sigma^2\)</span>. It makes no difference what value you use in your code. Why?</a></li>
+  <li><a href="#check-that-your-estimates-are-identical-to-the-usual-ols-estimates-obtained-with-the-lm-function." id="toc-check-that-your-estimates-are-identical-to-the-usual-ols-estimates-obtained-with-the-lm-function." class="nav-link" data-scroll-target="#check-that-your-estimates-are-identical-to-the-usual-ols-estimates-obtained-with-the-lm-function.">4. Check that your estimates are identical to the usual OLS estimates obtained with the <code>lm</code> function.</a></li>
+  <li><a href="#use-your-code-to-obtain-the-sequence-of-parameter-estimates-given-by-hatx_11-hatx_22-ldots-hatx_tt." id="toc-use-your-code-to-obtain-the-sequence-of-parameter-estimates-given-by-hatx_11-hatx_22-ldots-hatx_tt." class="nav-link" data-scroll-target="#use-your-code-to-obtain-the-sequence-of-parameter-estimates-given-by-hatx_11-hatx_22-ldots-hatx_tt.">5. Use your code to obtain the sequence of parameter estimates given by <span class="math inline">\(\hat{x}_{1|1}, \hat{x}_{2|2}, \ldots, \hat{x}_{T|T}\)</span>.</a></li>
+  <li><a href="#plot-the-parameters-over-time.-does-it-appear-that-a-model-with-time-varying-parameters-would-be-better" id="toc-plot-the-parameters-over-time.-does-it-appear-that-a-model-with-time-varying-parameters-would-be-better" class="nav-link" data-scroll-target="#plot-the-parameters-over-time.-does-it-appear-that-a-model-with-time-varying-parameters-would-be-better">6. Plot the parameters over time. Does it appear that a model with time-varying parameters would be better?</a></li>
+  <li><a href="#how-would-you-estimate-sigma2-using-your-code" id="toc-how-would-you-estimate-sigma2-using-your-code" class="nav-link" data-scroll-target="#how-would-you-estimate-sigma2-using-your-code">7. How would you estimate <span class="math inline">\(\sigma^2\)</span> using your code?</a></li>
+  <li><a href="#repeat-the-above-but-this-time-use-the-dlm-package-to-implement-the-kalman-filter.-check-that-you-get-the-same-series-of-parameter-estimates." id="toc-repeat-the-above-but-this-time-use-the-dlm-package-to-implement-the-kalman-filter.-check-that-you-get-the-same-series-of-parameter-estimates." class="nav-link" data-scroll-target="#repeat-the-above-but-this-time-use-the-dlm-package-to-implement-the-kalman-filter.-check-that-you-get-the-same-series-of-parameter-estimates.">8. Repeat the above, but this time use the <code>dlm</code> package to implement the Kalman filter. Check that you get the same series of parameter estimates.</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#reflection" id="toc-reflection" class="nav-link" data-scroll-target="#reflection">Reflection</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">SSM Prac</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="packages" class="level2">
+<h2 class="anchored" data-anchor-id="packages">packages</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'stringr' was built under R version 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'lubridate' was built under R version 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.0     ✔ readr     2.1.6
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'patchwork' was built under R version 4.5.3</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'fpp2' was built under R version 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ──────────────────────────────────────────── fpp2 2.5.1 ──
+✔ forecast  9.0.2     ✔ expsmooth 2.3  
+✔ fma       2.5       </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'forecast' was built under R version 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'fma' was built under R version 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'expsmooth' was built under R version 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dlm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dlm' was built under R version 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dlm'
+
+The following object is masked from 'package:ggplot2':
+
+    %+%</code></pre>
+</div>
+</div>
+</section>
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshot 2026-10-28 164616.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<figcaption>Question 1</figcaption>
+</figure>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># variance values </span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># function for gt</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>gt <span class="ot">&lt;-</span> <span class="cf">function</span>(t){</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  (<span class="sc">-</span><span class="dv">1</span>)<span class="sc">^</span>t<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># initial values for the Normal distribution</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">=</span> <span class="dv">0</span> </span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>C0 <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co"># function for ft as given </span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>Ft <span class="ot">&lt;-</span> <span class="cf">function</span>(t){</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="fl">0.2</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co"># initialising vectors y, theta and f values for 100 observations</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>yt <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">100</span>)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">100</span>)</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>F_values <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">100</span>)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="co"># first thea value mean</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>theta_previous <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> m0, <span class="at">sd =</span> <span class="fu">sqrt</span>(C0))</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="co"># loop for simulating latent gdp values and the observed values </span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="dv">100</span>)) {</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>  F_values[i] <span class="ot">&lt;-</span> <span class="fu">Ft</span>(i)</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>  theta[i] <span class="ot">&lt;-</span> <span class="fu">gt</span>(i) <span class="sc">*</span> theta_previous <span class="sc">+</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(W))</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>  yt[i] <span class="ot">&lt;-</span> F_values[i] <span class="sc">*</span> theta[i] <span class="sc">+</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(V))</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>  theta_previous <span class="ot">&lt;-</span> theta[i]</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>In the code, <code>theta[i]</code> represents the underlying, unobserved state at time (i), while <code>yt[i]</code> represents the observed data. Random noise is included in both equations to account for process and measurement uncertainty. Process noise allows the underlying state to vary beyond what is explained by the state transition equation. Measurement noise represents variation in the observations around <code>F_values[i] * theta[i]</code>, so the observations do not reveal the underlying state exactly.</p>
+<p>The coefficient <code>gt(i)</code> determines how the previous hidden state contributes to the current state. In this model, it alternates between −0.5 and 0.5. The coefficient <code>F_values[i]</code> links the current hidden state to the observed data by multiplying <code>theta[i]</code>. Both coefficients vary over time.</p>
+<section id="use-the-kalman-filter-for-parameter-estimation-and-to-fit-the-model.-write-your-own-code-for-the-kalman-filter-not-using-r-package-functions." class="level3">
+<h3 class="anchored" data-anchor-id="use-the-kalman-filter-for-parameter-estimation-and-to-fit-the-model.-write-your-own-code-for-the-kalman-filter-not-using-r-package-functions.">2. Use the Kalman Filter for parameter estimation and to fit the model. Write your own code for the Kalman Filter, not using R package functions.</h3>
+<p>I used the one in the textbook as the template. I changed tweaked the function to not use the full vectors as the coefficients F and G are not constant but change with time.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function for the kalman filter</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>Kfilter <span class="ot">&lt;-</span> <span class="cf">function</span>(FF, GG, m0, C0, W, V, y) {</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">length</span>(y)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>at <span class="ot">=</span> <span class="fu">numeric</span>(N <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>Rt <span class="ot">=</span> <span class="fu">numeric</span>(N <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ft <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>Qt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>mt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>Ct <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>et <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="do">## predict theta</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>at[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">GG</span>(<span class="dv">1</span>) <span class="sc">*</span> m0</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>Rt[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">GG</span>(<span class="dv">1</span>)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span> C0 <span class="sc">+</span> W</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N) {</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="do">## predict y</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>ft[i] <span class="ot">=</span> FF[i] <span class="sc">*</span> at[i]</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>Qt[i] <span class="ot">=</span> FF[i]<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> Rt[i] <span class="sc">+</span> V</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="do">## posterior</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.na</span>(y[i])) {</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>et[i] <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>Kt <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>Kt <span class="ot">=</span> Rt[i] <span class="sc">*</span>  FF[i]<span class="sc">/</span>Qt[i]</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>et[i] <span class="ot">&lt;-</span> y[i] <span class="sc">-</span> ft[i]</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>mt[i] <span class="ot">=</span> at[i] <span class="sc">+</span> Kt <span class="sc">*</span> et[i]</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>Ct[i] <span class="ot">=</span> Rt[i] <span class="sc">-</span> Kt <span class="sc">*</span> FF[i] <span class="sc">*</span> Rt[i]</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="do">## predict theta</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>at[i<span class="sc">+</span><span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">GG</span>(i<span class="sc">+</span><span class="dv">1</span>) <span class="sc">*</span> mt[i]</span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>Rt[i<span class="sc">+</span><span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">GG</span>(i<span class="sc">+</span><span class="dv">1</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> Ct[i] <span class="sc">+</span> W</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(<span class="fu">list</span>(<span class="at">at =</span> at, <span class="at">Rt =</span> Rt, <span class="at">ft =</span> ft, <span class="at">Qt =</span> Qt, <span class="at">mt =</span> mt, <span class="at">Ct =</span> Ct))</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>fitted_kf <span class="ot">&lt;-</span> <span class="fu">Kfilter</span>(<span class="at">FF =</span> F_values, <span class="at">GG =</span> gt, <span class="at">m0 =</span> m0, <span class="at">C0 =</span> C0 , <span class="at">W =</span> W, <span class="at">V =</span> V, <span class="at">y =</span> yt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>In the function the prediction error, <code>et[i]</code>, is the difference between the observed and predicted values. It provides new information for updating our estimate of the hidden state. The Kalman filter adjusts the predicted state mean by <code>Kt * et[i]</code>, where <code>Kt</code> is the Kalman gain and determines how the prediction error affects the update.</p>
+<p>When measurement noise is high, the Kalman filter gives less weight to the observations when updating the state estimate. Holding the other quantities fixed, a larger measurement variance reduces the magnitude of the Kalman gain, so the filter relies more on its predicted state.</p>
+<p>The function checks whether <code>y[i]</code> is missing. If it is, there is no observation available to update the predicted state, so the Kalman gain is set to zero. The updated state mean and variance therefore remain equal to their predicted values. This allows the Kalman filter to handle missing observations and continue predicting.</p>
+</section>
+<section id="forecast-up-to-h-5-with-prediction-intervals." class="level3">
+<h3 class="anchored" data-anchor-id="forecast-up-to-h-5-with-prediction-intervals.">3. Forecast up to <span class="math inline">\(h = 5\)</span>, with prediction intervals.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(yt)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># forecasting horison</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Missing future observations</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(yt, <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="at">times =</span> h))</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate future observation coefficients</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>FF <span class="ot">&lt;-</span> <span class="fu">c</span>(F_values, <span class="fu">sapply</span>((n <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(n <span class="sc">+</span> h), Ft))</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">Kfilter</span>(</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">FF =</span> FF, <span class="at">GG =</span> gt,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">m0 =</span> m0, <span class="at">C0 =</span> C0, <span class="at">W =</span> W, <span class="at">V =</span> V, <span class="at">y =</span> y</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># conbined the actual y values, predicted and intervals as well</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">cbind</span>(</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">observed =</span> y,</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> fit<span class="sc">$</span>ft,</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> fit<span class="sc">$</span>ft <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> <span class="fu">sqrt</span>(fit<span class="sc">$</span>Qt),</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper =</span> fit<span class="sc">$</span>ft <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> <span class="fu">sqrt</span>(fit<span class="sc">$</span>Qt)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting of the prediction invervals for the data </span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(vals)),</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>  vals</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>time,</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"series"</span>,</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"y"</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_data, <span class="fu">aes</span>(time, y, <span class="at">colour =</span> series)) <span class="sc">+</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> n <span class="sc">+</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">observed =</span> <span class="st">"black"</span>, <span class="at">predicted =</span> <span class="st">"blue"</span>,</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">lower =</span> <span class="st">"grey"</span>, <span class="at">upper =</span> <span class="st">"grey"</span></span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="st">"observed"</span>, <span class="st">"predicted"</span>, <span class="st">"lower"</span>),</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"observed"</span>, <span class="st">"predicted"</span>, <span class="st">"95% prediction limits"</span>)</span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>, <span class="at">y =</span> <span class="st">"y"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position.inside =</span> <span class="fu">c</span>(<span class="fl">0.98</span>, <span class="fl">0.98</span>),</span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the five forecasts</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>vals[(n <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(n <span class="sc">+</span> h), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     observed   predicted     lower    upper
+[1,]       NA -0.50214757 -4.070063 3.065768
+[2,]       NA -0.03525138 -2.827661 2.757158
+[3,]       NA  0.14680006 -3.837350 4.130950
+[4,]       NA  0.13757498 -5.919035 6.194185
+[5,]       NA  0.03692888 -3.970251 4.044109</code></pre>
+</div>
+</div>
+<p>The code below shows the appending of the 5 values because appending five missing values extends the observation vector to include the forecast horizon. At each future time point, the filter predicts the state and observation. Because the future observation is missing, it skips the observation update and carries the predicted state forward to generate the next forecast.</p>
+<p>The predicted values show much less variation than the observed values and remain close to zero. This is because they represent the expected observations, while the actual observations include process and measurement noise. The observed values appear to fall within the 95% prediction limits. The vertical dashed line separates the observed period from the forecast period, which extends five time steps ahead.</p>
+</section>
+<section id="plot-data-with-fitted-and-filtered-level-estimates." class="level3">
+<h3 class="anchored" data-anchor-id="plot-data-with-fitted-and-filtered-level-estimates.">4. Plot data with fitted and filtered level estimates.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Observation scale plot</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>observation_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="fu">seq_len</span>(n),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Observed =</span> yt,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">One-step fitted</span><span class="st">`</span> <span class="ot">=</span> fitted_kf<span class="sc">$</span>ft,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Filtered observation</span><span class="st">`</span> <span class="ot">=</span> F_values <span class="sc">*</span> fitted_kf<span class="sc">$</span>mt,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">check.names =</span> <span class="cn">FALSE</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>time,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"series"</span>,</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(observation_data, <span class="fu">aes</span>(time, value, <span class="at">colour =</span> series)) <span class="sc">+</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Observed"</span> <span class="ot">=</span> <span class="st">"black"</span>,</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">"One-step fitted"</span> <span class="ot">=</span> <span class="st">"blue"</span>,</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Filtered observation"</span> <span class="ot">=</span> <span class="st">"darkgreen"</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="st">"Observed"</span>, <span class="st">"One-step fitted"</span>, <span class="st">"Filtered observation"</span>)</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>, <span class="at">y =</span> <span class="st">"Observation"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># State scale plot</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>state_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="fu">seq_len</span>(n),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">True level</span><span class="st">`</span> <span class="ot">=</span> theta,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Filtered level</span><span class="st">`</span> <span class="ot">=</span> fitted_kf<span class="sc">$</span>mt,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">check.names =</span> <span class="cn">FALSE</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>time,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"series"</span>,</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(state_data, <span class="fu">aes</span>(time, value, <span class="at">colour =</span> series)) <span class="sc">+</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"True level"</span> <span class="ot">=</span> <span class="st">"grey"</span>,</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Filtered level"</span> <span class="ot">=</span> <span class="st">"darkgreen"</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="st">"True level"</span>, <span class="st">"Filtered level"</span>)</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>, <span class="at">y =</span> <span class="st">"Level"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In the observation plot, the one-step fitted values (<code>fitted_kf$ft</code>, blue) use information from previous observations, while the filtered observation estimates (<code>F_values * fitted_kf$mt</code>, green) also incorporate the current observation. The green line generally follows the observed values more closely than the blue line. In the filter code, the state mean is updated using <code>mt[i] = at[i] + Kt * et[i]</code>, so the Kalman gain determines how much the prediction error adjusts the estimate.</p>
+<p>In the state plot, the filtered level (<code>fitted_kf$mt</code>, green) captures some movements in the true simulated level (<code>theta</code>, grey), but misses several peaks and troughs. This is because the hidden state is estimated from noisy observations rather than observed directly. Although the filter accounts for process and measurement uncertainty through <code>W</code> and <code>V</code>, it cannot perfectly separate the state from the noise, so uncertainty remains after the update.</p>
+</section>
+<section id="calculate-the-residuals-and-show-an-autocorrelation-plot." class="level3">
+<h3 class="anchored" data-anchor-id="calculate-the-residuals-and-show-an-autocorrelation-plot.">5.Calculate the residuals and show an autocorrelation plot.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># redisuals extracted </span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>residuals <span class="ot">&lt;-</span> yt <span class="sc">-</span> fitted_kf<span class="sc">$</span>ft</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># scaled </span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>standardised_residuals <span class="ot">&lt;-</span> residuals <span class="sc">/</span> <span class="fu">sqrt</span>(fitted_kf<span class="sc">$</span>Qt)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># plot of residuals scaled</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>residual_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="fu">seq_along</span>(standardised_residuals),</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">residual =</span> standardised_residuals</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(residual_data, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> residual)) <span class="sc">+</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> time, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> residual)) <span class="sc">+</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>, <span class="at">y =</span> <span class="st">"Standardised residual"</span>) <span class="sc">+</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># acf plot</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(standardised_residuals,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">main =</span> <span class="st">"ACF of standardised prediction residuals"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>If the model captures the time dependence well, I would expect no significant autocorrelation in the standardised prediction residuals at non-zero lags. The ACF plot shows no significant spikes beyond lag 0, which supports this expectation and suggests that the model has adequately captured the time dependence. The spike at lag 0 is expected because each residual is perfectly correlated with itself.</p>
+</section>
+</section>
+<section id="question-2" class="level1">
+<h1>Question 2</h1>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section">1.</h3>
+<pre><code>![Answer to 2a](ssm%20tut%20q2%20b.jpeg){width="70%" fig-align="center"}</code></pre>
+</section>
+<section id="find-the-values-of-sigma_02and-sigma_12-that-make-the-observations-stationary." class="level3">
+<h3 class="anchored" data-anchor-id="find-the-values-of-sigma_02and-sigma_12-that-make-the-observations-stationary.">2. Find the values of <span class="math inline">\(\sigma_0^{2}\)</span>and <span class="math inline">\(\sigma_1^{2}\)</span> that make the observations, stationary.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for reproducibility</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>phi_2 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.9</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>sigma_w <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># stationary variance calculated</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>variance_x <span class="ot">&lt;-</span> (sigma_w<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> phi_2<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>sigma_0 <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(variance_x)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>sigma_1 <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(variance_x)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"Sigma_1"</span> <span class="ot">=</span> sigma_0, <span class="st">"Sigma 2"</span> <span class="ot">=</span> sigma_1) <span class="sc">|&gt;</span> </span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">"Sigma values"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Sigma values</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Sigma_1</td>
+<td style="text-align: right;">2.29</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sigma 2</td>
+<td style="text-align: right;">2.29</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>the able shows that they are both the same. Both initial states are assigned the stationary variance so that the process has the same variance from the start. Otherwise, the variance would change over time as it approached its long-run value. Here, the stationary variance is (1/(1-0.9^2)).</p>
+</section>
+<section id="generate-n-100-observations-with-sigma_w-1sigma_v-1-and-using-the-values-of-sigma_02-andsigma_12-found-in-b.-do-a-time-plot-of-x_t-and-ofy_t-and-compare-the-two-processes.-also-compare-the-sample-acf-and-pacf-of-x_t-and-of-y_t." class="level3">
+<h3 class="anchored" data-anchor-id="generate-n-100-observations-with-sigma_w-1sigma_v-1-and-using-the-values-of-sigma_02-andsigma_12-found-in-b.-do-a-time-plot-of-x_t-and-ofy_t-and-compare-the-two-processes.-also-compare-the-sample-acf-and-pacf-of-x_t-and-of-y_t.">3. Generate <span class="math inline">\(n = 100\)</span> observations with <span class="math inline">\(\sigma_w = 1\)</span>,<span class="math inline">\(\sigma_v = 1\)</span> and using the values of <span class="math inline">\(\sigma_0^2\)</span> and<span class="math inline">\(\sigma_1^2\)</span> found in (b). Do a time plot of <span class="math inline">\(x_t\)</span> and of<span class="math inline">\(y_t\)</span> and compare the two processes. Also, compare the sample ACF and PACF of <span class="math inline">\(x_t\)</span> and of <span class="math inline">\(y_t\)</span>.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to simulate and plot the observations</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>simulate_and_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(sigma_v, part_label) {</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n <span class="sc">+</span> <span class="dv">2</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Initial states</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  x[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_1)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  x[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_0)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Process and measurement noise</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  w <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_w)</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_v)</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="fu">seq_len</span>(n)) {</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    x[t <span class="sc">+</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.9</span> <span class="sc">*</span> x[t] <span class="sc">+</span> w[t]</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    y[t] <span class="ot">&lt;-</span> x[t <span class="sc">+</span> <span class="dv">2</span>] <span class="sc">+</span> v[t]</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  x_t <span class="ot">&lt;-</span> x[<span class="dv">3</span><span class="sc">:</span>(n <span class="sc">+</span> <span class="dv">2</span>)]</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Helper for time plots</span></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>  time_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(values, title, colour) {</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">data.frame</span>(<span class="at">time =</span> <span class="fu">seq_along</span>(values), <span class="at">value =</span> values),</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(time, value)</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">colour =</span> colour) <span class="sc">+</span></span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> title, <span class="at">x =</span> <span class="st">"Time"</span>, <span class="at">y =</span> <span class="st">"Value"</span>) <span class="sc">+</span></span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>()</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Helper for ACF and PACF plots</span></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>  correlation_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(values, type, title, colour) {</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> <span class="cf">if</span> (type <span class="sc">==</span> <span class="st">"ACF"</span>) {</span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">acf</span>(values, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pacf</span>(values, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>    correlation_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">lag =</span> <span class="fu">as.numeric</span>(result<span class="sc">$</span>lag),</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">correlation =</span> <span class="fu">as.numeric</span>(result<span class="sc">$</span>acf)</span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>    bound <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(values))</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(correlation_data, <span class="fu">aes</span>(lag, correlation)) <span class="sc">+</span></span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_hline</span>(</span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>        <span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span>bound, bound),</span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>        <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">colour =</span> <span class="st">"blue"</span></span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_segment</span>(</span>
+<span id="cb28-56"><a href="#cb28-56" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">xend =</span> lag, <span class="at">yend =</span> correlation),</span>
+<span id="cb28-57"><a href="#cb28-57" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="dv">0</span>, <span class="at">colour =</span> colour</span>
+<span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> title, <span class="at">x =</span> <span class="st">"Lag"</span>, <span class="at">y =</span> type) <span class="sc">+</span></span>
+<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>()</span>
+<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a>  p1 <span class="ot">&lt;-</span> <span class="fu">time_plot</span>(x_t, <span class="st">"Process x_t"</span>, <span class="st">"purple"</span>)</span>
+<span id="cb28-64"><a href="#cb28-64" aria-hidden="true" tabindex="-1"></a>  p2 <span class="ot">&lt;-</span> <span class="fu">time_plot</span>(y, <span class="st">"Observation y_t"</span>, <span class="st">"green"</span>)</span>
+<span id="cb28-65"><a href="#cb28-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a>  p3 <span class="ot">&lt;-</span> <span class="fu">correlation_plot</span>(x_t, <span class="st">"ACF"</span>, <span class="st">"ACF of x_t"</span>, <span class="st">"lightblue"</span>)</span>
+<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a>  p4 <span class="ot">&lt;-</span> <span class="fu">correlation_plot</span>(y, <span class="st">"ACF"</span>, <span class="st">"ACF of y_t"</span>, <span class="st">"pink"</span>)</span>
+<span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a>  p5 <span class="ot">&lt;-</span> <span class="fu">correlation_plot</span>(x_t, <span class="st">"PACF"</span>, <span class="st">"PACF of x_t"</span>, <span class="st">"darkgreen"</span>)</span>
+<span id="cb28-70"><a href="#cb28-70" aria-hidden="true" tabindex="-1"></a>  p6 <span class="ot">&lt;-</span> <span class="fu">correlation_plot</span>(y, <span class="st">"PACF"</span>, <span class="st">"PACF of y_t"</span>, <span class="st">"darkblue"</span>)</span>
+<span id="cb28-71"><a href="#cb28-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a>  combined <span class="ot">&lt;-</span> ((p1 <span class="sc">|</span> p2) <span class="sc">/</span> (p3 <span class="sc">|</span> p4) <span class="sc">/</span> (p5 <span class="sc">|</span> p6)) <span class="sc">+</span></span>
+<span id="cb28-73"><a href="#cb28-73" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_annotation</span>(</span>
+<span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste0</span>(</span>
+<span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a>        part_label, <span class="st">": sigma_w = "</span>, sigma_w,</span>
+<span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">", sigma_v = "</span>, sigma_v</span>
+<span id="cb28-77"><a href="#cb28-77" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb28-78"><a href="#cb28-78" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb28-79"><a href="#cb28-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-80"><a href="#cb28-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(combined)</span>
+<span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-82"><a href="#cb28-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-83"><a href="#cb28-83" aria-hidden="true" tabindex="-1"></a><span class="fu">simulate_and_plot</span>(<span class="at">sigma_v =</span> <span class="dv">1</span>, <span class="at">part_label =</span> <span class="st">"Plots of simulated data"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The time plots show that the observed series (y_t) generally follows the pattern of the hidden process (x_t). Measurement noise adds variation around this pattern and makes some underlying movements less clear, although the main fluctuations remain visible when (_v = 1).</p>
+<p>The ACF plots show similar patterns, with alternating negative and positive correlations at even lags. The correlations in (y_t) are generally slightly weaker because independent measurement noise increases the variance without adding autocovariance at non-zero lags.</p>
+<p>The PACF plots show their strongest negative spike at lag 2, consistent with the model (x_t = -0.9x_{t-2} + w_t). For (x_t), this reflects the AR(2) structure, with no direct lag-1 effect. The observed series retains a strong lag-2 relationship, although measurement noise alters its PACF, so it need not cut off after lag 2.</p>
+</section>
+<section id="repeat-c-but-with-sigma_v-10." class="level3">
+<h3 class="anchored" data-anchor-id="repeat-c-but-with-sigma_v-10.">4. Repeat (c), but with <span class="math inline">\(\sigma_v = 10\)</span>.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">simulate_and_plot</span>(<span class="at">sigma_v =</span> <span class="dv">10</span>, <span class="at">part_label =</span> <span class="st">"Part d"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>When (_v) increases to 10, the time plots of the hidden process and the observations look much more different. Measurement noise dominates (y_t), largely concealing the pattern of (x_t).</p>
+<p>The dependence structure is also less visible in the observation ACF and PACF. The PACF of (x_t) still shows a strong spike at lag 2, consistent with the underlying model, whereas the PACF of (y_t) shows an isolated significant spike around lag 12. This spike may reflect sampling variation rather than a genuine lag-12 relationship. If the only significant ACF spike is at lag 0, it provides no evidence of serial dependence, since the lag-0 correlation is always 1.</p>
+<p>Compared with part (c), the larger measurement noise makes the observations less informative about the hidden process. This illustrates the value of state estimation, which combines the process model with noisy observations to estimate the underlying state and quantify uncertainty.</p>
+</section>
+<section id="question-3" class="level2">
+<h2 class="anchored" data-anchor-id="question-3">Question 3</h2>
+<p><img src="ssm tut q3 .jpeg" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Answer to 3"> The secod difference removes the level and slope, leavin a fixed cobination of white noise terms. The autocorrealtion of them only depends on the lag and so therefore weak stationarity is acheived.</p>
+</section>
+<section id="question-4" class="level2">
+<h2 class="anchored" data-anchor-id="question-4">Question 4</h2>
+<p>In this exercise, you will write your own code for updating regression coefficients using a Kalman filter. We will model quarterly growth rates in US personal consumption expenditure (<span class="math inline">\(y\)</span>) against quarterly growth rates in US real personal disposable income (<span class="math inline">\(z\)</span>). So the model is <span class="math inline">\(y_t = a + bz_t + e_t\)</span>.</p>
+<p>The corresponding state space model is</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_t &amp;= a_t + b_t z_t + e_t,\\
+a_t &amp;= a_{t-1},\\
+b_t &amp;= b_{t-1}.
+\end{aligned}
+\]</span> a) Plot the data (<code>usconsumption[,1]</code>, <code>usconsumption[,2]</code>) and fit a linear regression model to the data using the <code>lm</code> function.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># importing data, had to use ai to help me find the data because fpp does not exist anymore in R. </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"uschange"</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> uschange[, <span class="dv">1</span>] <span class="co"># consumption </span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> uschange[, <span class="dv">2</span>] <span class="co"># disposable income</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>T_len <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># making to a data fram to use for lm </span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>cons_data<span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="fu">as.numeric</span>(<span class="fu">time</span>(y)),</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">consumption =</span> <span class="fu">as.numeric</span>(y),</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">income =</span> <span class="fu">as.numeric</span>(z)</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Linear regression</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(consumption <span class="sc">~</span> income, <span class="at">data =</span> cons_data)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = consumption ~ income, data = cons_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.40845 -0.31816  0.02558  0.29978  1.45157 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  0.54510    0.05569   9.789  &lt; 2e-16 ***
+income       0.28060    0.04744   5.915 1.58e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.6026 on 185 degrees of freedom
+Multiple R-squared:  0.159, Adjusted R-squared:  0.1545 
+F-statistic: 34.98 on 1 and 185 DF,  p-value: 1.577e-08</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plots scatter plots with fitted regression line</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cons_data, <span class="fu">aes</span>(<span class="at">x =</span> income, <span class="at">y =</span> consumption)) <span class="sc">+</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> x,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"US consumption and disposable income growth"</span>,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Quarterly disposable income growth (%)"</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Quarterly consumption growth (%)"</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cons_data, <span class="fu">aes</span>(<span class="at">x =</span> time)) <span class="sc">+</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> consumption, <span class="at">colour =</span> <span class="st">"Consumption"</span>)) <span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> income, <span class="at">colour =</span> <span class="st">"Disposable income"</span>)) <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"US quarterly consumption and income growth"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Quarterly growth (%)"</span>,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="cn">NULL</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The scatterplot shows a positive association between quarterly disposable income growth and consumption growth. Consumption growth tends to increase as income growth increases, with the fitted regression line making this trend clearer. However, the points show considerable spread around the line, indicating that income growth alone does not fully explain consumption growth. The vertical differences between the observed points and the fitted line are the regression residuals.</p>
+<section id="write-some-r-code-to-implement-the-kalman-filter-using-the-above-state-space-model." class="level3">
+<h3 class="anchored" data-anchor-id="write-some-r-code-to-implement-the-kalman-filter-using-the-above-state-space-model.">2. Write some R code to implement the Kalman filter using the above state space model.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># used the textbook version but adjusted based on the dimensions </span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>Kfilter <span class="ot">&lt;-</span> <span class="cf">function</span>(FF, GG, m0, C0, W, V, y) {</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">length</span>(y)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">=</span> <span class="fu">length</span>(m0)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  at <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, N <span class="sc">+</span> <span class="dv">1</span>, p)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  Rt <span class="ot">=</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(p, p, N <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  ft <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  Qt <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  mt <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, N, p)</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  Ct <span class="ot">=</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(p, p, N))</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  et <span class="ot">=</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="do">## predict state</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  at[<span class="dv">1</span>, ] <span class="ot">=</span> GG <span class="sc">%*%</span> m0</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  Rt[, , <span class="dv">1</span>] <span class="ot">=</span> GG <span class="sc">%*%</span> C0 <span class="sc">%*%</span> <span class="fu">t</span>(GG) <span class="sc">+</span> W</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(N)) {</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    Fi <span class="ot">=</span> FF[i, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>    <span class="do">## predict observation</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>    ft[i] <span class="ot">=</span> Fi <span class="sc">%*%</span> at[i, ]</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>    Qt[i] <span class="ot">=</span> Fi <span class="sc">%*%</span> Rt[, , i] <span class="sc">%*%</span> <span class="fu">t</span>(Fi) <span class="sc">+</span> V</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>    <span class="do">## posterior</span></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.na</span>(y[i])) {</span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>      et[i] <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>      Kt <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, p, <span class="dv">1</span>)</span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>      Kt <span class="ot">&lt;-</span> Rt[, , i] <span class="sc">%*%</span> <span class="fu">t</span>(Fi) <span class="sc">/</span> Qt[i]</span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>      et[i] <span class="ot">=</span> y[i] <span class="sc">-</span> ft[i]</span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>    mt[i, ] <span class="ot">=</span> at[i, ] <span class="sc">+</span> <span class="fu">drop</span>(Kt <span class="sc">*</span> et[i])</span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Numerically stable covariance update</span></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a>    A <span class="ot">=</span> <span class="fu">diag</span>(p) <span class="sc">-</span> Kt <span class="sc">%*%</span> Fi</span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>    Ct[, , i] <span class="ot">=</span> A <span class="sc">%*%</span> Rt[, , i] <span class="sc">%*%</span> <span class="fu">t</span>(A) <span class="sc">+</span></span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a>      V <span class="sc">*</span> Kt <span class="sc">%*%</span> <span class="fu">t</span>(Kt)</span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a>    <span class="do">## predict next state</span></span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>    at[i <span class="sc">+</span> <span class="dv">1</span>, ] <span class="ot">=</span> GG <span class="sc">%*%</span> mt[i, ]</span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>    Rt[, , i <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">=</span> GG <span class="sc">%*%</span> Ct[, , i] <span class="sc">%*%</span> <span class="fu">t</span>(GG) <span class="sc">+</span> W</span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(mt) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>)</span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">at =</span> at, <span class="at">Rt =</span> Rt, <span class="at">ft =</span> ft, <span class="at">Qt =</span> Qt,</span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a>              <span class="at">mt =</span> mt, <span class="at">Ct =</span> Ct, <span class="at">et =</span> et))</span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>In the Kalman filter function, <code>Fi &lt;- FF[i, , drop = FALSE]</code> selects the observation matrix row <span class="math inline">\([1,z_i]\)</span> for the current time point. The first entry multiplies the estimated intercept and the second multiplies the estimated slope. Therefore, <code>ft[i] &lt;- Fi %*% at[i, ]</code> calculates predicted consumption growth as <span class="math inline">\(\hat{a}_{i|i-1}+z_i\hat{b}_{i|i-1}\)</span>), using the coefficient estimates available before observing the current consumption value.</p>
+</section>
+<section id="estimate-the-parameters-a-and-b-by-applying-a-kalman-filter-and-calculate-hatx_tt.-you-will-need-to-write-your-own-code-to-implement-the-kalman-filter.-the-only-parameter-that-has-not-been-specified-is-sigma2.-it-makes-no-difference-what-value-you-use-in-your-code.-why" class="level3">
+<h3 class="anchored" data-anchor-id="estimate-the-parameters-a-and-b-by-applying-a-kalman-filter-and-calculate-hatx_tt.-you-will-need-to-write-your-own-code-to-implement-the-kalman-filter.-the-only-parameter-that-has-not-been-specified-is-sigma2.-it-makes-no-difference-what-value-you-use-in-your-code.-why">3. Estimate the parameters <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> by applying a Kalman filter and calculate <span class="math inline">\(\hat{x}_{T|T}\)</span>. You will need to write your own code to implement the Kalman filter. The only parameter that has not been specified is <span class="math inline">\(\sigma^2\)</span>. It makes no difference what value you use in your code. Why?</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracting values</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(uschange[, <span class="st">"Consumption"</span>])</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(uschange[, <span class="st">"Income"</span>])</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># initializing and using the function</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>FF <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, z)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>GG <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">2</span>)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>V <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>C0 <span class="ot">&lt;-</span> V <span class="sc">*</span> <span class="fl">1e7</span> <span class="sc">*</span> <span class="fu">diag</span>(<span class="dv">2</span>)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">Kfilter</span>(</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">FF =</span> FF, <span class="at">GG =</span> GG,</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">m0 =</span> m0, <span class="at">C0 =</span> C0,</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">W =</span> W, <span class="at">V =</span> V, <span class="at">y =</span> y</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Final filtered coefficient estimates)</span></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>mt[N, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        a         b 
+0.5451038 0.2806012 </code></pre>
+</div>
+</div>
+<p>The first filtered estimate, <code>fit$mt[1, ]</code>, updates the initial coefficient estimates using only the first observation. Each subsequent step incorporates another observation while retaining the information from earlier updates. Therefore, <code>fit$mt[N, ]</code> gives the final intercept and slope estimates using all (N) observations. The choice of (^2) does not affect these coefficient estimates because the common scale factor cancels in the Kalman gain. In the code, <code>C0</code> is proportional to <code>V</code> and <code>W</code> is zero, so changing <code>V</code> scales both the predicted state covariance and the observation prediction variance by the same factor. Their ratio remains unchanged, giving the same coefficient updates. However, the estimated uncertainty still depends on (^2).</p>
+</section>
+<section id="check-that-your-estimates-are-identical-to-the-usual-ols-estimates-obtained-with-the-lm-function." class="level3">
+<h3 class="anchored" data-anchor-id="check-that-your-estimates-are-identical-to-the-usual-ols-estimates-obtained-with-the-lm-function.">4. Check that your estimates are identical to the usual OLS estimates obtained with the <code>lm</code> function.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span><span class="fu">round</span>(<span class="fu">cbind</span>(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">OLS =</span> <span class="fu">unname</span>(<span class="fu">coef</span>(fit1)),</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Kalman =</span> <span class="fu">unname</span>(fit<span class="sc">$</span>mt[N, ])</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>), <span class="dv">6</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(comparison) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Slope"</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>comparison <span class="sc">|&gt;</span> </span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption=</span><span class="st">"lm() coeffecients"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>lm() coeffecients</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">OLS</th>
+<th style="text-align: right;">Kalman</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Intercept</td>
+<td style="text-align: right;">0.545</td>
+<td style="text-align: right;">0.545</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Slope</td>
+<td style="text-align: right;">0.281</td>
+<td style="text-align: right;">0.281</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The OLS and final Kalman filter estimates agree to three decimal places, with an intercept of 0.545 and a slope of 0.281. This confirms that, with constant coefficients and a diffuse initial prior, the Kalman filter reproduces the OLS estimates to the displayed precision.</p>
+</section>
+<section id="use-your-code-to-obtain-the-sequence-of-parameter-estimates-given-by-hatx_11-hatx_22-ldots-hatx_tt." class="level3">
+<h3 class="anchored" data-anchor-id="use-your-code-to-obtain-the-sequence-of-parameter-estimates-given-by-hatx_11-hatx_22-ldots-hatx_tt.">5. Use your code to obtain the sequence of parameter estimates given by <span class="math inline">\(\hat{x}_{1|1}, \hat{x}_{2|2}, \ldots, \hat{x}_{T|T}\)</span>.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>parameter_estimates <span class="ot">&lt;-</span> fit<span class="sc">$</span>mt</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(parameter_estimates)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                a          b
+[1,]  0.316654946  0.3078713
+[2,]  1.384651717 -0.7905971
+[3,] -0.009212048  0.5361286
+[4,] -0.108316241  0.6141210
+[5,] -0.221027725  0.8626960
+[6,] -0.226788540  0.8509087</code></pre>
+</div>
+</div>
+<p>The code <code>parameter_estimates &lt;- fit$mt</code> stores the intercept and slope estimates after each observation. Early estimates may fluctuate more because they are based on limited information. As more observations are incorporated, uncertainty about the coefficients decreases and individual observations generally have less influence, so the estimates tend to stabilise.</p>
+</section>
+<section id="plot-the-parameters-over-time.-does-it-appear-that-a-model-with-time-varying-parameters-would-be-better" class="level3">
+<h3 class="anchored" data-anchor-id="plot-the-parameters-over-time.-does-it-appear-that-a-model-with-time-varying-parameters-would-be-better">6. Plot the parameters over time. Does it appear that a model with time-varying parameters would be better?</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># formatting to plot</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>parameter_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="fu">as.numeric</span>(<span class="fu">time</span>(uschange)),</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intercept =</span> fit<span class="sc">$</span>mt[, <span class="dv">1</span>],</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Slope =</span> fit<span class="sc">$</span>mt[, <span class="dv">2</span>]</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>time,</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"parameter"</span>,</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"estimate"</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>ols_values <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">parameter =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Slope"</span>),</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">unname</span>(<span class="fu">coef</span>(fit1))</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="co"># plots</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(parameter_data, <span class="fu">aes</span>(time, estimate)) <span class="sc">+</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> ols_values,</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">yintercept =</span> estimate),</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"red"</span>,</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="st">"dashed"</span></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>parameter, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Coefficient estimate"</span>,</span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Filtered regression coefficient estimates"</span></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SSM-prac_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The intercept estimate fluctuates considerably at the beginning, then settles close to the full-sample OLS estimate. The slope takes longer to stabilise, showing periods of little change followed by further adjustments. Both estimates become more stable as additional observations are incorporated.</p>
+<p>These plots alone do not provide strong evidence that time-varying coefficients are needed. The changes may reflect learning about constant coefficients as more data become available, particularly early in the sample. A comparison with a model allowing time-varying coefficients would help assess whether that additional flexibility improves the fit.</p>
+</section>
+<section id="how-would-you-estimate-sigma2-using-your-code" class="level3">
+<h3 class="anchored" data-anchor-id="how-would-you-estimate-sigma2-using-your-code">7. How would you estimate <span class="math inline">\(\sigma^2\)</span> using your code?</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitted values using the final intercept and slope</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>fitted_values <span class="ot">&lt;-</span> <span class="fu">drop</span>(FF <span class="sc">%*%</span> fit<span class="sc">$</span>mt[N, ])</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Regression residuals</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>errors <span class="ot">&lt;-</span> y <span class="sc">-</span> fitted_values</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate observation error variance</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>sigma2_hat <span class="ot">&lt;-</span> <span class="fu">sum</span>(errors<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (N <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>sigma2_hat</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3631358</code></pre>
+</div>
+</div>
+</section>
+<section id="repeat-the-above-but-this-time-use-the-dlm-package-to-implement-the-kalman-filter.-check-that-you-get-the-same-series-of-parameter-estimates." class="level3">
+<h3 class="anchored" data-anchor-id="repeat-the-above-but-this-time-use-the-dlm-package-to-implement-the-kalman-filter.-check-that-you-get-the-same-series-of-parameter-estimates.">8. Repeat the above, but this time use the <code>dlm</code> package to implement the Kalman filter. Check that you get the same series of parameter estimates.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model construction</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>dlm_model <span class="ot">&lt;-</span> <span class="fu">dlmModReg</span>(</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">X =</span> <span class="fu">as.numeric</span>(z),</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">addInt =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dV =</span> V,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">dW =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">m0 =</span> m0,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">C0 =</span> C0</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="co"># dlm Kalman filter</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>dlm_fit <span class="ot">&lt;-</span> <span class="fu">dlmFilter</span>(<span class="fu">as.numeric</span>(y), dlm_model)</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Removes the initial state row to align with fit$mt</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>dlm_estimates <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(dlm_fit<span class="sc">$</span>m[<span class="sc">-</span><span class="dv">1</span>, , <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(dlm_estimates) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>)</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>comparison_h <span class="ot">&lt;-</span> <span class="fu">cbind</span>(</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">Own_filter =</span> <span class="fu">unname</span>(fit<span class="sc">$</span>mt[N, ]),</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">dlm =</span> <span class="fu">unname</span>(dlm_estimates[N, ]),</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">OLS =</span> <span class="fu">unname</span>(<span class="fu">coef</span>(fit1))</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(comparison_h) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Slope"</span>)</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>comparison_h <span class="sc">|&gt;</span> </span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Table comparing package to function"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table comparing package to function</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Own_filter</th>
+<th style="text-align: right;">dlm</th>
+<th style="text-align: right;">OLS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Intercept</td>
+<td style="text-align: right;">0.545</td>
+<td style="text-align: right;">0.545</td>
+<td style="text-align: right;">0.545</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Slope</td>
+<td style="text-align: right;">0.281</td>
+<td style="text-align: right;">0.281</td>
+<td style="text-align: right;">0.281</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the complete sequence of estimates</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(<span class="fu">abs</span>(fit<span class="sc">$</span>mt <span class="sc">-</span> dlm_estimates))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8.226381e-10</code></pre>
+</div>
+</div>
+<p>The final coefficient estimates agree across the manually coded Kalman filter, the <code>dlm</code> package and OLS to the displayed precision. Comparing the complete sequence checks that the two Kalman filter implementations agree at every update, rather than only at the final observation. The maximum absolute difference between their sequences is very close to zero, indicating agreement within numerical precision.</p>
+</section>
+</section>
+</section>
+<section id="reflection" class="level1">
+<h1>Reflection</h1>
+<p>This tutorial helped me understand how to implement the Kalman filter and how it updates state estimates as new observations become available. I learned to distinguish between the predicted state, which uses past information, and the filtered state, which also incorporates the current observation. Working through the code helped me understand how the prediction error and Kalman gain determine the adjustment, and how missing observations can be handled by continuing prediction without an observation update.</p>
+<p>The simulations showed me how measurement noise can conceal the underlying process and weaken the dependence visible in the observed ACF and PACF. I also learned how to verify weak stationarity by examining whether the mean is constant and the autocovariance depends only on the lag. Checking the residual ACF helped me assess whether the model had captured the time dependence.</p>
+<p>The most challenging part was understanding how the coefficient estimates stabilize. I learned that changing estimates do not necessarily mean the true coefficients are changing, as the filter is still learning about them. Early estimates use limited information, while later estimates generally become more stable as observations accumulate. Comparing my implementation with OLS and the <code>dlm</code> package gave me more confidence in the code and helped connect the state space approach to familiar regression methods.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Natalie Chidikwindi · CHDNAT002</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Time Series Portfolio · 2026</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
