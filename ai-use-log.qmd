@@ -2,39 +2,97 @@
 title: "AI Use Log"
 ---
 
-A running log of substantive AI use that influenced my work — not every minor interaction, but
-anything that shaped an analysis, a piece of writing, or a decision.
+This log records substantive AI assistance that influenced my projects, tutorials, writing and portfolio presentation. It is grouped by activity rather than by individual interaction.
+
+## Projects
+
+### Project 1: Influenza forecasting — `code.qmd`
+
+- **Tools used:** Claude and Gemini Notebook.
+- **What I used AI for:** Finding possible datasets, formatting plots, debugging code and checking grammar. I also used AI to work through a separate example, rather than the analysis used in my project. Gemini Notebook helped me consolidate the concepts before applying them.
+- **What I changed myself:** I chose a different dataset from the South African dataset initially suggested. I also changed the plot colours and the packages used for plotting.
+
+https://claude.ai/share/d723d0f3-2f7b-4ac6-896c-ae9db38ef75d
+https://claude.ai/share/e335ea20-aa6c-4a3a-9a1f-cb5d0b34c2e0
+
+### Project 2: Volatility modelling — `Project 2.qmd`
+
+- **Tools used:** Gemini Notebook and AI chat assistance.
+- **What I used AI for:** Plotting, structuring the Quarto document, checking grammar and finding an additional dataset. I used Gemini Notebook to develop my understanding of the concepts needed for the analysis.
+- **What I changed or rejected myself:** I abandoned the initial Claude-assisted Shiny app approach so I could focus on volatility modelling. I also reduced the suggested number of subsections because the proposed structure was too extensive.
+
+### Project 3 — `Project 3.qmd`
+
+- **Tools used:** Gemini Notebook and ChatGPT.
+- **What I used AI for:** Organising the code and its output, and consolidating my understanding of the cross-correlation function (CCF). I also used ChatGPT to create an HTML learning resource to help me understand the CCF.
+- **My own contribution:** I chose the project idea myself.
+
+### Project 4: Kalman filter — `Project 4.qmd`
+
+- **Tool used:** ChatGPT.
+- **What I used AI for:** Developing the initial project idea, creating an HTML checklist, formatting graphs and checking grammar. I also used it to create an HTML learning resource explaining the Kalman filter and to test my understanding through questions.
+- **What I changed or rejected myself:** I rejected some suggested extensions and further project ideas to keep the project focused.
+
+https://chatgpt.com/s/cx_6ae4d30238d48191be6a2b234c7c2a2a
+
+### Support across projects
+
+I used AI to create checklists of work still to be completed. Gemini helped me find possible datasets. For Projects 1–3, I chose the project ideas myself; for Project 4, ChatGPT helped develop the initial idea.
+
+## Tutorials
+
+### ARCH/GARCH theoretical tutorial — `ARCH_GARCH_Theoretical_Tutorial.qmd`
+
+- **Tools used:** Gemini Notebook and ChatGPT.
+- **What I used AI for:** Gemini Notebook generated an initial theoretical tutorial. I then used ChatGPT to refine the questions and structure the Quarto document.
+- **What I checked or changed myself:** I found the original tutorial too long and felt that some questions did not adequately test understanding. I selected questions for revision or removal and checked the questions and proofs against textbook material or lecture notes.
+
+### ARCH/GARCH practical lab — `arch garch lab.qmd`
+
+I did not use AI for this tutorial.
+
+### Spectral analysis tutorial — `spectral analysis tut.qmd`
+
+- **Tools used:** Gemini Notebook and ChatGPT.
+- **What I used AI for:** I initially used Gemini Notebook to create a tutorial. I then used ChatGPT to develop a version with more emphasis on analysis and interpretation and to help structure the Quarto document.
+- **What I changed or rejected myself:** I found the initial tutorial too convoluted. The revised version was also too long, so I selected questions based on the focus I wanted.
+
+### Structural breaks tutorial — `Structural breaks tut.qmd`
+
+- **Tools used:** Gemini and ChatGPT.
+- **What I used AI for:** Gemini initially suggested Japan visitor arrivals data for Project 1. After I started exploring the data and encountered structural breaks, I used ChatGPT to help develop a structural breaks tutorial using that dataset. I also used ChatGPT to create an HTML learning resource explaining structural breaks, organise the tutorial and check grammar.
+- **My own contribution:** I decided to use the dataset for a structural breaks tutorial rather than continue with it as Project 1.
+https://claude.ai/share/f898dcee-f5bf-4eba-9072-a26361174dbc
 
 
+### Exponential smoothing, state space models and Hidden Markov Models tutorials
 
+- **What I used AI for:** Checking grammar, structuring the Quarto documents and making code collapsible in the rendered tutorials.
 
-## [2026-10-13]
+## General learning and textbook support
 
-- **Tool used:** Claude
-- **What I asked for help with:** Help with how to go about doing my second project specifically on volatility modelling. I had initially thought to do a shiny app but due to time and also not really being able to see the direction of it, I decided to switch to one where I could actually focus on the models rather than the UI. 
-- **Link to prompt/conversation:**  https://claude.ai/share/f898dcee-f5bf-4eba-9072-a26361174dbc
-- **What I checked or changed myself:** 
-verified:  
-edited: decided on the series chosen and how to then implement the steps mentioned in r code. Also to chosing the more complex models.
-rejected: the series chosen
-
-
-
-
-## [2026-09 to 2026-10]
-
-- **Tool used:** Gemini Note books
-- **What I asked for help with:**
-explanations of various time series topics for my projects, tutorials and overall time series understanding. The sources used to answer are the R textbooks:
+- **Tool used:** Gemini Notebook.
+- **Period:** September–October 2026.
+- **What I used it for:** Explanations of time series topics to support my projects, tutorials and general understanding.
+- **Sources supplied to the notebook:**
   - Introduction to Time Series and Forecasting
-  - Introductory to Time Series With R
-  - Time Series Analysis and its Applications
+  - Introductory Time Series with R
+  - Time Series Analysis and Its Applications
   - Forecasting: Principles and Practice
-  - Reproducible Finance with R Code Flows and Shiny Apps for Portfolio Analysis
-- **Link to prompt/conversation:**
-https://notebook.google.com/notebook/3c75fb8f-a8b0-4ca9-8bdd-31e4134efe08
-- **What I checked or changed myself:**
-the textbook pages to see if the advice given aligned with the material
+  - Reproducible Finance with R
+- **What I checked myself:** I referred to the textbook pages to check whether the explanations aligned with the source material.
+- **Notebook link:** [Time series textbook notebook](https://notebook.google.com/notebook/3c75fb8f-a8b0-4ca9-8bdd-31e4134efe08)
 
-will add other ai logs
+## Portfolio structure, styling and publishing
 
+- **Tools used:** Gemini and ChatGPT.
+- **What I used AI for:** Gemini helped create the initial portfolio template before any code was added. I then used ChatGPT to change the visual style, resolve compilation and rendering issues, add files to GitHub and configure the website through GitHub Pages.
+- **What I changed or rejected myself:** I rejected several suggested themes and identified errors in the suggested YAML settings. I also rejected presenting the portfolio as a Word document because I wanted a website, and used AI assistance to configure GitHub Pages.
+
+## Journal entries and reflective commentary
+
+- **What I used AI for:** Checking grammar and improving document structure, including help with embedding images and adding links.
+
+## Preparing this log
+
+I used ChatGPT to ask me questions about my AI use and organise my answers into this log. I supplied the details about the assistance used and the suggestions I changed or rejected.
