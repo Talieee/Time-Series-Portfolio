@@ -1,7 +1,8 @@
 ---
 title: "section 1 tutorial"
-format: html
-editor: visual
+format:
+  html:
+    embed-resources: true
 ---
 
 ```{r}
@@ -28,9 +29,9 @@ Monitoring forecasting model performance: Continuously track the accuracy of the
 
 ## Question 2
 
-For each of the following series, what sort of time patterns would you expect to see? 
+For each of the following series, what sort of time patterns would you expect to see?
 
-a) Monthly sales of computer hard drives for the past 10 years at your local store.
+a)  Monthly sales of computer hard drives for the past 10 years at your local store.
 
 I would expect to see seasonal patterns that repeat annually, I would also expect to see some sort of trend presenting the long term change in sales over time.
 
@@ -248,7 +249,8 @@ plot(r_forecasts, main="Forecasts from ARIMA(0,1,1) for US Strikes",
 
 8b) The PACF plot shows significant spikes at lags 1 and 4 before cutting off, while the ACF plot decays gradually. The combination of a tailing-off ACF and a PACF cutting off after 4 lags indicates an Autoregressive process of order 4, making an ARIMA(4,0,0) model appropriate.
 
-8c) ![Written solution 8c](tut%20exercises%208c.jpeg){#fig-label width="75%"}
+8c) 
+![Written solution 8c](tut 1 exercises 8c.jpeg){#fig-label width="75%"}
 
 # Reflection
 

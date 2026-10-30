@@ -3965,7 +3965,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../Index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -4134,7 +4134,7 @@ window.Quarto = {
 <summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>spectrum_df <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">spans =</span> <span class="cn">NULL</span>, <span class="at">taper =</span> <span class="fl">0.1</span>, <span class="at">detrend =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pad =</span> <span class="dv">0</span>, <span class="at">fast =</span> <span class="cn">FALSE</span>) {</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">spec.pgram</span>(<span class="fu">as.numeric</span>(x), <span class="at">spans =</span> spans, <span class="at">taper =</span> taper,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">=</span> <span class="fu">spec.pgram</span>(<span class="fu">as.numeric</span>(x), <span class="at">spans =</span> spans, <span class="at">taper =</span> taper,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">detrend =</span> detrend, <span class="at">demean =</span> <span class="sc">!</span>detrend,</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">pad =</span> pad, <span class="at">fast =</span> fast, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">frequency =</span> <span class="fu">as.numeric</span>(s<span class="sc">$</span>freq), <span class="at">power =</span> <span class="fu">as.numeric</span>(s<span class="sc">$</span>spec))</span>
@@ -4149,7 +4149,7 @@ window.Quarto = {
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>top_peaks <span class="ot">&lt;-</span> <span class="cf">function</span>(d, <span class="at">number =</span> <span class="dv">5</span>) {</span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Local maxima, so a broad peak is not reported as five adjacent frequencies.</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">which</span>(d<span class="sc">$</span>power <span class="sc">&gt;</span> <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fu">head</span>(d<span class="sc">$</span>power, <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">&amp;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">=</span> <span class="fu">which</span>(d<span class="sc">$</span>power <span class="sc">&gt;</span> <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fu">head</span>(d<span class="sc">$</span>power, <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">&amp;</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>               d<span class="sc">$</span>power <span class="sc">&gt;=</span> <span class="fu">c</span>(<span class="fu">tail</span>(d<span class="sc">$</span>power, <span class="sc">-</span><span class="dv">1</span>), <span class="sc">-</span><span class="cn">Inf</span>))</span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  d[k, ] <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(power)) <span class="sc">|&gt;</span> <span class="fu">slice_head</span>(<span class="at">n =</span> number) <span class="sc">|&gt;</span></span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">period_observations =</span> <span class="dv">1</span> <span class="sc">/</span> frequency)</span>
@@ -4165,9 +4165,9 @@ window.Quarto = {
 <details class="code-fold">
 <summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>raw_periodogram <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(x)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  j <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">floor</span>(n <span class="sc">/</span> <span class="dv">2</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">=</span> <span class="fu">as.numeric</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(x)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  j <span class="ot">=</span> <span class="fu">seq_len</span>(<span class="fu">floor</span>(n <span class="sc">/</span> <span class="dv">2</span>))</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">frequency =</span> j <span class="sc">/</span> n, <span class="at">power =</span> <span class="fu">Mod</span>(<span class="fu">fft</span>(x)[j <span class="sc">+</span> <span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> n)</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>

@@ -1,3 +1,10 @@
+---
+title: "ARCH and GARCH Theory"
+format:
+  html:
+    embed-resources: true
+---
+
 # ARCH and GARCH: Modelling Conditional Variance
 
 ## Purpose
@@ -50,7 +57,11 @@ $$
 
 a)  
 
+    ![Solution 1A](arch%20garch%20theory%20pics/q1a.jpeg){width="90%"}
+
 b)  
+
+    ![Solution 1B](arch%20garch%20theory%20pics/q1b.jpeg){width="90%"}
 
 The reason returns instead of prices are modelled is because prices tend to follow a random work in financial data. This makes them very difficult to model. The variance of prices is also unbounded meaning the spread can be very large.
 
@@ -82,11 +93,15 @@ $$ Assume a causal stationary solution with finite second moment exists.
 
 a)  
 
+    ![Solution 2A](arch%20garch%20theory%20pics/q2a.jpeg){width="90%"}
+
 b)  
 
-c)  The covariance only measures linear dependence and so this does not mean that there is non linear independence.
+    ![Solution 2B](arch%20garch%20theory%20pics/q2b.jpeg){width="90%"}
 
-d)  the parameter restriction is due to the unconditional variance as found in question a). \$\\alpha_0 = 1\$ then it would be undefined.
+c)  The covariance only measures linear dependence and so this does not mean that there is non linear independence. ![Solution 2C](arch%20garch%20theory%20pics/q2c.jpeg){width="90%"}
+
+d)  the parameter restriction is due to the unconditional variance as found in question a). $\\alpha_0 = 1$ then it would be undefined.
 
 ## Question 3: Reading volatility patterns \[15\]
 
@@ -144,9 +159,9 @@ $$
 
 **Your response:**
 
-a\)
+a\) ![Solution 4A](arch%20garch%20theory%20pics/q4a.jpeg){width="90%"}
 
-b\)
+b\) ![Solution 4B](arch%20garch%20theory%20pics/q4b.jpeg){width="90%"}
 
 Model B reacts more sharply and its due to the alpha 1 parameter because it refers to how sharply volatility jumps in a day. This parameter estimate is higher for model B than it is for model A.
 
@@ -180,9 +195,9 @@ $$ No derivation of these formulas is required.
 
 **Your response:**
 
-a\) The previous conditional variance contributes the most followed by the latest squared shock and then lastly the constant.
+a\) ![Solution 5A](arch%20garch%20theory%20pics/q5a.jpeg){width="90%"} The previous conditional variance contributes the most followed by the latest squared shock and then lastly the constant.
 
-b\)
+b\) ![Solution 5B](arch%20garch%20theory%20pics/q5b.jpeg){width="90%"}
 
 c\) The half-life is the number of days it takes for the deviation of the volatility forecast from its long run level to fall by half.
 
@@ -190,7 +205,7 @@ d\) The student’s conclusion is wrong because knowing tomorrow’s variance do
 
 The variance for T+1 is known because it relies on values we already have: the parameters, today’s squared shock and today’s conditional variance. For T+2, we need tomorrow’s squared shock, ε²\_{T+1}, which is unknown at time T. This means σ²\_{T+2} is itself random from today’s point of view, so it can’t be calculated, only forecast. We replace the unknown ε²\_{T+1} with its expected value, σ²\_{T+1}.
 
-e\)
+e\) ![Solution 5E](arch%20garch%20theory%20pics/q5e.jpeg){width="90%"}
 
 The analyst's calculation ignores mean reversion in the conditional variance. Multiplying tomorrow's variance by ten assumes volatility stays at its current level for all ten days. At a turbulent origin, where $\sigma^2_{T+1}$ is above the long-run variance $\bar{\sigma}^2$, the true daily variances decline towards $\bar{\sigma}^2$, so the rule overstates the ten-day variance. At a calm origin, where $\sigma^2_{T+1}$ is below $\bar{\sigma}^2$, the true daily variances rise towards $\bar{\sigma}^2$, so the rule understates it.
 
@@ -232,9 +247,9 @@ For each model, identify which component, if any, these results suggest revisiti
 
 **Your response:**
 
-a\) This means that GARCH(1,1) is either not the right specification or the conditional mean model is wrong.
+a\) ![Solution 6A](arch%20garch%20theory%20pics/q6.jpeg){width="90%"} This means that GARCH(1,1) is either not the right specification or the conditional mean model is wrong.
 
-b\) Model A's conditional mean model requires revisting as the test on the standarized innovation has a p value that is small.
+b\) Model A's conditional mean model requires revising as the test on the standardized innovation has a p value that is small.
 
 Form Model B I would revisit the Variance (ARCH) model being used based on the p value.
 

@@ -69,7 +69,7 @@ garch.model.Tbill@fit$matcoef
 
 ## Problem 2
 
-### a)  Which ARMA/GARCH model is being fit? Write down the model using the same parameter names as in the R output.
+### a) Which ARMA/GARCH model is being fit? Write down the model using the same parameter names as in the R output.
 
 The model being fit at the end of problem 1 is a ARMA(1,0)/GARCH(1,0) model which is made of an AR(1) process for the conditional mean and an ARCH(1) process for the conditional variance.
 
@@ -93,7 +93,7 @@ Where:
 
 - $alpha1$ (`alpha1`): The ARCH coefficient capturing the effect of the lagged squared error.
 
-### b)  What are the estimates of each of the parameters in the model?
+### b) What are the estimates of each of the parameters in the model?
 
 ```{r}
 coef(garch.model.Tbill)

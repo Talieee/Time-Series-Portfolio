@@ -92,7 +92,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../Index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -211,22 +211,38 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<div class="journal-entry-shell">
+<div class="journal-card">
 <p><strong>Date:</strong> 2026-09-28</p>
+</div>
+<div class="journal-card">
 <p><strong>Session/topic covered:</strong></p>
 <p>State space models: dynamic linear models</p>
+</div>
+<div class="journal-card">
 <p><strong>What I did:</strong></p>
 <p>Attended lecture and made notes of content covered. I also went through textbook notes up to what was covered in the lecture</p>
+</div>
+<div class="journal-card">
 <p><strong>Related tutorial:</strong></p>
 <p><a href="../../section-2/SSM prac.html">State space models tutorial</a></p>
+</div>
+<div class="journal-card">
 <p><strong>What I learned:</strong></p>
 <p>I learnt that state space models are used when we have noisy data and the observed data is not what we are interested but in the underlying model of the data but the data is noisy. I realized that is very similar to the decomposition of a time series done in the exploratory data analysis where we break the time series model into additive or multiplicative components. I also learnt there are 2 components the model is broken up into which are: the observation equation and the state equation (which is the underlying structure we are interested in). I also learnt that state space models can be used in mapping other time series models as well. Examples being Exponential smoothing models, and ARIMA models.</p>
 <p>The lecture covered dynamic linear models in particular where the parameters in the observation equation F represents the observation matrix and the coefficients of the linear combination of the state levels in the state equation is G. Both F and G are usually independent of time but in regression case they are dependent on time. I also learnt about Structural time series models such as the local trend models (state equation is a random walk), local linear trend (has a slope term) and the basic structural model where a seasonal component is present.</p>
 <p>Another thing that was covered was how state space modelling can incorporate Bayesian techniques to model time series data. During the lecture we went through what these models look like, how they would appear in R, their F,G, theta vector and vector of variances. We lastly covered the advantages of this method such as that missing values are not an issue and that is works for non stationary data.</p>
+</div>
+<div class="journal-card">
 <p><strong>Difficulties or open questions:</strong></p>
 <p>I would like to go over the Basic structural component in particular the seasonal element and determining the number of seasonal parameter values there will be in the theta vector. How do we determine the values for initial states with normal priors? How do we estimate the parameter values in the model and what do we do with them once we find them? I also want to know how it looks more practically in R considering that F, G are supposed to be known and we should know the underlying process.</p>
+</div>
+<div class="journal-card">
 <p><strong>What to do next:</strong></p>
 <p>Do the tutorial questions and prac questions to consolidate understanding and practice coding it in R practically</p>
 <p><a href="../../journal/index.html">Back to journal</a></p>
+</div>
+</div>
 
 
 

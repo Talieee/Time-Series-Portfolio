@@ -3,19 +3,39 @@ title: "Journal Entry 5"
 date: 24 August 2026
 ---
 
+:::: {.journal-entry-shell}
+
+::: {.journal-card}
+
 **Date:** 2026-08-24
+
+:::
+
+::: {.journal-card}
 
 **Session/topic covered:**
 
 MA(1), AR(1), ACF, PACF, ARMA models, differencing, ARIMA, SARIMA, Box Jenkins loop. We also went through the data sets we can use for out portfolio projects during the lecture.
 
+:::
+
+::: {.journal-card}
+
 **What I did:**
 
 Went over the lecture as well as my notes that I made during the lecture on the linear conditional mean models.
 
+:::
+
+::: {.journal-card}
+
 **Related analysis:**
 
 [Project 1: Forecasting influenza — analysis and code](../../projects/project-01/code.qmd)
+
+:::
+
+::: {.journal-card}
 
 **What I learned:**
 
@@ -27,12 +47,24 @@ ARIMA models includes the differencing element which was covered in the lecture 
 
 Lastly, the lecture had a look at SARIMA models which adds a seasonal component in the time series data.This means there would need to be differencing for the seasonal elements as well.
 
+:::
+
+::: {.journal-card}
+
 **Difficulties or open questions:**
 
 I would like to determine how they got to the mean and variance values for these models. In the slide we only get given the values.
+
+:::
+
+::: {.journal-card}
 
 **What to do next:**
 
 Research and define my project to do a comparative study between these models.
 
 [Back to journal](../index.qmd)
+
+:::
+
+::::

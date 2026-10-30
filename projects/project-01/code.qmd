@@ -754,5 +754,3 @@ Finally, the test set contained only 24 monthly observations. Although this prov
 <https://www.geeksforgeeks.org/r-language/how-to-use-readxl-package-to-read-data-in-r/>
 
 <https://www.r-bloggers.com/2024/07/time-series-forecasting-in-r-from-moving-averages-to-seasonal-arima/>
-
-

@@ -3,19 +3,39 @@ title: "Journal entry 10"
 date: 28 September 2026
 ---
 
+:::: {.journal-entry-shell}
+
+::: {.journal-card}
+
 **Date:** 2026-09-28
+
+:::
+
+::: {.journal-card}
 
 **Session/topic covered:**
 
 State space models: dynamic linear models
 
+:::
+
+::: {.journal-card}
+
 **What I did:**
 
 Attended lecture and made notes of content covered. I also went through textbook notes up to what was covered in the lecture
 
+:::
+
+::: {.journal-card}
+
 **Related tutorial:**
 
 [State space models tutorial](../../section-2/SSM%20prac.qmd)
+
+:::
+
+::: {.journal-card}
 
 **What I learned:**
 
@@ -25,12 +45,24 @@ The lecture covered dynamic linear models in particular where the parameters in 
 
 Another thing that was covered was how state space modelling can incorporate Bayesian techniques to model time series data. During the lecture we went through what these models look like, how they would appear in R, their F,G, theta vector and vector of variances. We lastly covered the advantages of this method such as that missing values are not an issue and that is works for non stationary data.
 
+:::
+
+::: {.journal-card}
+
 **Difficulties or open questions:**
 
 I would like to go over the Basic structural component in particular the seasonal element and determining the number of seasonal parameter values there will be in the theta vector. How do we determine the values for initial states with normal priors? How do we estimate the parameter values in the model and what do we do with them once we find them? I also want to know how it looks more practically in R considering that F, G are supposed to be known and we should know the underlying process.
+
+:::
+
+::: {.journal-card}
 
 **What to do next:**
 
 Do the tutorial questions and prac questions to consolidate understanding and practice coding it in R practically
 
 [Back to journal](../index.qmd)
+
+:::
+
+::::

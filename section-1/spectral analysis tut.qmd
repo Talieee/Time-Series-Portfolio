@@ -35,7 +35,7 @@ For consistency, the helper below deliberately converts inputs to plain numeric 
 ```{r}
 spectrum_df <- function(x, spans = NULL, taper = 0.1, detrend = TRUE,
                         pad = 0, fast = FALSE) {
-  s <- spec.pgram(as.numeric(x), spans = spans, taper = taper,
+  s = spec.pgram(as.numeric(x), spans = spans, taper = taper,
                   detrend = detrend, demean = !detrend,
                   pad = pad, fast = fast, plot = FALSE)
   data.frame(frequency = as.numeric(s$freq), power = as.numeric(s$spec))
@@ -50,7 +50,7 @@ plot_spectrum <- function(d, title = NULL) {
 
 top_peaks <- function(d, number = 5) {
   # Local maxima, so a broad peak is not reported as five adjacent frequencies.
-  k <- which(d$power > c(-Inf, head(d$power, -1)) &
+  k = which(d$power > c(-Inf, head(d$power, -1)) &
                d$power >= c(tail(d$power, -1), -Inf))
   d[k, ] |> arrange(desc(power)) |> slice_head(n = number) |>
     mutate(period_observations = 1 / frequency)
@@ -65,9 +65,9 @@ For centered values $x_t$, calculate $I_j=|\sum_t x_t e^{-2\pi ijt/n}|^2/n$. We 
 
 ```{r}
 raw_periodogram <- function(x) {
-  x <- as.numeric(x) - mean(x)
-  n <- length(x)
-  j <- seq_len(floor(n / 2))
+  x = as.numeric(x) - mean(x)
+  n = length(x)
+  j = seq_len(floor(n / 2))
   data.frame(frequency = j / n, power = Mod(fft(x)[j + 1])^2 / n)
 }
 

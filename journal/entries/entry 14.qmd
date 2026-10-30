@@ -3,30 +3,62 @@ title: "Entry 14"
 date: 29 October 2026
 ---
 
+:::: {.journal-entry-shell}
+
+::: {.journal-card}
+
 **Date:** 2026-10-29
+
+:::
+
+::: {.journal-card}
 
 **Session/topic covered:**
 
 Structural breaks in time series
 
+:::
+
+::: {.journal-card}
+
 **Related tutorial:**
 
 [Structural breaks tutorial](../../section-1/Structural%20breaks%20tut.qmd)
+
+:::
+
+::: {.journal-card}
 
 **What I did:**
 
 I worked through a tutorial on structural breaks, where I explored different types of breaks and how they can be visually identified and represented using intervention variables in regression models. I looked at changes in the mean, trend, variance and seasonality, and applied these ideas to real-world Japan tourist arrivals data.
 
+:::
+
+::: {.journal-card}
+
 **What I learned:**
 
 I learnt that a structural break does not only refer to a sudden change in the mean. It can also involve changes in the trend, variance, seasonality or overall regime of a time series. I also learnt to distinguish between a one-time structural break in variance and changing volatility, where periods of high and low variance occur repeatedly. The Japan tourist arrivals example was the most informative because it showed me how a structural break can lead to a new regime and how older relationships may become less useful for forecasting.
 
+:::
+
+::: {.journal-card}
+
 **Difficulties or open questions:**
 
 One area I would like to understand further is how structural breaks can be detected automatically rather than mainly identified visually or through known intervention dates. I would also like to explore how structural breaks are handled in other modelling approaches, particularly state-space models.
+
+:::
+
+::: {.journal-card}
 
 **What to do next:**
 
 Explore R packages for structural break detection and investigate how regime changes can be incorporated into state-space models.
 
 [Back to journal](../index.qmd)
+
+:::
+
+::::

@@ -17,7 +17,6 @@ execute:
   fig-height: 5
 ---
 
-
 # Introduction
 
 Crime and socioeconomic inequality are important concerns in South Africa. Research on crime often examines factors associated with criminal activity, but understanding how recorded crime changes over time is also important for identifying trends and producing forecasts.
@@ -128,7 +127,7 @@ The overlapping observations are then used to calculate a scaling factor so that
 #| label: project3-chunk-04
 # importing cpi dataset
 read_cpi_index <- function(path, code, headline_only = FALSE) {
-  r <- read_excel(path) |> filter(H03 == code)
+  r = read_excel(path) |> filter(H03 == code)
   if (headline_only) r <- r |> filter(H04 == "CPI Headline")   # for the new file
   stopifnot(nrow(r) == 1)
   r |>

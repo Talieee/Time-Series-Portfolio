@@ -6,21 +6,6 @@ A running log of substantive AI use that influenced my work — not every minor 
 anything that shaped an analysis, a piece of writing, or a decision.
 
 
-## [YYYY-MM-DD]
-
-- **Tool used:**
-- **What I asked for help with:**
-- **Link to prompt/conversation:**
-- **What I checked or changed myself:**
-
-
-
-## [YYYY-MM-DD]
-
-- **Tool used:**
-- **What I asked for help with:**
-- **Link to prompt/conversation:**
-- **What I checked or changed myself:**
 
 
 ## [2026-10-13]

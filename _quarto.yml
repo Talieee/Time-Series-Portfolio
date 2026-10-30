@@ -11,7 +11,7 @@ website:
     collapse-below: lg
 
     left:
-      - href: Index.qmd
+      - href: index.qmd
         text: Home
 
       - href: journal/index.qmd

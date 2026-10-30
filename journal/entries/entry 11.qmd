@@ -3,30 +3,62 @@ title: "Journal entry 11"
 date: 12 October 2026
 ---
 
+:::: {.journal-entry-shell}
+
+::: {.journal-card}
+
 **Date:** 2026-10-12
+
+:::
+
+::: {.journal-card}
 
 **Session/topic covered:**
 
 Spectral analysis
 
+:::
+
+::: {.journal-card}
+
 **Related tutorial:**
 
 [Spectral analysis tutorial](../../section-1/spectral%20analysis%20tut.qmd)
+
+:::
+
+::: {.journal-card}
 
 **What I did:**
 
 I worked through a tutorial on spectral analysis, where I looked at how repeating patterns can be represented using frequencies. I explored periodograms, seasonal harmonics, leakage and smoothing, and applied these ideas to monthly CO2 data after removing a trend.
 
+:::
+
+::: {.journal-card}
+
 **What I learned:**
 
 I learnt that several spectral peaks can be harmonics of the same seasonal pattern rather than separate cycles. The CO2 example also helped me understand why the preparation of the series matters. Removing a trend helps isolate seasonality, while removing the seasonal component changes the question to whether any cycles remain. A large peak also needs to be checked against the time plot, ACF and an appropriate noise background.
 
+:::
+
+::: {.journal-card}
+
 **Difficulties or open questions:**
 
 I would like to understand how to choose a smoothing span that reduces noise without hiding important peaks. I also want to understand how peak testing changes when the series has serial dependence rather than a white-noise background.
+
+:::
+
+::: {.journal-card}
 
 **What to do next:**
 
 Compare smoothing choices and investigate residual spectra after fitting an ARMA model.
 
 [Back to journal](../index.qmd)
+
+:::
+
+::::

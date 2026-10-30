@@ -1,12 +1,16 @@
 ---
 title: "SSM Prac"
-format: html
-editor: visual
+format:
+  html:
+    embed-resources: true
 ---
 
 ## packages
 
 ```{r}
+#| warning: false
+#| message: false
+
 library(tidyverse)
 library(ggplot2)
 library(patchwork)
@@ -16,7 +20,7 @@ library(dlm)
 
 ## Question 1
 
-![Question 1](Screenshot%202026-10-28%20164616.png){width="70%" fig-align="center"}
+![Question 1](Screenshot 2026-10-28 164616.png){width="70%" fig-align="center"}
 
 ```{r}
 # variance values 
@@ -63,7 +67,7 @@ In the code, `theta[i]` represents the underlying, unobserved state at time (i),
 
 The coefficient `gt(i)` determines how the previous hidden state contributes to the current state. In this model, it alternates between −0.5 and 0.5. The coefficient `F_values[i]` links the current hidden state to the observed data by multiplying `theta[i]`. Both coefficients vary over time.
 
-### 2.  Use the Kalman Filter for parameter estimation and to fit the model. Write your own code for the Kalman Filter, not using R package functions.
+### 2. Use the Kalman Filter for parameter estimation and to fit the model. Write your own code for the Kalman Filter, not using R package functions.
 
 I used the one in the textbook as the template. I changed tweaked the function to not use the full vectors as the coefficients F and G are not constant but change with time.
 
@@ -82,8 +86,8 @@ et = numeric(N)
 
 
 ## predict theta
-at[1] <- GG(1) * m0
-Rt[1] <- GG(1)^2* C0 + W
+at[1] = GG(1) * m0
+Rt[1] = GG(1)^2* C0 + W
 
 for (i in 1:N) {
 ## predict y
@@ -95,14 +99,14 @@ et[i] = 0
 Kt = 0
 } else {
 Kt = Rt[i] *  FF[i]/Qt[i]
-et[i] <- y[i] - ft[i]
+et[i] = y[i] - ft[i]
 }
 mt[i] = at[i] + Kt * et[i]
 Ct[i] = Rt[i] - Kt * FF[i] * Rt[i]
 
 ## predict theta
-at[i+1] <- GG(i+1) * mt[i]
-Rt[i+1] <- GG(i+1)^2 * Ct[i] + W
+at[i+1] = GG(i+1) * mt[i]
+Rt[i+1] = GG(i+1)^2 * Ct[i] + W
 }
 return(list(at = at, Rt = Rt, ft = ft, Qt = Qt, mt = mt, Ct = Ct))
 }
@@ -118,7 +122,7 @@ When measurement noise is high, the Kalman filter gives less weight to the obser
 
 The function checks whether `y[i]` is missing. If it is, there is no observation available to update the predicted state, so the Kalman gain is set to zero. The updated state mean and variance therefore remain equal to their predicted values. This allows the Kalman filter to handle missing observations and continue predicting.
 
-### 3.  Forecast up to $h = 5$, with prediction intervals.
+### 3. Forecast up to $h = 5$, with prediction intervals.
 
 ```{r}
 
@@ -182,7 +186,7 @@ The code below shows the appending of the 5 values because appending five missin
 
 The predicted values show much less variation than the observed values and remain close to zero. This is because they represent the expected observations, while the actual observations include process and measurement noise. The observed values appear to fall within the 95% prediction limits. The vertical dashed line separates the observed period from the forecast period, which extends five time steps ahead.
 
-### 4.  Plot data with fitted and filtered level estimates.
+### 4. Plot data with fitted and filtered level estimates.
 
 ```{r}
 
@@ -274,11 +278,12 @@ If the model captures the time dependence well, I would expect no significant au
 
 # Question 2
 
-### 1. 
+### 1.
 
-    ![Answer to 2a](ssm%20tut%20q2%20b.jpeg){width="70%" fig-align="center"}
+![Answer to 2a](ssm tut q2 b.jpeg){width="70%" fig-align="center"}
 
-### 2.  Find the values of $\sigma_0^{2}$and $\sigma_1^{2}$ that make the observations, stationary.
+
+### 2. Find the values of $\sigma_0^{2}$and $\sigma_1^{2}$ that make the observations, stationary.
 
 ```{r}
 # for reproducibility
@@ -299,29 +304,29 @@ c("Sigma_1" = sigma_0, "Sigma 2" = sigma_1) |>
 
 the able shows that they are both the same. Both initial states are assigned the stationary variance so that the process has the same variance from the start. Otherwise, the variance would change over time as it approached its long-run value. Here, the stationary variance is (1/(1-0.9\^2)\approx 5.26).
 
-### 3.  Generate $n = 100$ observations with $\sigma_w = 1$,$\sigma_v = 1$ and using the values of $\sigma_0^2$ and$\sigma_1^2$ found in (b). Do a time plot of $x_t$ and of$y_t$ and compare the two processes. Also, compare the sample ACF and PACF of $x_t$ and of $y_t$.
+### 3. Generate $n = 100$ observations with $\sigma_w = 1$,$\sigma_v = 1$ and using the values of $\sigma_0^2$ and$\sigma_1^2$ found in (b). Do a time plot of $x_t$ and of$y_t$ and compare the two processes. Also, compare the sample ACF and PACF of $x_t$ and of $y_t$.
 
 ```{r}
 # function to simulate and plot the observations
 simulate_and_plot <- function(sigma_v, part_label) {
 
-  x <- numeric(n + 2)
-  y <- numeric(n)
+  x = numeric(n + 2)
+  y = numeric(n)
 
   # Initial states
-  x[1] <- rnorm(1, mean = 0, sd = sigma_1)
-  x[2] <- rnorm(1, mean = 0, sd = sigma_0)
+  x[1] = rnorm(1, mean = 0, sd = sigma_1)
+  x[2] = rnorm(1, mean = 0, sd = sigma_0)
 
   # Process and measurement noise
-  w <- rnorm(n, mean = 0, sd = sigma_w)
-  v <- rnorm(n, mean = 0, sd = sigma_v)
+  w = rnorm(n, mean = 0, sd = sigma_w)
+  v = rnorm(n, mean = 0, sd = sigma_v)
 
   for (t in seq_len(n)) {
-    x[t + 2] <- -0.9 * x[t] + w[t]
-    y[t] <- x[t + 2] + v[t]
+    x[t + 2] = -0.9 * x[t] + w[t]
+    y[t] = x[t + 2] + v[t]
   }
 
-  x_t <- x[3:(n + 2)]
+  x_t = x[3:(n + 2)]
 
   # Helper for time plots
   time_plot <- function(values, title, colour) {
@@ -336,7 +341,7 @@ simulate_and_plot <- function(sigma_v, part_label) {
 
   # Helper for ACF and PACF plots
   correlation_plot <- function(values, type, title, colour) {
-    result <- if (type == "ACF") {
+    result = if (type == "ACF") {
       acf(values, plot = FALSE)
     } else {
       pacf(values, plot = FALSE)
@@ -347,7 +352,7 @@ simulate_and_plot <- function(sigma_v, part_label) {
       correlation = as.numeric(result$acf)
     )
 
-    bound <- qnorm(0.975) / sqrt(length(values))
+    bound = qnorm(0.975) / sqrt(length(values))
 
     ggplot(correlation_data, aes(lag, correlation)) +
       geom_hline(yintercept = 0, colour = "grey50") +
@@ -393,7 +398,7 @@ The ACF plots show similar patterns, with alternating negative and positive corr
 
 The PACF plots show their strongest negative spike at lag 2, consistent with the model (x_t = -0.9x\_{t-2} + w_t). For (x_t), this reflects the AR(2) structure, with no direct lag-1 effect. The observed series retains a strong lag-2 relationship, although measurement noise alters its PACF, so it need not cut off after lag 2.
 
-### 4.  Repeat (c), but with $\sigma_v = 10$.
+### 4. Repeat (c), but with $\sigma_v = 10$.
 
 ```{r}
 
@@ -472,7 +477,7 @@ ggplot(cons_data, aes(x = time)) +
 
 The scatterplot shows a positive association between quarterly disposable income growth and consumption growth. Consumption growth tends to increase as income growth increases, with the fitted regression line making this trend clearer. However, the points show considerable spread around the line, indicating that income growth alone does not fully explain consumption growth. The vertical differences between the observed points and the fitted line are the regression residuals.
 
-### 2.  Write some R code to implement the Kalman filter using the above state space model.
+### 2. Write some R code to implement the Kalman filter using the above state space model.
 
 ```{r}
 # used the textbook version but adjusted based on the dimensions 
@@ -502,9 +507,9 @@ Kfilter <- function(FF, GG, m0, C0, W, V, y) {
     ## posterior
     if (is.na(y[i])) {
       et[i] = 0
-      Kt <- matrix(0, p, 1)
+      Kt = matrix(0, p, 1)
     } else {
-      Kt <- Rt[, , i] %*% t(Fi) / Qt[i]
+      Kt = Rt[, , i] %*% t(Fi) / Qt[i]
       et[i] = y[i] - ft[i]
     }
 
@@ -529,7 +534,7 @@ Kfilter <- function(FF, GG, m0, C0, W, V, y) {
 
 In the Kalman filter function, `Fi <- FF[i, , drop = FALSE]` selects the observation matrix row $[1,z_i]$ for the current time point. The first entry multiplies the estimated intercept and the second multiplies the estimated slope. Therefore, `ft[i] <- Fi %*% at[i, ]` calculates predicted consumption growth as $\hat{a}_{i|i-1}+z_i\hat{b}_{i|i-1}$), using the coefficient estimates available before observing the current consumption value.
 
-### 3.  Estimate the parameters $a$ and $b$ by applying a Kalman filter and calculate $\hat{x}_{T|T}$. You will need to write your own code to implement the Kalman filter. The only parameter that has not been specified is $\sigma^2$. It makes no difference what value you use in your code. Why?
+### 3. Estimate the parameters $a$ and $b$ by applying a Kalman filter and calculate $\hat{x}_{T|T}$. You will need to write your own code to implement the Kalman filter. The only parameter that has not been specified is $\sigma^2$. It makes no difference what value you use in your code. Why?
 
 ```{r}
 # extracting values
@@ -558,7 +563,7 @@ fit$mt[N, ]
 
 The first filtered estimate, `fit$mt[1, ]`, updates the initial coefficient estimates using only the first observation. Each subsequent step incorporates another observation while retaining the information from earlier updates. Therefore, `fit$mt[N, ]` gives the final intercept and slope estimates using all (N) observations. The choice of (\sigma\^2) does not affect these coefficient estimates because the common scale factor cancels in the Kalman gain. In the code, `C0` is proportional to `V` and `W` is zero, so changing `V` scales both the predicted state covariance and the observation prediction variance by the same factor. Their ratio remains unchanged, giving the same coefficient updates. However, the estimated uncertainty still depends on (\sigma\^2).
 
-### 4.  Check that your estimates are identical to the usual OLS estimates obtained with the `lm` function.
+### 4. Check that your estimates are identical to the usual OLS estimates obtained with the `lm` function.
 
 ```{r}
 comparison <-round(cbind(
@@ -573,7 +578,7 @@ comparison |>
 
 The OLS and final Kalman filter estimates agree to three decimal places, with an intercept of 0.545 and a slope of 0.281. This confirms that, with constant coefficients and a diffuse initial prior, the Kalman filter reproduces the OLS estimates to the displayed precision.
 
-### 5.  Use your code to obtain the sequence of parameter estimates given by $\hat{x}_{1|1}, \hat{x}_{2|2}, \ldots, \hat{x}_{T|T}$.
+### 5. Use your code to obtain the sequence of parameter estimates given by $\hat{x}_{1|1}, \hat{x}_{2|2}, \ldots, \hat{x}_{T|T}$.
 
 ```{r}
 parameter_estimates <- fit$mt
@@ -624,7 +629,7 @@ The intercept estimate fluctuates considerably at the beginning, then settles cl
 
 These plots alone do not provide strong evidence that time-varying coefficients are needed. The changes may reflect learning about constant coefficients as more data become available, particularly early in the sample. A comparison with a model allowing time-varying coefficients would help assess whether that additional flexibility improves the fit.
 
-### 7.  How would you estimate $\sigma^2$ using your code?
+### 7. How would you estimate $\sigma^2$ using your code?
 
 ```{r}
 # Fitted values using the final intercept and slope
@@ -638,7 +643,7 @@ sigma2_hat <- sum(errors^2) / (N - 2)
 sigma2_hat
 ```
 
-### 8.  Repeat the above, but this time use the `dlm` package to implement the Kalman filter. Check that you get the same series of parameter estimates.
+### 8. Repeat the above, but this time use the `dlm` package to implement the Kalman filter. Check that you get the same series of parameter estimates.
 
 ```{r}
 

@@ -1,13 +1,8 @@
 ---
 title: "Hidden Markov Models — Tutorial"
 subtitle: "Simulation, likelihood calculation and state decoding"
-format:
-  html:
-    toc: true
-    code-fold: false
-    embed-resources: true
+format: html
 execute:
-  echo: true
   warning: false
   message: false
 ---
@@ -27,14 +22,14 @@ set.seed(4010)
 ```{r}
 # function to calculate the stationary state probabilities
 stationary <- function(Gamma) {
-  k <- nrow(Gamma)
+  k = nrow(Gamma)
 
   # set up the equations for delta Gamma = delta
-  A <- t(Gamma) - diag(k)
+  A = t(Gamma) - diag(k)
 
   # replace one equation so the probabilities sum to 1
-  A[k, ] <- 1
-  b <- c(rep(0, k - 1), 1)
+  A[k, ] = 1
+  b = c(rep(0, k - 1), 1)
 
   # solve for the stationary probabilities
   as.numeric(solve(A, b))
@@ -42,15 +37,15 @@ stationary <- function(Gamma) {
 
 # function to simulate the hidden state sequence
 simulate_states <- function(n, Gamma, delta) {
-  states <- integer(n)
+  states = integer(n)
 
   # sample the first state using the initial probabilities
-  states[1] <- sample.int(nrow(Gamma), 1, prob = delta)
+  states[1] = sample.int(nrow(Gamma), 1, prob = delta)
 
   # sample each next state using the previous state's transition row
   if (n > 1) {
     for (t in 2:n) {
-      states[t] <- sample.int(
+      states[t] = sample.int(
         nrow(Gamma), 1,
         prob = Gamma[states[t - 1], ]
       )
@@ -63,13 +58,13 @@ simulate_states <- function(n, Gamma, delta) {
 # function for the forward algorithm
 # each row of emission gives the observation likelihood under each state
 forward_hmm <- function(emission, Gamma, delta) {
-  n <- nrow(emission)
-  k <- ncol(emission)
+  n = nrow(emission)
+  k = ncol(emission)
 
   # storage for the filtered state probabilities
-  filtered <- matrix(NA_real_, n, k)
-  loglik <- 0
-  prob <- delta
+  filtered = matrix(NA_real_, n, k)
+  loglik = 0
+  prob = delta
 
   for (t in seq_len(n)) {
 
@@ -77,21 +72,21 @@ forward_hmm <- function(emission, Gamma, delta) {
     if (t > 1) prob <- drop(prob %*% Gamma)
 
     # combine the state probabilities with the observation likelihoods
-    weight <- prob * emission[t, ]
-    scale <- sum(weight)
+    weight = prob * emission[t, ]
+    scale = sum(weight)
 
-    # stop if the normalising value is zero or not finite
+    # stop if the normalizing value is zero or not finite
     if (!is.finite(scale) || scale <= 0) {
       return(list(loglik = -Inf, filtered = filtered))
     }
 
-    # normalise so the updated probabilities sum to 1
-    prob <- weight / scale
-    filtered[t, ] <- prob
+    # normalize so the updated probabilities sum to 1
+    prob = weight / scale
+    filtered[t, ] = prob
 
     # accumulate the log likelihood
     # scaling at each step helps avoid numerical underflow
-    loglik <- loglik + log(scale)
+    loglik = loglik + log(scale)
   }
 
   list(loglik = loglik, filtered = filtered)
@@ -99,38 +94,38 @@ forward_hmm <- function(emission, Gamma, delta) {
 
 # function to find the most likely complete hidden state sequence
 viterbi_hmm <- function(emission, Gamma, delta) {
-  n <- nrow(emission)
-  k <- ncol(emission)
+  n = nrow(emission)
+  k = ncol(emission)
 
-  # store the best log score and previous state for each position
-  score <- matrix(-Inf, n, k)
-  previous <- matrix(0L, n, k)
+  # stores the best log score and previous state for each position
+  score = matrix(-Inf, n, k)
+  previous = matrix(0L, n, k)
 
-  # initialise using the first observation and initial probabilities
-  score[1, ] <- log(delta) + log(emission[1, ])
+  # initializes using the first observation and initial probabilities
+  score[1, ] = log(delta) + log(emission[1, ])
 
   if (n > 1) {
     for (t in 2:n) {
       for (j in seq_len(k)) {
 
-        # compare paths entering state j from each possible previous state
-        candidate <- score[t - 1, ] + log(Gamma[, j])
+        # compares paths entering state j from each possible previous state
+        candidate = score[t - 1, ] + log(Gamma[, j])
 
-        # save the best previous state and update the path score
-        previous[t, j] <- which.max(candidate)
-        score[t, j] <- max(candidate) + log(emission[t, j])
+        # savse the best previous state and update the path score
+        previous[t, j] = which.max(candidate)
+        score[t, j] = max(candidate) + log(emission[t, j])
       }
     }
   }
 
-  # start with the best final state
-  path <- integer(n)
-  path[n] <- which.max(score[n, ])
+  # starts with the best final state
+  path = integer(n)
+  path[n] = which.max(score[n, ])
 
-  # work backwards to recover the most likely state sequence
+  # works backward to recover the most likely state sequence
   if (n > 1) {
     for (t in seq.int(n - 1, 1)) {
-      path[t] <- previous[t + 1, path[t + 1]]
+      path[t] = previous[t + 1, path[t + 1]]
     }
   }
 
@@ -182,13 +177,13 @@ Gamma <- matrix(
   nrow = 3, byrow = TRUE
 )
 
-# simulate the hidden states using a stationary initial distribution
+# simulates the hidden states using a stationary initial distribution
 set.seed(4010)
 n <- 20
 delta <- stationary(Gamma)
 states <- simulate_states(n, Gamma, delta)
 
-# generate each observation using its state's mean and covariance
+# each observation using its state's mean and covariance
 observations <- matrix(0, nrow = n, ncol = 2)
 
 for (t in seq_len(n)) {
@@ -198,7 +193,7 @@ for (t in seq_len(n)) {
     drop(t(chol(sigma[, , k])) %*% rnorm(2))
 }
 
-# combine the observations and true states
+# the observations and true states
 simulated_data <- data.frame(
   time = seq_len(n),
   x1 = observations[, 1],
@@ -216,7 +211,7 @@ I first simulated 20 hidden states using the transition matrix and its stationar
 ### 2. Plot the observations $Y_t$, colour-coded by their true state. Also indicate the path of these observations, as this is a time series.
 
 ```{r}
-# plot the observations and connect them in time order
+# plots the observations 
 ggplot(simulated_data, aes(x1, x2)) +
   geom_path(
     aes(group = 1),
@@ -287,7 +282,7 @@ state_names <- c("A", "B", "C")
 # initial state probabilities
 init <- c(0.4, 0.3, 0.3)
 
-# transition probabilities, rows are current states
+# transition probabilities
 tpm <- matrix(
   c(0.5, 0.3, 0.2,
     0.1, 0.6, 0.3,
@@ -295,7 +290,7 @@ tpm <- matrix(
   byrow = TRUE, ncol = 3
 )
 
-# emission probabilities, rows are states and columns are x, y, z
+# emission probabilities
 emmprob <- matrix(
   c(0.6, 0.2, 0.2,
     0.1, 0.5, 0.4,
@@ -303,7 +298,7 @@ emmprob <- matrix(
   byrow = TRUE, ncol = 3
 )
 
-# use log probabilities to avoid multiplying small numbers
+# log probabilities 
 log_init <- log2(init)
 Gamma <- log2(tpm)
 em.probs <- log2(emmprob)
@@ -311,14 +306,14 @@ em.probs <- log2(emmprob)
 n <- length(obs)
 K <- length(state_names)
 
-# store the best log score for each state at each time
+# best log score for each state at each time
 xi <- matrix(0, nrow = K, ncol = n)
 
-# initialise using the first observation
+# initializes using the first observation
 oi <- match(obs[1], obsposs)
 xi[, 1] <- log_init + em.probs[, oi]
 
-# calculate the best path score ending in each state
+# calculates best path score ending in each state
 for (i in 2:n) {
   oi <- match(obs[i], obsposs)
 
@@ -328,7 +323,7 @@ for (i in 2:n) {
   }
 }
 
-# backtrack from the best final state
+# backtracks from the best final state
 path <- integer(n)
 path[n] <- which.max(xi[, n])
 
@@ -336,7 +331,7 @@ for (i in seq.int(n - 1, 1)) {
   path[i] <- which.max(xi[, i] + Gamma[, path[i + 1]])
 }
 
-# compare the decoded and true states
+# comparison
 decoded <- state_names[path]
 true_states <- c("A", "C", "A", "A", "A", "A", "A", "B", "B", "B")
 
@@ -415,7 +410,7 @@ x3 <- c(0, 2, 1)
 delta3 <- stationary(Gamma3)
 delta3
 
-# list all eight possible hidden state sequences
+# paths
 paths3 <- expand.grid(
   s1 = 1:2,
   s2 = 1:2,
@@ -429,20 +424,20 @@ paths3$state_probability <- apply(paths3[, 1:3], 1, function(s) {
     Gamma3[s[2], s[3]]
 })
 
-# probability of observing 0, 2, 1 given each state sequence
+# probabilities
 paths3$observation_given_states <- apply(
   paths3[, 1:3], 1, function(s) {
     prod(dpois(x3, lambda = lambda3[s]))
   }
 )
 
-# joint probability of each state sequence and the observations
+# joint probabilities
 paths3$joint_probability <-
   paths3$state_probability * paths3$observation_given_states
 
 paths3
 
-# sum over all possible hidden state sequences
+# sum
 probability_a <- sum(paths3$joint_probability)
 probability_a
 ```
@@ -450,12 +445,12 @@ probability_a
 ### 2. Apply the formula
 
 ```{r}
-# diagonal matrix of observation probabilities under each state
+# diagonal matrix of observation probabilities 
 P3 <- function(x) {
   diag(dpois(x, lambda = lambda3))
 }
 
-# sum over the hidden states through matrix multiplication
+# sum over the hidden states 
 probability_b <- drop(
   delta3 %*% P3(0) %*%
     Gamma3 %*% P3(2) %*%
@@ -463,7 +458,7 @@ probability_b <- drop(
     rep(1, 2)
 )
 
-# compare the two methods
+
 c(enumeration = probability_a, matrix = probability_b)
 ```
 
@@ -494,26 +489,25 @@ $$
 Use the probabilities shown in the source diagram. The initial distribution and simulation length were not specified; use stationarity and 500 rolls.
 
 ```{r}
-# transition probabilities, states are fair and loaded
+# transition probabilities
 Gamma6 <- matrix(
   c(0.95, 0.05,
     0.10, 0.90),
   nrow = 2, byrow = TRUE
 )
 
-# outcome probabilities for each die
+# outcome probabilities
 emission6 <- rbind(
   Fair = rep(1/6, 6),
   Loaded = c(rep(0.1, 5), 0.5)
 )
 
-# simulate the hidden die sequence
+# hidden die sequence simulated
 set.seed(4010)
 n6 <- 500
 delta6 <- stationary(Gamma6)
 states6 <- simulate_states(n6, Gamma6, delta6)
 
-# simulate each roll using the selected die
 rolls6 <- integer(n6)
 
 for (t in seq_len(n6)) {
@@ -523,7 +517,7 @@ for (t in seq_len(n6)) {
   )
 }
 
-# combine the rolls and true states
+# rolls and true states
 casino_data <- data.frame(
   time = seq_len(n6),
   roll = rolls6,
@@ -534,7 +528,7 @@ casino_data <- data.frame(
   )
 )
 
-# plot the simulated outcomes
+# plot
 ggplot(casino_data, aes(time, roll, colour = state)) +
   geom_point(alpha = 0.7) +
   scale_y_continuous(breaks = 1:6) +
@@ -546,7 +540,7 @@ ggplot(casino_data, aes(time, roll, colour = state)) +
   theme_classic() +
   theme(legend.position = "top")
 
-# compare outcome proportions within each state
+
 prop.table(table(casino_data$state, casino_data$roll), margin = 1)
 ```
 
@@ -605,7 +599,7 @@ Gamma7 <- matrix(
 # stationary initial distribution
 delta7 <- c(1/3, 2/3)
 
-# probability of observing 1 in each state
+# probabilities
 p7 <- c(0.5, 1)
 
 # diagonal matrices of observation probabilities
@@ -616,26 +610,25 @@ P7 <- function(x) {
 P7(0)
 P7(1)
 
-# function to calculate the Bernoulli HMM likelihood
+# Bernoulli HMM likelihood
 bernoulli_likelihood <- function(x, log = FALSE) {
   stopifnot(length(x) > 0, all(x %in% c(0, 1)))
 
-  phi <- delta7
-  ll <- 0
+  phi = delta7
+  ll = 0
 
   for (i in seq_along(x)) {
-    Pi <- P7(x[i])
+    Pi = P7(x[i])
 
-    # use the initial distribution for the first observation
-    # and transition probabilities for subsequent observations
+
     if (i == 1) {
-      v <- phi %*% Pi
+      v = phi %*% Pi
     } else {
-      v <- phi %*% Gamma7 %*% Pi
+      v = phi %*% Gamma7 %*% Pi
     }
 
-    # normalise and accumulate the log likelihood
-    u <- sum(v)
+    # normalizes and accumulate the log likelihood
+    u = sum(v)
 
     if (u <= 0) {
       return(if (log) -Inf else 0)
@@ -648,7 +641,7 @@ bernoulli_likelihood <- function(x, log = FALSE) {
   if (log) ll else exp(ll)
 }
 
-# check against the supplied answer
+
 c(
   calculated = bernoulli_likelihood(c(1, 1, 1)),
   expected = 29/48

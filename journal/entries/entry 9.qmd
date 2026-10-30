@@ -6,20 +6,40 @@ editor:
     wrap: 72
 ---
 
+:::: {.journal-entry-shell}
+
+::: {.journal-card}
+
 **Date:** 2026-09-21
+
+:::
+
+::: {.journal-card}
 
 **Session/topic covered:**
 
 Bootstrapping for exponential smoothing and Time series regression.
 
+:::
+
+::: {.journal-card}
+
 **What I did:**
 
 Went over the lecture and went through the notes.
+
+:::
+
+::: {.journal-card}
 
 **Related tutorial:**
 
 [Exponential smoothing
 tutorial](../../section-2/exponential%20smoothing%20prac.qmd)
+
+:::
+
+::: {.journal-card}
 
 **What I learned:**
 
@@ -39,6 +59,10 @@ estimating parameters
 problems associated with using regression models for auto-correlated
 data.
 
+:::
+
+::: {.journal-card}
+
 **Difficulties or open questions:**
 
 I would like to go over the idea of bootstrapping the residuals to
@@ -51,9 +75,17 @@ idea of the underlying model? We briefly covered the graph that helps
 determine the frequency that explains the data. I would like to learn
 how to do use it more.
 
+:::
+
+::: {.journal-card}
+
 **What to do next:**
 
 Do a tutorial to fit the ARMAX MODELS, REGRESSION WITH ARMA ERROS , VAR
 MODELS AND GARMA MODELS.
 
 [Back to journal](../index.qmd)
+
+:::
+
+::::

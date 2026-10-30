@@ -92,7 +92,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../Index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -211,15 +211,27 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<div class="journal-entry-shell">
+<div class="journal-card">
 <p><strong>Date</strong> 2026-09-14</p>
+</div>
+<div class="journal-card">
 <p><strong>Session/topic covered:</strong></p>
 <p>Exponential smoothing</p>
+</div>
+<div class="journal-card">
 <p><strong>What I did:</strong></p>
 <p>I went over the lecture content and read through the textbook notes on exponential smoothing. I also started the related tutorial to connect the updating equations to their implementation in R.</p>
+</div>
+<div class="journal-card">
 <p><strong>Related tutorial:</strong></p>
 <p><a href="../../section-2/exponential smoothing prac.html">Exponential smoothing tutorial</a></p>
+</div>
+<div class="journal-card">
 <p><strong>Related analysis:</strong></p>
 <p><a href="../../projects/project-01/code.html">Project 1: Forecasting influenza</a></p>
+</div>
+<div class="journal-card">
 <p><strong>What I learned:</strong></p>
 <p>I learnt how the components of a time series help guide the choice of exponential smoothing method:</p>
 <ul>
@@ -229,12 +241,18 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>I learnt that exponential smoothing updates estimates as new observations become available, giving more weight to recent observations. In simple exponential smoothing, the smoothing parameter, alpha, controls how strongly the estimated level responds to new observations. A larger alpha gives more weight to recent observations, while a smaller alpha produces a smoother estimate.</p>
 <p>Starting the tutorial helped me begin connecting the mathematical updating equation to the steps needed to implement it in R. It also highlighted the distinction between estimating the current level and forecasting future observations. I would like to develop this understanding further by comparing my own implementation with the package functions.</p>
+</div>
+<div class="journal-card">
 <p><strong>Difficulties or open questions:</strong></p>
 <p>I would like to understand more clearly how the smoothing parameter and initial level are estimated. I also want to practice identifying when a series needs a trend or seasonal component, rather than choosing a method only by following an example.</p>
 <p>Another question is how prediction intervals are constructed for exponential smoothing models and how uncertainty changes as the forecast horizon increases.</p>
+</div>
+<div class="journal-card">
 <p><strong>What to do next:</strong></p>
 <p>Continue the exponential smoothing tutorial, compare my implementation with <code>ses()</code>, and investigate the prediction intervals. Then compare simple exponential smoothing with Holt’s linear method and interpret the results. I would also like to connect these ideas to the SARIMA and ETS comparison in Project 1.</p>
 <p><a href="../../journal/index.html">Back to journal</a></p>
+</div>
+</div>
 
 
 

@@ -528,13 +528,13 @@ The optimiser searches for the parameter values that minimise this expression, w
 ```{r}
 #| label: project2-chunk-17
 garch_loglik <- function(par, ret) {
-  omega <- par[2]
-  alpha <- par[3]
-  beta  <- par[4]
+  omega = par[2]
+  alpha = par[3]
+  beta  = par[4]
   if (omega <= 0 || alpha < 0 || beta < 0 || alpha + beta >= 0.9999) {
     return(1e10)
   }
-  f <- garch_func(par, ret)
+  f = garch_func(par, ret)
   0.5 * sum(log(2 * pi) + log(f$sig1) + f$eps^2 / f$sig1)
 }
 
@@ -722,22 +722,22 @@ models <- list(
   # Information Criteria
   # Diagnostic p-values 
 evaluate_model <- function(fit) {
-  ic <- infocriteria(fit)
-  k  <- length(coef(fit))
-  N  <- fit@fit$N
+  ic = infocriteria(fit)
+  k  = length(coef(fit))
+  N  = fit@fit$N
   
-  aic  <- ic["Akaike", 1]
-  aicc <- aic + (2 * k * (k + 1)) / (N * (N - k - 1))
-  bic  <- ic["Bayes", 1]
+  aic  = ic["Akaike", 1]
+  aicc = aic + (2 * k * (k + 1)) / (N * (N - k - 1))
+  bic  = ic["Bayes", 1]
   
   # extracts standardized residuals
-  res <- residuals(fit, standardize = TRUE)
-  z2  <- res^2
+  res = residuals(fit, standardize = TRUE)
+  z2  = res^2
   
   # extracts the p-value from diagnostic tests
-  lb_res <- Box.test(res, lag = 12, type = "Ljung-Box", fitdf = 1)$p.value
-  lb_z2  <- Box.test(z2, lag = 12, type = "Ljung-Box", fitdf = 2)$p.value
-  arch   <- ArchTest(as.numeric(res))$p.value
+  lb_res = Box.test(res, lag = 12, type = "Ljung-Box", fitdf = 1)$p.value
+  lb_z2  = Box.test(z2, lag = 12, type = "Ljung-Box", fitdf = 2)$p.value
+  arch   = ArchTest(as.numeric(res))$p.value
   
   # formatting
   c(AIC = aic, BIC = bic, LB_p = lb_res, LB_Sq_p = lb_z2, ARCH_p = arch)
@@ -825,11 +825,11 @@ where (v_t) is the squared-return proxy and (H) is the number of forecast observ
 # computes average loss metrics in the functions
 # Returns the mean of the loss series
 compute_loss_metrics <- function(realized_proxy, var_fc) {
-  eps <- 1e-8  
-  safe_var <- pmax(var_fc, eps)
+  eps = 1e-8  
+  safe_var = pmax(var_fc, eps)
   
-  mse_loss   <- (realized_proxy - safe_var)^2
-  qlike_loss <- log(safe_var) + (realized_proxy / safe_var)
+  mse_loss   = (realized_proxy - safe_var)^2
+  qlike_loss = log(safe_var) + (realized_proxy / safe_var)
   
   data.frame(
     Mean_MSE   = mean(mse_loss), 
@@ -838,7 +838,7 @@ compute_loss_metrics <- function(realized_proxy, var_fc) {
 }
 
  
-loss_gjrgarch <- compute_loss_metrics(realised_proxy, var_fc_gjrgarch)
+loss_gjrgarch = compute_loss_metrics(realised_proxy, var_fc_gjrgarch)
 
 loss_gjrgarch |>
   kable(

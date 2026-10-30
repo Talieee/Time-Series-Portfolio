@@ -3,30 +3,62 @@ title: "Journal Entry 2"
 date: 03 August 2026
 ---
 
+:::: {.journal-entry-shell}
+
+::: {.journal-card}
+
 **Date:** 2026-08-03
+
+:::
+
+::: {.journal-card}
 
 **Session/topic covered:**
 
 The forecasting problem, Exploring a time series and how decomposition works
 
+:::
+
+::: {.journal-card}
+
 **What I did:**
 
 Went over the lecture 2 in Sulaiman's class as well as attempted to do a tutorial on how these concepts work and how to apply them.
+
+:::
+
+::: {.journal-card}
 
 **Related tutorial:**
 
 [Section 1 exercises](../../section-1/section%201%20tut%20-%20exercises.qmd)
 
+:::
+
+::: {.journal-card}
+
 **What I learned:**
 
 I learnt about the difference between forecasting as well as what predicting is and how that are not the same, forecasting is all about projecting into the future based on past data. There are a lot of factors to take into this based on the complexity of the time series data. I also learnt that forecasting will be determines by the research question and need four conditions to be satisfied. Also how the Forecast-Goal-Plan is a feedback loop. I also learnt that our forecast horizons will depend on certain hings such as how long the period is. One concept that i learnt that I think is very important is that we need to break our time series into its separate components and then we model on them separately and put them together. It can be decomposed into the trend, the seasonality, the cyclical component and then the Irregularity. They can be combined in linear or multiplicative form. I also learnt how to identify each one such as a season, trend, cyclic and the irregular components
 
+:::
+
+::: {.journal-card}
+
 **Difficulties or open questions:**
 
 Need to go over the notation, there is quite a lot of new notation and make sure I understand the notation. I also don't really understand what is going on on slide 20 with the growing uncertainty. I would like to spend more time describing the different plots based on the component being shown. I would also like to do an example where a cyclic component is in the time series.
+
+:::
+
+::: {.journal-card}
 
 **What to do next:**
 
 Do a Tutorial and Go through slide 20.
 
 [Back to journal](../index.qmd)
+
+:::
+
+::::

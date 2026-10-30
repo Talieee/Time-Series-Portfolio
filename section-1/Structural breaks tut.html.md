@@ -234,9 +234,9 @@ This scan finds the best location **conditional on allowing one break**. The dis
 library(patchwork)
 # minimum length 10
 scan_level <- function(y, minimum = 10) {
-  n <- length(y)
+  n = length(y)
   stopifnot(n >= 2 * minimum, all(is.finite(y)))
-  candidates <- minimum:(n - minimum)
+  candidates = minimum:(n - minimum)
   data.frame(last_before = candidates,
              RSS = vapply(candidates, function(b) {
                sum((y[1:b] - mean(y[1:b]))^2) +
@@ -280,9 +280,9 @@ min10_shift <- acf(residuals(nile_shift))
 ```{.r .cell-code}
 # minimum 20
 scan_level <- function(y, minimum = 20) {
-  n <- length(y)
+  n = length(y)
   stopifnot(n >= 2 * minimum, all(is.finite(y)))
-  candidates <- minimum:(n - minimum)
+  candidates = minimum:(n - minimum)
   data.frame(last_before = candidates,
              RSS = vapply(candidates, function(b) {
                sum((y[1:b] - mean(y[1:b]))^2) +
@@ -326,9 +326,9 @@ min20_shift <- acf(residuals(nile_shift))
 ```{.r .cell-code}
 # minimum 30 
 scan_level <- function(y, minimum = 30) {
-  n <- length(y)
+  n = length(y)
   stopifnot(n >= 2 * minimum, all(is.finite(y)))
-  candidates <- minimum:(n - minimum)
+  candidates = minimum:(n - minimum)
   data.frame(last_before = candidates,
              RSS = vapply(candidates, function(b) {
                sum((y[1:b] - mean(y[1:b]))^2) +

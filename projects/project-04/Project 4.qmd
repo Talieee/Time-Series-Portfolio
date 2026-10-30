@@ -216,6 +216,7 @@ $$
 This reflects the fact that uncertainty increases as the underlying process evolves between consecutive time periods.
 
 ### Innovation
+
 Once the new observation $y_t$ becomes available, the difference between the observed value and the predicted state is calculated:
 
 $$
@@ -233,6 +234,7 @@ $$
 It incorporates uncertainty from both the predicted state and the measurement process.
 
 ### Kalman Gain
+
 The Kalman gain determines how strongly the predicted state should be adjusted in response to the new observation:
 
 $$
@@ -244,6 +246,7 @@ $$
 The Kalman gain therefore depends on the relative uncertainty associated with the predicted state and the observed measurement. When measurement uncertainty $R$ is large, less weight is placed on the observation. In contrast, when the predicted state is relatively uncertain compared with the measurement, greater weight is placed on the new observation.
 
 ### State Update
+
 The predicted state is then corrected using the innovation and the Kalman gain:
 
 $$
@@ -255,6 +258,7 @@ $$
 The updated estimate therefore combines information from the model prediction with information contained in the new observation.
 
 ### Uncertainty Update
+
 Finally, the uncertainty associated with the filtered state is updated:
 
 $$
@@ -268,38 +272,38 @@ The updated state estimate $\hat{x}_{t|t}$ and its uncertainty $P_{t|t}$ then be
 kalman_filt <- function(y, Q, R, m0, P0){
   
   # initialize vectors 
-  N <- length(y)
+  N = length(y)
   
-  at <- numeric(N)
-  Rt <- numeric(N)
-  Qt <- numeric(N)
-  mt <- numeric(N)
-  Pt <- numeric(N)
-  et <- numeric(N)
-  Kt <- numeric(N)
+  at = numeric(N)
+  Rt = numeric(N)
+  Qt = numeric(N)
+  mt = numeric(N)
+  Pt = numeric(N)
+  et = numeric(N)
+  Kt = numeric(N)
   
   # loop for filter
   for(i in 1:N){
     
     # prediction
     if(i == 1){
-      at[i] <- m0
-      Rt[i] <- P0 + Q
+      at[i] = m0
+      Rt[i] = P0 + Q
     } else {
-      at[i] <- mt[i-1]
-      Rt[i] <- Pt[i-1] + Q
+      at[i] = mt[i-1]
+      Rt[i] = Pt[i-1] + Q
     }
     
     # innovation 
-    et[i] <- y[i] - at[i]
-    Qt[i] <- Rt[i] + R
+    et[i] = y[i] - at[i]
+    Qt[i] = Rt[i] + R
     
     # Kalman gain
-    Kt[i] <- Rt[i] / Qt[i]
+    Kt[i] = Rt[i] / Qt[i]
     
     # update states
-    mt[i] <- at[i] + Kt[i] * et[i]
-    Pt[i] <- (1 - Kt[i]) * Rt[i]
+    mt[i] = at[i] + Kt[i] * et[i]
+    Pt[i] = (1 - Kt[i]) * Rt[i]
   }
   
   return(data.frame(
@@ -430,7 +434,7 @@ The maximum absolute difference between the two sets of filtered state estimates
 
 Now that the Kalman filter has been shown to work well, benchmark values will be used to determine how the different scenarios affect its performance. A five-period moving average is used as the benchmark model to determine whether it is better to explicitly model uncertainty or simply smooth out the noise in the observed data.
 
-The main metric used for comparison is the root mean squared error (RMSE): 
+The main metric used for comparison is the root mean squared error (RMSE):
 
 $$
 \mathrm{RMSE} = \sqrt{ \frac{1}{T} \sum_{t=1}^{T} (x_t-\hat{x}_t)^2 }.
@@ -545,19 +549,19 @@ R_vals <- c(
 # function to create true state values
 simulate_state <- function(n, Q, R, x0 = 0){
   
-  xt <- numeric(n)
-  yt <- numeric(n)
+  xt = numeric(n)
+  yt = numeric(n)
   
-  xt[1] <- x0
+  xt[1] = x0
   
   for(i in 2:n){
-    wt <- rnorm(1, mean = 0, sd = sqrt(Q))
-    xt[i] <- xt[i - 1] + wt
+    wt = rnorm(1, mean = 0, sd = sqrt(Q))
+    xt[i] = xt[i - 1] + wt
   }
   
   for(i in 1:n){
-    vt <- rnorm(1, mean = 0, sd = sqrt(R))
-    yt[i] <- xt[i] + vt
+    vt = rnorm(1, mean = 0, sd = sqrt(R))
+    yt[i] = xt[i] + vt
   }
   
   data.frame(
@@ -1106,20 +1110,20 @@ simulate_break <- function(
     break_size = 15,
     x0 = 0){
   
-  xt <- numeric(n)
-  yt <- numeric(n)
+  xt = numeric(n)
+  yt = numeric(n)
   
-  xt[1] <- x0
+  xt[1] = x0
   
   for(i in 2:n){
     
-    wt <- rnorm(
+    wt = rnorm(
       1,
       mean = 0,
       sd = sqrt(Q)
     )
     
-    xt[i] <- xt[i - 1] + wt
+    xt[i] = xt[i - 1] + wt
     
     # Permanent level shift
     if(i == break_point){
@@ -1128,7 +1132,7 @@ simulate_break <- function(
   }
   
   for(i in 1:n){
-    yt[i] <- xt[i] +
+    yt[i] = xt[i] +
       rnorm(1, 0, sqrt(R))
   }
   
@@ -1231,46 +1235,46 @@ The Kalman filter is changed slightly so that when an observation is missing, th
 #| label: project4-chunk-28
 kalman_filt_missing <- function(y, Q, R, m0, P0){
   
-  N <- length(y)
+  N = length(y)
   
-  at <- numeric(N)
-  Rt <- numeric(N)
-  Qt <- rep(NA_real_, N)
-  mt <- numeric(N)
-  Pt <- numeric(N)
-  et <- rep(NA_real_, N)
-  Kt <- rep(NA_real_, N)
+  at = numeric(N)
+  Rt = numeric(N)
+  Qt = rep(NA_real_, N)
+  mt = numeric(N)
+  Pt = numeric(N)
+  et = rep(NA_real_, N)
+  Kt = rep(NA_real_, N)
   
   for(i in 1:N){
     
     # Prediction
     if(i == 1){
-      at[i] <- m0
-      Rt[i] <- P0 + Q
+      at[i] = m0
+      Rt[i] = P0 + Q
     } else {
-      at[i] <- mt[i - 1]
-      Rt[i] <- Pt[i - 1] + Q
+      at[i] = mt[i - 1]
+      Rt[i] = Pt[i - 1] + Q
     }
     
     if(is.na(y[i])){
       
       # No measurement:
       # prediction becomes filtered estimate
-      mt[i] <- at[i]
-      Pt[i] <- Rt[i]
+      mt[i] = at[i]
+      Pt[i] = Rt[i]
       
     } else {
       
       # Normal measurement update
-      et[i] <- y[i] - at[i]
-      Qt[i] <- Rt[i] + R
+      et[i] = y[i] - at[i]
+      Qt[i] = Rt[i] + R
       
-      Kt[i] <- Rt[i] / Qt[i]
+      Kt[i] = Rt[i] / Qt[i]
       
-      mt[i] <- at[i] +
+      mt[i] = at[i] +
         Kt[i] * et[i]
       
-      Pt[i] <- (1 - Kt[i]) * Rt[i]
+      Pt[i] = (1 - Kt[i]) * Rt[i]
     }
   }
   
@@ -1374,6 +1378,7 @@ The Kalman filter can still produce an estimate when an observation is missing b
 This shows that the Kalman filter is able to handle missing observations, but the certainty of its estimates is affected when less information is available.
 
 ### Uncertainty Intervals
+
 The filtered variance is also used to construct 95% uncertainty intervals around the estimated state:
 
 $$
